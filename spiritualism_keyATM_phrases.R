@@ -1,8 +1,9 @@
 library(dplyr)
-library(ggplot2)
 library(esocorpus)
-library(quanteda)
+library(ggplot2)
 library(keyATM)
+library(quanteda)
+library(tidyr)
 
 # load data
 data(esocorpus)
@@ -77,10 +78,23 @@ plot_alpha(model)
 plot_topicprop(model)
 top_words(model)
 keyATM_top_docs_texts(model, spiritualism_corpus, spiritualism_dfm)
+
+# Show topic in texts
+model$theta %>%
+  as.data.frame() %>%
+  mutate(name = rownames(spiritualism_dfm)) %>%
+  separate_wider_delim(
     name,
     delim = ".txt.",
+    names = c("book", "paragraph")
+  ) %>%
+  mutate(
+    paragraph = as.numeric(paragraph)
+  ) %>%
+  ggplot(aes(x=paragraph, y=`1_magnetic_sleep`, group=book)) +
   geom_line() +
   facet_wrap(~ book, ncol=1)
+
 
 # plot_pi(model)
 # keyATM_topic_coherence(model, spiritualism_dfm)
