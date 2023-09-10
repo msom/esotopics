@@ -4,13 +4,14 @@ library(topicmodels)
 library(topicdoc)
 
 keyATM_top_docs_texts <- function(
-    model, corpus,n = 10, include_others = FALSE
+    model, corpus, dfm, n = 10, include_others = FALSE
 ) {
   #'
   #' Show the texts of the top documents of a keyATM model for each topics
   #'
   #' @param model the keyATM model
   #' @param corpus the quanteda corpus used to train the model
+  #' @param dfm the dfm used to train the model
   #' @param n the number of texts to show, default is 10
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @return a n x k table with the texts of the top n documents for each topic
@@ -19,7 +20,7 @@ keyATM_top_docs_texts <- function(
   docs <- top_docs(model, n) %>%
     select(matches(match))
   for (name in colnames(docs)) {
-    docs[,name] <- corpus[docs[,name]]
+    docs[,name] <- corpus[rownames(dfm)[docs[,name]]]
   }
   return(docs)
 }

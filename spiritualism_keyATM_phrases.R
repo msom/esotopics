@@ -21,7 +21,7 @@ spiritualism_corpus <- esocorpus %>%
   corpus_reshape(to = "paragraphs")
 
 # Extract adjective-noun phrases
-spritualism_dfm <- udpipe_phrases(spiritualism_corpus, 'AN') %>%
+spiritualism_dfm <- udpipe_phrases(spiritualism_corpus, 'AN') %>%
   as.dfm() %>%
   dfm_subset(
     ntoken(.) > 0,
@@ -29,7 +29,7 @@ spritualism_dfm <- udpipe_phrases(spiritualism_corpus, 'AN') %>%
   )
 
 # Read texts
-spiritualism_docs <- keyATM_read(texts = spritualism_dfm)
+spiritualism_docs <- keyATM_read(texts = spiritualism_dfm)
 
 # Create keywords
 spiritualism_keywords <- list(
@@ -46,9 +46,9 @@ visualize_keywords(
 # Find number of topics (we are looking for the top left)
 spiritualism_metrics <- keyATM_find_no_keyword_topics(
   spiritualism_docs,
-  spritualism_dfm,
+  spiritualism_dfm,
   spiritualism_keywords,
-  seq(0, 10, 1),
+  seq(1, 20, 1),
   iterations=100
 )
 spiritualism_topics <- spiritualism_metrics[1, "topics"]
@@ -70,13 +70,18 @@ model <- keyATM(
     iterations = 1500
   ),
 )
+
 # Validate
 plot_modelfit(model)
 plot_alpha(model)
 plot_topicprop(model)
 top_words(model)
-keyATM_top_docs_texts(model, spiritualism_corpus)
+keyATM_top_docs_texts(model, spiritualism_corpus, spiritualism_dfm)
+    name,
+    delim = ".txt.",
+  geom_line() +
+  facet_wrap(~ book, ncol=1)
 
 # plot_pi(model)
-# keyATM_topic_coherence(model, spritualism_dfm)
+# keyATM_topic_coherence(model, spiritualism_dfm)
 # keyATM_topic_exclusiveness(model)

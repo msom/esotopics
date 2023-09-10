@@ -21,7 +21,7 @@ spiritualism_corpus <- esocorpus %>%
 
 # Create tokens. Remove numbers, punctuation, symbols, separators, stopwords
 # and short words.
-spritualism_tokens <- spiritualism_corpus %>%
+spiritualism_tokens <- spiritualism_corpus %>%
   tokens(
     remove_numbers = TRUE,
     remove_punct = TRUE,
@@ -32,7 +32,7 @@ spritualism_tokens <- spiritualism_corpus %>%
   tokens_select(min_nchar = 3)
 
 # Create dfm.
-spritualism_dfm <- spritualism_tokens %>%
+spiritualism_dfm <- spiritualism_tokens %>%
   dfm() %>%
   # dfm_trim(min_termfreq = 1) %>%
   dfm_subset(
@@ -41,7 +41,7 @@ spritualism_dfm <- spritualism_tokens %>%
   )
 
 # Read texts
-spiritualism_docs <- keyATM_read(texts = spritualism_dfm)
+spiritualism_docs <- keyATM_read(texts = spiritualism_dfm)
 
 # Create keywords
 spiritualism_keywords <- list(
@@ -58,7 +58,7 @@ visualize_keywords(
 # Find number of topics (we are looking for the top left)
 spiritualism_metrics <- keyATM_find_no_keyword_topics(
   spiritualism_docs,
-  spritualism_dfm,
+  spiritualism_dfm,
   spiritualism_keywords,
   seq(0, 10, 1),
   iterations=500
@@ -86,11 +86,11 @@ model <- keyATM(
 
 # Validate
 plot_topicprop(model)
-keyATM_topic_coherence(model, spritualism_dfm)
+keyATM_topic_coherence(model, spiritualism_dfm)
 keyATM_topic_exclusiveness(model)
 
 top_words(model, n = 30)
-keyATM_top_docs_texts(model, spiritualism_corpus)
+keyATM_top_docs_texts(model, spiritualism_corpus, spiritualism_dfm)
 
 
 # Old
@@ -99,4 +99,3 @@ keyATM_top_docs_texts(model, spiritualism_corpus)
 plot_modelfit(model)
 plot_alpha(model)
 plot_pi(model)
-
