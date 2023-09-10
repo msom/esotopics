@@ -1,6 +1,5 @@
 library(udpipe)
-library(plyr)
-library(progress)
+library(dplyr)
 
 udpipe_load_cached_model <- function() {
   #'
@@ -35,6 +34,7 @@ udpipe_extract_phrases <- function(text, pattern, as_columns = FALSE, model = NU
   #' @param model the udpipe model to be used
   #' @return as data frame with phrases and frequency
   #'
+
   if (is.null(model)) {
     model <- udpipe_load_cached_model()
   }
@@ -48,6 +48,9 @@ udpipe_extract_phrases <- function(text, pattern, as_columns = FALSE, model = NU
     is_regex = TRUE,
     detailed = FALSE
   ) %>%
+    mutate(
+      keyword = tolower(keyword)
+    ) %>%
     select(-ngram)
   if (as_columns) {
     column_names <- result$keyword
@@ -72,18 +75,28 @@ udpipe_phrases <- function(corpus, pattern) {
   #'    O: other elements
   #' @return as data frame with phrases and frequency per document
   #'
+  stopifnot(require(parallel))
+  stopifnot(require(plyr))
+  stopifnot(require(pbapply))
 
-  # TODO: https://josephcrispell.github.io/2018/08/27/multi-threading-R.html
-  bar <- progress_bar$new(total = length(corpus) / 10)
-  model <- udpipe_load_cached_model()
-  result <- data.frame()
-  for (i in 1:length(corpus)) {
-    if (i %% 10 == 0) {
-      bar$tick()
+  cluster <- makeCluster(detectCores())
+  clusterExport(cluster, c("corpus", "pattern"), envir = environment())
+  clusterExport(cluster, c("udpipe_extract_phrases","udpipe_load_cached_model"))
+  clusterEvalQ(cluster, library(udpipe))
+  clusterEvalQ(cluster, library(dplyr))
+  clusterEvalQ(cluster, model <- udpipe_load_cached_model())
+
+  result <- pblapply(
+    cl = cluster,
+    X = names(corpus),
+    FUN = function(name) {
+      return(
+        udpipe_extract_phrases(corpus[[name]], pattern, as_columns = TRUE, model = model)
+      )
     }
-    row <- udpipe_extract_phrases(corpus[[i]], pattern, as_columns = TRUE, model = model)
-    result <- rbind.fill(result, row)
-  }
+  )
+  stopCluster(cluster)
+  result <- rbind.fill(result, row)
   result[is.na(result)] <- 0
   rownames(result) <- names(corpus)
   names(result) <- make.names(names(result))
