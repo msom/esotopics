@@ -13,7 +13,7 @@ source("helpers/keyatm.R")
 # Create corpus. Exclude Davis, since his books is too general about knowledge
 # of that time. Only include paragraphs with at least 30 words. Reshape to
 # paragraphs, since we assume to topic may change by paragraphs.
-spritualism_corpus <- esocorpus %>%
+spiritualism_corpus <- esocorpus %>%
   corpus() %>%
   corpus_subset(name %in% c("Kerner", "Cahagnet")) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
@@ -21,7 +21,7 @@ spritualism_corpus <- esocorpus %>%
 
 # Create tokens. Remove numbers, punctuation, symbols, separators, stopwords
 # and short words.
-spritualism_tokens <- spritualism_corpus %>%
+spritualism_tokens <- spiritualism_corpus %>%
   tokens(
     remove_numbers = TRUE,
     remove_punct = TRUE,
@@ -90,7 +90,7 @@ keyATM_topic_coherence(model, spritualism_dfm)
 keyATM_topic_exclusiveness(model)
 
 top_words(model, n = 30)
-keyATM_top_docs_texts(model, spritualism_corpus)
+keyATM_top_docs_texts(model, spiritualism_corpus)
 
 
 # Old

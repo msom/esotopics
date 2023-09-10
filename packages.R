@@ -10,5 +10,5 @@ install.packages("topicmodels")
 install.packages("udpipe")
 
 library(devtools)
-install_github("msom/esocorpus", upgrade = "always")
+install_github("msom/esocorpus", upgrade = "always", force = TRUE)
 

@@ -14,14 +14,14 @@ source("helpers/udpipe.R")
 # Create corpus. Exclude Davis, since his books is too general about knowledge
 # of that time. Only include paragraphs with at least 30 words. Reshape to
 # paragraphs, since we assume to topic may change by paragraphs.
-spritualism_corpus <- esocorpus %>%
+spiritualism_corpus <- esocorpus %>%
   corpus() %>%
   corpus_subset(name %in% c("Kerner", "Cahagnet")) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
 
 # Extract adjective-noun phrases
-spritualism_dfm <- udpipe_phrases(spritualism_corpus, 'A{1}N{1}') %>%
+spritualism_dfm <- udpipe_phrases(spiritualism_corpus, 'AN') %>%
   as.dfm() %>%
   dfm_subset(
     ntoken(.) > 0,
@@ -70,16 +70,13 @@ model <- keyATM(
     iterations = 1500
   ),
 )
-
 # Validate
 plot_modelfit(model)
 plot_alpha(model)
 plot_topicprop(model)
 top_words(model)
-keyATM_top_docs_texts(model, spritualism_corpus)
+keyATM_top_docs_texts(model, spiritualism_corpus)
 
 # plot_pi(model)
 # keyATM_topic_coherence(model, spritualism_dfm)
 # keyATM_topic_exclusiveness(model)
-
-
