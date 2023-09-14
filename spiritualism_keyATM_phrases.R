@@ -49,8 +49,9 @@ spiritualism_metrics <- keyATM_find_no_keyword_topics(
   spiritualism_docs,
   spiritualism_dfm,
   spiritualism_keywords,
-  seq(1, 20, 1),
-  iterations=100
+  seq(1, 100, 1),
+  iterations=100,
+  seed = 123
 )
 spiritualism_topics <- spiritualism_metrics[1, "topics"]
 spiritualism_metrics %>%
@@ -91,9 +92,10 @@ model$theta %>%
   mutate(
     paragraph = as.numeric(paragraph)
   ) %>%
-  ggplot(aes(x=paragraph, y=`1_magnetic_sleep`, group=book)) +
+  ggplot(aes(x=paragraph, y=`1_magnetic_sleep`, group = book)) +
   geom_line() +
-  facet_wrap(~ book, ncol=1)
+  geom_smooth(span = 0.1, se = FALSE) +
+  facet_wrap(~ book, ncol = 1)
 
 
 # plot_pi(model)

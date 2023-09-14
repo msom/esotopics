@@ -82,11 +82,46 @@ keyATM_topic_exclusiveness <- function(
   return(result)
 }
 
+keyATM_fit_and_measure_model <- function(
+    docs, dfm, keywords, no_keyword_topics, n = 10, iterations = 1500, seed = NULL
+) {
+  #'
+  #' Fit a model and measure the coherence and exclusiveness.
+  #'
+  #' @param docs the keyATM docs
+  #' @param dfm the document feature matrix
+  #' @param keywords the keyATM keywords
+  #' @param no_keyword_topics the number of non-keyword topics
+  #' @param n the number of top words to consider, default is 10
+  #' @param iterations the number of iterations, default is 1500
+  #' @param seed the random seed, default is chosing a seed randomly
+  #' @return a data frame with the number of topics, coherence and exclusivity
+  #'
+  model <- keyATM(
+    docs = docs,
+    model = "base",
+    no_keyword_topics = no_keyword_topics,
+    keywords = keywords,
+    options = list(
+      seed = seed,
+      iterations = iterations
+    )
+  )
+  result <- data.frame(
+    topics=no_keyword_topics,
+    coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
+    overall_coherence=mean(keyATM_topic_coherence(model, dfm, n = n, include_others = TRUE)),
+    exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n)),
+    overall_exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n, include_others = TRUE))
+  )
+  return(result)
+}
+
 keyATM_find_no_keyword_topics <- function(
     docs, dfm, keywords, numbers, n = 10, iterations = 1500, seed = NULL
 ) {
   #'
-  #' Try a range
+  #' Try a range of no_keyword_topics and return their coherence and exclusivity
   #'
   #' Taken from Luigi Curinis Big Data Analytics course
   #'
@@ -98,36 +133,48 @@ keyATM_find_no_keyword_topics <- function(
   #' @param seed the random seed, default is chosing a seed randomly
   #' @return a data frame with the number of topics, coherence and exclusivity
   #'
-  result <- data.frame(
-    topics=integer(),
-    coherence=double(),
-    exclusiveness=double()
-  )
-  for (index in 1:length(numbers)) {
-    number <- numbers[index]
-    result[index, "topics"]  <- number
-    model <- keyATM(
-      docs = docs,
-      model = "base",
-      no_keyword_topics = 5,
-      keywords = keywords,
-      options = list(
-        seed = seed,
-        iterations = iterations
+  stopifnot(require(parallel))
+  stopifnot(require(plyr))
+  stopifnot(require(pbapply))
+
+  cluster <- makeCluster(detectCores())
+  clusterExport(cluster, c("docs", "dfm", "keywords", "n", "iterations","seed"), envir = environment())
+  clusterExport(cluster, c("keyATM_fit_and_measure_model", "keyATM_topic_coherence", "keyATM_topic_exclusiveness"))
+  clusterEvalQ(cluster, library(dplyr))
+  clusterEvalQ(cluster, library(keyATM))
+  clusterEvalQ(cluster, library(quanteda))
+
+  # Models with a lot of topics taking longer, we calculate them first so
+  # that the progress bar estimation is pessimistic rather than optimistic
+  # in the beginning
+  result <- pblapply(
+    cl = cluster,
+    X = sort(numbers, decreasing = TRUE),
+    FUN = function(no_keyword_topics) {
+      tryCatch(
+        {
+          return(
+            keyATM_fit_and_measure_model(
+              docs, dfm, keywords, no_keyword_topics,
+              n = n, iterations = iterations, seed = seed
+            )
+          )
+        },
+        error = function(e) {
+          return(data.frame())
+        }
       )
-    )
-    result[index, "coherence"] <- mean(keyATM_topic_coherence(model, dfm, n = n))
-    result[index, "exclusiveness"] <- mean(keyATM_topic_exclusiveness(model, n = n))
-  }
-  result <- result %>%
+    }
+  )
+  stopCluster(cluster)
+
+  result <- rbind.fill(result) %>%
     mutate(
-      coherence_scaled=abs(coherence),
-      exclusiveness_scaled=exclusiveness,
-      across(c("coherence_scaled","exclusiveness_scaled"), ~ scale(.)),
-      coherence_scaled = coherence_scaled - min(coherence_scaled),
-      exclusiveness_scaled = exclusiveness_scaled - min(exclusiveness_scaled),
-      value = sqrt(coherence_scaled^2 + exclusiveness_scaled^2)
+      c_scaled = scale(-coherence, center=1),
+      e_scaled = scale(exclusiveness, center=1),
+      metric = sqrt(c_scaled^2 + e_scaled^2)
     ) %>%
-    arrange(-value)
+    select(-c_scaled, -e_scaled) %>%
+    arrange(-metric)
   return(result)
 }

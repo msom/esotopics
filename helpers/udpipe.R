@@ -96,7 +96,7 @@ udpipe_phrases <- function(corpus, pattern) {
     }
   )
   stopCluster(cluster)
-  result <- rbind.fill(result, row)
+  result <- rbind.fill(result)
   result[is.na(result)] <- 0
   rownames(result) <- names(corpus)
   names(result) <- make.names(names(result))
