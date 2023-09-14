@@ -82,51 +82,8 @@ top_words(model, n = 50)[1]
 keyATM_top_docs_texts(model, spiritualism_corpus, spiritualism_dfm)
 
 # Show topic in texts
-model$theta %>%
-  as.data.frame() %>%
-  mutate(name = rownames(spiritualism_dfm)) %>%
-  separate_wider_delim(
-    name,
-    delim = ".txt.",
-    names = c("book", "paragraph")
-  ) %>%
-  mutate(
-    paragraph = as.numeric(paragraph),
-    book = as.factor(book),
-  ) %>%
-  ggplot(
-    aes(x = paragraph, y = `1_magnetic_sleep`)
-  ) +
-  geom_line() +
-  geom_smooth(span = 0.1, se = FALSE) +
-  facet_wrap(~ book, ncol = 1) +
-  xlab("") +
-  ylab("Magnetic Sleep")
-
-
-model$theta %>%
-  as.data.frame() %>%
-  mutate(name = rownames(spiritualism_dfm)) %>%
-  separate_wider_delim(
-    name,
-    delim = ".txt.",
-    names = c("book", "paragraph")
-  ) %>%
-  gather(key = "topic", value = "value", c(-book, -paragraph)) %>%
-  mutate(
-    other = ifelse(startsWith(topic, "Other"), TRUE, FALSE),
-    paragraph = as.numeric(paragraph),
-    topic = as.factor(topic),
-    book = as.factor(book),
-  ) %>%
-  ggplot(
-    aes(x = paragraph, y = value, color = topic, linetype = other)
-  ) +
-  geom_smooth(span = 0.1, se = FALSE) +
-  facet_wrap(~ book, ncol = 1) +
-  xlab("") +
-  ylab("Topic")
-
+plot_topic_occurrence(model, spiritualism_dfm, "1_magnetic_sleep")
+plot_topic_occurrences(model, spiritualism_dfm)
 
 # plot_pi(model)
 # keyATM_topic_coherence(model, spiritualism_dfm)

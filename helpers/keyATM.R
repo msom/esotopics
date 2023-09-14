@@ -1,5 +1,6 @@
 library(keyATM)
 library(dplyr)
+library(ggplot)
 library(topicmodels)
 library(topicdoc)
 
@@ -178,3 +179,66 @@ keyATM_find_no_keyword_topics <- function(
     arrange(-metric)
   return(result)
 }
+
+plot_topic_occurrence <- function(model, dfm, topic)
+{
+  #'
+  #' Plot the occurrence of a topic within the documents.
+  #'
+  #' @param model the keyATM model
+  #' @param dfm the esocorpus based DFM used with the model
+  #' @param topic the topic name
+  #'
+  model$theta %>%
+    as.data.frame() %>%
+    mutate(name = rownames(dfm)) %>%
+    separate_wider_delim(
+      name,
+      delim = ".txt.",
+      names = c("book", "paragraph")
+    ) %>%
+    mutate(
+      paragraph = as.numeric(paragraph),
+      book = as.factor(book),
+    ) %>%
+    ggplot(aes(x = paragraph, y = .data[[topic]])) +
+    geom_line() +
+    geom_smooth(span = 0.1, se = FALSE) +
+    facet_wrap(~ book, ncol = 1) +
+    xlab("") +
+    ylab("Theta") +
+    labs(title = topic)
+}
+
+plot_topic_occurrences <- function(model, dfm, topic) {
+  #'
+  #' Plot the occurrences of a topic within the documents.
+  #'
+  #' @param model the keyATM model
+  #' @param dfm the esocorpus based DFM used with the model
+  #'
+  model$theta %>%
+  as.data.frame() %>%
+    mutate(name = rownames(spiritualism_dfm)) %>%
+    separate_wider_delim(
+      name,
+      delim = ".txt.",
+      names = c("book", "paragraph")
+    ) %>%
+    gather(key = "topic", value = "value", c(-book, -paragraph)) %>%
+    mutate(
+      other = ifelse(startsWith(topic, "Other"), TRUE, FALSE),
+      paragraph = as.numeric(paragraph),
+      topic = as.factor(topic),
+      book = as.factor(book),
+    ) %>%
+    ggplot(
+      aes(x = paragraph, y = value, color = topic, linetype = other)
+    ) +
+    geom_smooth(span = 0.1, se = FALSE) +
+    scale_linetype(guide = "none") +
+    facet_wrap(~ book, ncol = 1) +
+    xlab("") +
+    ylab("Theta")
+}
+
