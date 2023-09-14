@@ -1,3 +1,4 @@
+library(corrplot)
 library(dplyr)
 library(esocorpus)
 library(ggplot2)
@@ -49,10 +50,12 @@ spiritualism_metrics <- keyATM_find_no_keyword_topics(
   spiritualism_docs,
   spiritualism_dfm,
   spiritualism_keywords,
-  seq(1, 100, 1),
+  seq(1, 200, 5),
   iterations=100,
-  seed = 123
+  seed = 123,
+  parallel = FALSE
 )
+
 spiritualism_topics <- spiritualism_metrics[1, "topics"]
 spiritualism_metrics %>%
   ggplot(aes(x=coherence, y=exclusiveness)) +
@@ -88,3 +91,10 @@ plot_topic_occurrences(model, spiritualism_dfm)
 # plot_pi(model)
 # keyATM_topic_coherence(model, spiritualism_dfm)
 # keyATM_topic_exclusiveness(model)
+model$theta %>%
+  as.data.frame() %>%
+  mutate(name = rownames(spiritualism_dfm)) %>%
+  filter(startsWith(name, "Kerner")) %>%
+  select(-name) %>%
+  cor() %>%
+  corrplot(method = "color", type = "lower")

@@ -119,7 +119,8 @@ keyATM_fit_and_measure_model <- function(
 }
 
 keyATM_find_no_keyword_topics <- function(
-    docs, dfm, keywords, numbers, n = 10, iterations = 1500, seed = NULL
+    docs, dfm, keywords, numbers, n = 10, iterations = 1500, seed = NULL,
+    parallel = TRUE
 ) {
   #'
   #' Try a range of no_keyword_topics and return their coherence and exclusivity
@@ -134,40 +135,58 @@ keyATM_find_no_keyword_topics <- function(
   #' @param seed the random seed, default is chosing a seed randomly
   #' @return a data frame with the number of topics, coherence and exclusivity
   #'
-  stopifnot(require(parallel))
-  stopifnot(require(plyr))
-  stopifnot(require(pbapply))
+  if (parallel) {
+    stopifnot(require(parallel))
+    stopifnot(require(plyr))
+    stopifnot(require(pbapply))
 
-  cluster <- makeCluster(detectCores())
-  clusterExport(cluster, c("docs", "dfm", "keywords", "n", "iterations","seed"), envir = environment())
-  clusterExport(cluster, c("keyATM_fit_and_measure_model", "keyATM_topic_coherence", "keyATM_topic_exclusiveness"))
-  clusterEvalQ(cluster, library(dplyr))
-  clusterEvalQ(cluster, library(keyATM))
-  clusterEvalQ(cluster, library(quanteda))
+    cluster <- makeCluster(detectCores())
+    clusterExport(
+      cluster,
+      c("docs", "dfm", "keywords", "n", "iterations","seed"),
+      envir = environment()
+    )
+    clusterExport(
+      cluster,
+      c("keyATM_fit_and_measure_model", "keyATM_topic_coherence",
+        "keyATM_topic_exclusiveness")
+    )
+    clusterEvalQ(cluster, library(dplyr))
+    clusterEvalQ(cluster, library(keyATM))
+    clusterEvalQ(cluster, library(quanteda))
 
-  # Models with a lot of topics taking longer, we calculate them first so
-  # that the progress bar estimation is pessimistic rather than optimistic
-  # in the beginning
-  result <- pblapply(
-    cl = cluster,
-    X = sort(numbers, decreasing = TRUE),
-    FUN = function(no_keyword_topics) {
-      tryCatch(
-        {
-          return(
-            keyATM_fit_and_measure_model(
-              docs, dfm, keywords, no_keyword_topics,
-              n = n, iterations = iterations, seed = seed
+    # Models with a lot of topics taking longer, we calculate them first so
+    # that the progress bar estimation is pessimistic rather than optimistic
+    # in the beginning
+    result <- pblapply(
+      cl = cluster,
+      X = sort(numbers, decreasing = TRUE),
+      FUN = function(no_keyword_topics) {
+        tryCatch(
+          {
+            return(
+              keyATM_fit_and_measure_model(
+                docs, dfm, keywords, no_keyword_topics,
+                n = n, iterations = iterations, seed = seed
+              )
             )
-          )
-        },
-        error = function(e) {
-          return(data.frame())
-        }
+          },
+          error = function(e) {
+            return(data.frame())
+          }
+        )
+      }
+    )
+    stopCluster(cluster)
+  } else {
+    result <- list()
+    for (number in numbers) {
+      result[[length(result)+1]] <- keyATM_fit_and_measure_model(
+        docs, dfm, keywords, number,
+        n = n, iterations = iterations, seed = seed
       )
     }
-  )
-  stopCluster(cluster)
+  }
 
   result <- rbind.fill(result) %>%
     mutate(
