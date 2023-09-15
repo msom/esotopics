@@ -22,9 +22,10 @@ spiritualism_corpus <- esocorpus %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
 
-# Extract adjective-noun phrases
-spiritualism_dfm <- udpipe_phrases(spiritualism_corpus, 'AN') %>%
-  as.dfm() %>%
+# Extract adjective-noun and noun-noun phrases
+spiritualism_dfm <- udpipe_phrases(
+    spiritualism_corpus, "AN|N(P+D*(A|N)*N)"
+  ) %>%
   dfm_subset(
     ntoken(.) > 0,
     drop_docid = FALSE
