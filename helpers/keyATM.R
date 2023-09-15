@@ -1,6 +1,6 @@
 library(keyATM)
 library(dplyr)
-library(ggplot)
+library(ggplot2)
 library(topicmodels)
 library(topicdoc)
 
