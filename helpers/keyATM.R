@@ -5,6 +5,7 @@ library(keyATM)
 library(dplyr)
 library(ggplot2)
 library(philentropy)
+library(tidyr)
 library(topicmodels)
 library(topicdoc)
 
@@ -238,7 +239,7 @@ keyATM_compare_models_by_words <- function(x, y, n = 10, include_others = FALSE)
   return(result)
 }
 
-keyATM_compare_models_by_distribution <- function(x, y) {
+keyATM_compare_models_by_distribution <- function(x, y, include_others = FALSE) {
   #'
   #' Compare two models by comparing their distribution using the
   #' Jensen-Shannon divergence.
@@ -247,6 +248,7 @@ keyATM_compare_models_by_distribution <- function(x, y) {
   #'
   #' @param x the first keyATM model
   #' @param y the second keyATM model
+  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @return An k vector with the distance value in the range 0 (similar) to 1 (distant)
   #'
   match = ifelse(include_others, ".*", "\\d_.*")
