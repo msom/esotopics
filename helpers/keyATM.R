@@ -273,7 +273,7 @@ keyATM_compare_models_by_distribution <- function(x, y) {
     )
     result[index] <- JSD(values, unit='log')
   }
-  names(result) <- colnames(words_x)
+  names(result) <- colnames(phi_x)
   return(result)
 }
 
@@ -334,14 +334,14 @@ keyATM_plot_topic_occurrence <- function(model, dfm, topic)
 
 keyATM_plot_topic_occurrences <- function(model, dfm, topic) {
   #'
-  #' Plot the occurrences of a topic within the documents.
+  #' Plot the occurrences of the topic within the documents.
   #'
   #' @param model the keyATM model
   #' @param dfm the esocorpus based DFM used with the model
   #'
   model$theta %>%
   as.data.frame() %>%
-    mutate(name = rownames(spiritualism_dfm)) %>%
+    mutate(name = rownames(dfm)) %>%
     separate_wider_delim(
       name,
       delim = ".txt.",
