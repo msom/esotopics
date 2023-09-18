@@ -2,6 +2,7 @@ library(cli)
 library(keyATM)
 library(dplyr)
 library(ggplot2)
+library(philentropy)
 library(topicmodels)
 library(topicdoc)
 
@@ -210,6 +211,70 @@ keyATM_find_no_keyword_topics <- function(
     ) %>%
     select(-c_scaled, -e_scaled) %>%
     arrange(-metric)
+  return(result)
+}
+
+keyATM_compare_models_by_words <- function(x, y, n = 10, include_others = FALSE) {
+  #'
+  #' Compare two models by comparing their top words.
+  #'
+  #' @param x the first keyATM model
+  #' @param y the second keyATM model
+  #' @param n the number of terms to include, only for by_distribution = FALSE, default is 10
+  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @return An k vector with the proportion of common top words
+  #'
+  match = ifelse(include_others, ".*", "\\d_.*")
+  words_x <- top_words(x, n, show_keyword = FALSE) %>%
+    select(matches(match))
+  words_y <- top_words(y, n, show_keyword = FALSE) %>%
+    select(matches(match))
+
+  result <- vector(length = ncol(words_x))
+  for (index in 1:length(colnames(words_x))) {
+    name <- colnames(words_x)[index]
+    result[index] <- length(unlist(intersect(words_x[name], words_y[name]))) / n
+  }
+  names(result) <- colnames(words_x)
+  return(result)
+}
+
+keyATM_compare_models_by_distribution <- function(x, y) {
+  #'
+  #' Compare two models by comparing their distribution using the
+  #' Jensen-Shannon divergence.
+  #'
+  #' Idea taken from https://datascience.stackexchange.com/a/87269
+  #'
+  #' @param x the first keyATM model
+  #' @param y the second keyATM model
+  #' @return An k vector with the distance value in the range 0 (similar) to 1 (distant)
+  #'
+  match = ifelse(include_others, ".*", "\\d_.*")
+
+  # get the distributions and outer join them
+  phi_x <- x$phi %>%
+    t() %>%
+    as.data.frame() %>%
+    select(matches(match))
+  colnames(phi_x) <- paste('x', colnames(phi_x), sep = '_')
+  phi_y <- y$phi %>%
+    t() %>%
+    as.data.frame() %>%
+    select(matches(match))
+  colnames(phi_y) <- paste('y', colnames(phi_y), sep = '_')
+  phi <- merge(phi_x, phi_y, by=0, all=TRUE)
+  phi[is.na(phi)] <- 0
+
+  result <- vector(length = ncol(phi_x))
+  for (index in 1:length(colnames(phi_x))) {
+    values <- rbind(
+      phi[,colnames(phi_x)[index]],
+      phi[,colnames(phi_y)[index]]
+    )
+    result[index] <- JSD(values, unit='log')
+  }
+  names(result) <- colnames(words_x)
   return(result)
 }
 

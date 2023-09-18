@@ -66,6 +66,7 @@ spiritualism_keywords <- list(
   ),
   law_of_progress = c(
     "law.of.progress"
+    # TODO: reincarnation?
   )
 )
 
@@ -112,7 +113,8 @@ plot_modelfit(spiritualism_model)
 plot_alpha(spiritualism_model)
 plot_topicprop(spiritualism_model)
 View(top_words(spiritualism_model))
-top_words(spiritualism_model, n=100) %>% write.csv("out/spiritualism_topics.csv")
+top_words(spiritualism_model, n = 100, show_keyword = FALSE) %>%
+  write.csv("out/spiritualism_topics.csv")
 top_words(spiritualism_model, n = 50)[1]
 keyATM_top_docs_texts(spiritualism_model, spiritualism_corpus, spiritualism_dfm)
 
@@ -131,6 +133,30 @@ spiritualism_model$theta %>%
   select(-name) %>%
   cor() %>%
   corrplot(method = "color", type = "lower")
+
+# Test with one of Kardecs other texts
+kardec_corpus <- esocorpus %>%
+  corpus() %>%
+  corpus_subset(title == "The Mediums Book") %>%
+  corpus_trim("paragraphs", min_ntoken = 30) %>%
+  corpus_reshape(to = "paragraphs")
+kardec_dfm <- preprocess(kardec_corpus)
+kardec_docs <- keyATM_read(texts = kardec_dfm)
+visualize_keywords(kardec_docs, spiritualism_keywords)
+kardec_model <- keyATM(
+  docs = kardec_docs,
+  model = "base",
+  no_keyword_topics = spiritualism_topics,  # TODO: this should be probably an own fit
+  keywords = spiritualism_keywords,
+  options = list(
+    seed = 123,
+    iterations = 2000
+  ),
+)
+keyATM_compare_models_by_words(spiritualism_model, kardec_model, n=100)
+keyATM_compare_models_by_distribution(spiritualism_model, kardec_model)
+
+# vvvvv cleanup vvvvvvv
 
 # TODO: move this to a test file
 udpipe_extract_phrases(
