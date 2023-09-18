@@ -24,7 +24,8 @@ udpipe_load_cached_model <- function() {
 }
 
 udpipe_extract_phrases <- function(
-    text, pattern, as_columns = FALSE, model = NULL, proper_nouns_only = TRUE
+    text, pattern, as_columns = FALSE, model = NULL, proper_nouns_only = TRUE,
+    nouns = NULL
 ) {
   #'
   #' Extracts phrases with the given pattern from the given text.
@@ -41,7 +42,8 @@ udpipe_extract_phrases <- function(
   #' @param as_columns return the phrases as colums instead of rows, default is FALSE
   #' @param model the udpipe model to be used
   #' @param proper_nouns_only if TRUE, pronouns are translated to O, else N
-  #' @return as data frame with lemmatized phrases and frequency
+  #' @param nouns an optional list of nouns (lemmas) to include
+  #' @return a data frame with lemmatized phrases and frequency
   #'
 
   # load model if not provided
@@ -50,25 +52,40 @@ udpipe_extract_phrases <- function(
   }
 
   # annotate parts of speech
-  annotation <- udpipe_annotate(model, text) %>%
+  annotations <- udpipe_annotate(model, tolower(text)) %>%
     as.data.frame() %>%
     mutate(phrase_tag = as_phrasemachine(upos, type = "upos"))
 
   # fix pronouns being categorized as nouns
   if (proper_nouns_only) {
-    annotation <- annotation %>%
+    annotations <- annotations %>%
       mutate(phrase_tag = ifelse(upos == "PRON", "O", phrase_tag))
   }
 
   # extract phrases using lemmas
   result <- phrases(
-    annotation$phrase_tag,
-    term = annotation$lemma,
+    annotations$phrase_tag,
+    term = annotations$lemma,
     pattern = pattern,
     is_regex = TRUE,
     detailed = FALSE
   ) %>%
     select(-ngram)
+
+  if (!is.null(nouns)) {
+    result <- result %>%
+      rbind(
+        phrases(
+          annotations$phrase_tag,
+          term = annotations$lemma,
+          pattern = 'N',
+          is_regex = TRUE,
+          detailed = FALSE
+        ) %>%
+          select(-ngram) %>%
+          filter(keyword %in% nouns)
+      )
+  }
 
   # transform to data frame
   if (as_columns) {
@@ -79,7 +96,7 @@ udpipe_extract_phrases <- function(
   return(result)
 }
 
-udpipe_phrases <- function(corpus, pattern) {
+udpipe_phrases <- function(corpus, pattern, nouns = NULL) {
   #'
   #' Create a DFM like data frame with phrases
   #'
@@ -92,10 +109,11 @@ udpipe_phrases <- function(corpus, pattern) {
   #'    N: noun or proper noun
   #'    P: preposition
   #'    O: other elements
-  #' @return as DFM with phrases and frequency per document
+  #' @param nouns an optional list of nouns (lemmas) to include
+  #' @return a DFM with phrases and frequency per document
   #'
   cluster <- makeCluster(detectCores())
-  clusterExport(cluster, c("corpus", "pattern"), envir = environment())
+  clusterExport(cluster, c("corpus", "pattern", "nouns"), envir = environment())
   clusterExport(cluster, c("udpipe_extract_phrases","udpipe_load_cached_model"))
   clusterEvalQ(cluster, library(udpipe))
   clusterEvalQ(cluster, library(dplyr))
@@ -107,13 +125,16 @@ udpipe_phrases <- function(corpus, pattern) {
     X = names(corpus),
     FUN = function(name) {
       return(
-        udpipe_extract_phrases(corpus[[name]], pattern, as_columns = TRUE, model = model)
+        udpipe_extract_phrases(
+          corpus[[name]], pattern, nouns = nouns,
+          as_columns = TRUE, model = model
+        )
       )
     }
   )
   stopCluster(cluster)
 
-  cli_alert_info("Constructin a DFM")
+  cli_alert_info("Creating a DFM")
   result <- rbind.fill(result)
   result[is.na(result)] <- 0
   rownames(result) <- names(corpus)
