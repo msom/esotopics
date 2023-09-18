@@ -1,5 +1,6 @@
 install.packages("cli")
 install.packages("corrplot")
+install.packages("datawizard")
 install.packages("devtools")
 install.packages("dplyr")
 install.packages("ggplot2")
