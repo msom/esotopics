@@ -199,7 +199,7 @@ keyATM_find_no_keyword_topics <- function(
   return(result)
 }
 
-plot_topic_occurrence <- function(model, dfm, topic)
+keyATM_plot_topic_occurrence <- function(model, dfm, topic)
 {
   #'
   #' Plot the occurrence of a topic within the documents.
@@ -229,7 +229,7 @@ plot_topic_occurrence <- function(model, dfm, topic)
     labs(title = topic)
 }
 
-plot_topic_occurrences <- function(model, dfm, topic) {
+keyATM_plot_topic_occurrences <- function(model, dfm, topic) {
   #'
   #' Plot the occurrences of a topic within the documents.
   #'

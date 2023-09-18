@@ -86,8 +86,8 @@ top_words(model, n = 50)[1]
 keyATM_top_docs_texts(model, spiritualism_corpus, spiritualism_dfm)
 
 # Show topic in texts
-plot_topic_occurrence(model, spiritualism_dfm, "1_magnetic_sleep")
-plot_topic_occurrences(model, spiritualism_dfm)
+keyATM_plot_topic_occurrence(model, spiritualism_dfm, "1_magnetic_sleep")
+keyATM_plot_topic_occurrences(model, spiritualism_dfm)
 
 # plot_pi(model)
 # keyATM_topic_coherence(model, spiritualism_dfm)
