@@ -1,3 +1,4 @@
+library(cli)
 library(keyATM)
 library(dplyr)
 library(ggplot2)
@@ -132,15 +133,19 @@ keyATM_find_no_keyword_topics <- function(
   #' @param keywords the keyATM keywords
   #' @param n the number of top words to consider, default is 10
   #' @param iterations the number of iterations, default is 1500
+  #' @param parallel fit models using the given number of cores or all
+  #'                 available cores (TRUE), default is TRUE
   #' @param seed the random seed, default is chosing a seed randomly
   #' @return a data frame with the number of topics, coherence and exclusivity
   #'
-  if (parallel) {
+
+  if (parallel != FALSE) {
     stopifnot(require(parallel))
     stopifnot(require(plyr))
     stopifnot(require(pbapply))
 
-    cluster <- makeCluster(detectCores())
+    nCores <- ifelse(parallel == TRUE, detectCores(), parallel)
+    cluster <- makeCluster(nCores)
     clusterExport(
       cluster,
       c("docs", "dfm", "keywords", "n", "iterations","seed"),
@@ -181,10 +186,19 @@ keyATM_find_no_keyword_topics <- function(
   } else {
     result <- list()
     for (number in numbers) {
-      result[[length(result)+1]] <- keyATM_fit_and_measure_model(
+      values <- keyATM_fit_and_measure_model(
         docs, dfm, keywords, number,
         n = n, iterations = iterations, seed = seed
       )
+      cli_alert_info(
+        sprintf(
+          "%i topics: coherence %f, exclusiveness %f",
+          number,
+          round(mean(values$coherence), digits = 1),
+          round(mean(values$exclusiveness), digits = 1)
+        )
+      )
+      result[[length(result)+1]] <- values
     }
   }
 

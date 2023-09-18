@@ -12,33 +12,61 @@ data(esocorpus)
 # load helper functions
 source("helpers/keyATM.R")
 source("helpers/udpipe.R")
+source("helpers/vocabulary.R")
 
-# Create corpus. Exclude Davis, since his books is too general about knowledge
-# of that time. Only include paragraphs with at least 30 words. Reshape to
+# Create corpus. Use text from esoteric animal magnetism, spiritualism and
+# Kardecs main text. Only include paragraphs with at least 30 words. Reshape to
 # paragraphs, since we assume to topic may change by paragraphs.
 spiritualism_corpus <- esocorpus %>%
   corpus() %>%
-  corpus_subset(name %in% c("Kerner", "Cahagnet")) %>%
+  corpus_subset(
+    current %in% c("Animal Magnetism", "Spiritualism") |
+    title %in% c("The Spirits Book")
+  ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
 
-# Extract adjective-noun and noun-noun phrases
-spiritualism_dfm <- udpipe_phrases(
-    spiritualism_corpus, "AN|N(P+D*(A|N)*N)"
-  ) %>%
-  dfm_subset(
-    ntoken(.) > 0,
-    drop_docid = FALSE
-  )
+# Extract (proper) noun phrases and some highly specific nouns
+preprocess <- function(corpus) {
+  result <- corpus %>%
+    udpipe_phrases(
+      "AN|N(P+D*(A|N)*N)",
+      nouns=c(
+        "spiritualism", "spiritualist",
+        "spiritism", "spiritist"
+      )
+    ) %>%
+    dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
+  return(result)
+}
+spiritualism_dfm <- preprocess(spiritualism_corpus)
+vocabulary_save(spiritualism_dfm, "out/spiritualism_features.txt")
+save(spiritualism_dfm, file="out/spiritualism_dfm.RData")
 
 # Read texts
 spiritualism_docs <- keyATM_read(texts = spiritualism_dfm)
 
 # Create keywords
 spiritualism_keywords <- list(
-  # nightly_encounter = c("night", "bed", "sleep", "spectre", "apparition"),
-  # souls_of_the_deceased = c("material.body", "spiritual.world"),
-  magnetic_sleep = c("magnetic.sleep", "magnetic.state", "somnambulic.state")
+  magnetic_sleep = c(
+    "magnetic.sleep",
+    # "magnetic.crisis", not found often
+    # "peaceful.sleep",  not found
+    "magnetic.state",
+    # "state.of.somnambulism",  not captured by preprocessing
+    "magnetic.somnambulism"
+  ),
+  spiritualism = c(
+    "spiritualist",
+    "spiritualism"
+  ),
+  spiritism = c(
+    "spiritism",
+    "spiritist"
+  ),
+  law_of_progress = c(
+    "law.of.progress"
+  )
 )
 
 visualize_keywords(
@@ -51,11 +79,12 @@ spiritualism_metrics <- keyATM_find_no_keyword_topics(
   spiritualism_docs,
   spiritualism_dfm,
   spiritualism_keywords,
-  seq(1, 200, 5),
-  iterations=100,
+  seq(1, 100, 1),  # TODO: 100 topics might be too less
+  iterations=100,  # TODO: 100 iterations are too less, models converge typically around 500
   seed = 123,
-  parallel = FALSE
+  parallel = FALSE  # TODO: use 4
 )
+save(spiritualism_metrics, file="out/spiritualism_metrics.RData")
 
 spiritualism_topics <- spiritualism_metrics[1, "topics"]
 spiritualism_metrics %>%
@@ -66,36 +95,58 @@ spiritualism_metrics %>%
   ylab(label="Exclusiveness")
 
 # Create model
-model <- keyATM(
+spiritualism_model <- keyATM(
   docs = spiritualism_docs,
   model = "base",
   no_keyword_topics = spiritualism_topics,
   keywords = spiritualism_keywords,
   options = list(
     seed = 123,
-    iterations = 1500
+    iterations = 2000
   ),
 )
+save(spiritualism_model, file="out/spiritualism_model.RData")
 
 # Validate
-plot_modelfit(model)
-plot_alpha(model)
-plot_topicprop(model)
-View(top_words(model))
-top_words(model, n = 50)[1]
-keyATM_top_docs_texts(model, spiritualism_corpus, spiritualism_dfm)
+plot_modelfit(spiritualism_model)
+plot_alpha(spiritualism_model)
+plot_topicprop(spiritualism_model)
+View(top_words(spiritualism_model))
+top_words(spiritualism_model, n=100) %>% write.csv("out/spiritualism_topics.csv")
+top_words(spiritualism_model, n = 50)[1]
+keyATM_top_docs_texts(spiritualism_model, spiritualism_corpus, spiritualism_dfm)
 
 # Show topic in texts
-keyATM_plot_topic_occurrence(model, spiritualism_dfm, "1_magnetic_sleep")
-keyATM_plot_topic_occurrences(model, spiritualism_dfm)
+keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "1_magnetic_sleep")
+keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "2_spiritualism")
+keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "3_spiritism")
+keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "4_law_of_progress")
+keyATM_plot_topic_occurrences(spiritualism_model, spiritualism_dfm)
 
-# plot_pi(model)
-# keyATM_topic_coherence(model, spiritualism_dfm)
-# keyATM_topic_exclusiveness(model)
-model$theta %>%
+# TODO: make this a separate plot function and group by first token in name
+spiritualism_model$theta %>%
   as.data.frame() %>%
   mutate(name = rownames(spiritualism_dfm)) %>%
-  filter(startsWith(name, "Kerner")) %>%
+  filter(startsWith(name, "Animal Magnetism")) %>%
   select(-name) %>%
   cor() %>%
   corrplot(method = "color", type = "lower")
+
+# TODO: move this to a test file
+udpipe_extract_phrases(
+  "He believed in the immortality of the soul. All humans have immortal
+  souls. Men's soul is immortal. He went into a magnetic sleep. Magnetic sleeps
+  are sleeping with magents. After death, his spirit lived on. The form of these spirits.
+  Of this, in this, magnetic he. Magnetic Sleep, magnetic Sleep, Magnetic Sleep.
+  Allan said this and that. The was a true spiritist. Spiritist Doctrine.
+  The law of progress is central.
+  ",
+  "AN|N(P+D*(A|N)*N)",
+  # "AN|NN"
+  # "N|AN"
+  # as_columns = TRUE,
+  # nouns = c("spiritist", "spiritualist")
+  # adjectives = c("spiritist", "spiritualist")
+)
+
+# TODO: add functionality to search by keywords
