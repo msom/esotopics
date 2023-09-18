@@ -1,4 +1,5 @@
 library(cli)
+library(corrplot)
 library(keyATM)
 library(dplyr)
 library(ggplot2)
@@ -363,5 +364,32 @@ keyATM_plot_topic_occurrences <- function(model, dfm, topic) {
     facet_wrap(~ book, ncol = 1) +
     xlab("") +
     ylab("Theta")
+}
+
+keyATM_plot_topic_correlation <- function(model, dfm) {
+  #'
+  #' Plot the topic correlations within each current
+  #'
+  #' @param model the keyATM model
+  #' @param dfm the esocorpus based DFM used with the model
+  #'
+
+  theta <- model$theta %>%
+    as.data.frame() %>%
+    mutate(name = rownames(dfm)) %>%
+    separate_wider_delim(
+      name,
+      delim = "_",
+      names = c("current", "name", "surname", "year", "title")
+    ) %>%
+    select(-name, -surname, -year, -title)
+
+  for (name in unique(theta$current)) {
+    theta %>%
+      filter(current == name) %>%
+      select(-current) %>%
+      cor() %>%
+      corrplot(title = name, method = "color", type = "lower")
+  }
 }
 
