@@ -278,6 +278,31 @@ keyATM_compare_models_by_distribution <- function(x, y) {
   return(result)
 }
 
+keyATM_keyword_search <- function(dfm, keywords) {
+  #'
+  #' Find the given keywords in the dfm
+  #'
+  #' @param dfm the DFM
+  #' @param keywords the keyATM like keywords list
+  #' @return A list with keyword occurrences for each topic
+  #'
+  df <- convert(dfm, to = "data.frame")
+  rownames(df) <- rownames(dfm)
+
+  result <- list()
+  for (index in 1:length(keywords)) {
+    terms <- keywords[index] %>%
+      unlist() %>%
+      as.vector()
+    name <- names(keywords)[index]
+    df_terms <- df %>%
+      select(any_of(terms))
+    result[[name]] <- df_terms %>%
+      filter(if_any(colnames(df_terms), ~.x > 0))
+  }
+  return(result)
+}
+
 keyATM_plot_topic_occurrence <- function(model, dfm, topic)
 {
   #'

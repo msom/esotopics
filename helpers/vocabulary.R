@@ -27,17 +27,19 @@ vocabulary_save <- function(x, filename, sort_alphabetically = FALSE) {
   write(result, filename)
 }
 
-vocabulary_compare <- function(x, base) {
+vocabulary_compare <- function(x, y) {
   #'
   #' Compare one vocabulary to another.
   #'
   #' @param x the vocabulary to compare, a vector or a dfm
-  #' @param base the vocabulary to compare to, a vector or a dfm
+  #' @param y the vocabulary to compare to, a vector or a dfm
   #' @return a the proportion of known terms and all the unknown terms
+  voc_x = vocabulary_extract(x)
+  voc_y = vocabulary_extract(y)
   return(
     list(
-      "known" = length(intersect(x, base)) / length(x),
-      "unknown" = setdiff(vocabulary_extract(x), vocabulary_extract(base))
+      "known" = length(intersect(voc_x, voc_y)) / length(voc_x),
+      "unknown" = setdiff(voc_x, voc_y)
     )
   )
 }

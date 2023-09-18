@@ -153,6 +153,8 @@ kardec_model <- keyATM(
     iterations = 2000
   ),
 )
+vocabulary_compare(kardec_dfm, spiritualism_dfm)$known
+keyATM_keyword_search(kardec_dfm, spiritualism_keywords)
 keyATM_compare_models_by_words(spiritualism_model, kardec_model, n=100)
 keyATM_compare_models_by_distribution(spiritualism_model, kardec_model)
 
