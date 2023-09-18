@@ -1,5 +1,6 @@
 library(cli)
 library(corrplot)
+library(datawizard)
 library(keyATM)
 library(dplyr)
 library(ggplot2)
@@ -114,9 +115,7 @@ keyATM_fit_and_measure_model <- function(
   result <- data.frame(
     topics=no_keyword_topics,
     coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
-    overall_coherence=mean(keyATM_topic_coherence(model, dfm, n = n, include_others = TRUE)),
     exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n)),
-    overall_exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n, include_others = TRUE))
   )
   return(result)
 }
@@ -206,11 +205,10 @@ keyATM_find_no_keyword_topics <- function(
 
   result <- rbind.fill(result) %>%
     mutate(
-      c_scaled = scale(-coherence, center=1),
-      e_scaled = scale(exclusiveness, center=1),
-      metric = sqrt(c_scaled^2 + e_scaled^2)
+      coherence.scaled = normalize(-coherence),
+      exclusiveness.scaled = normalize(exclusiveness),
+      metric = sqrt(coherence.scaled^2 + exclusiveness.scaled^2)
     ) %>%
-    select(-c_scaled, -e_scaled) %>%
     arrange(-metric)
   return(result)
 }
