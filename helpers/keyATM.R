@@ -115,7 +115,7 @@ keyATM_fit_and_measure_model <- function(
   result <- data.frame(
     topics=no_keyword_topics,
     coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
-    exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n)),
+    exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n))
   )
   return(result)
 }
