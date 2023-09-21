@@ -155,7 +155,10 @@ kardec_model <- keyATM(
   ),
 )
 vocabulary_compare(kardec_dfm, spiritualism_dfm)$known
-keyATM_compare_models_by_words(spiritualism_model, kardec_model, n=100)
+keyATM_compare_models_by_words(spiritualism_model, kardec_model, m = 100) %>%
+  pivot_longer(-n) %>%
+  ggplot(aes(x = n, y = value, color = name)) +
+  geom_line()
 keyATM_compare_models_by_distribution(spiritualism_model, kardec_model)
 keyATM_plot_keyword_occurrences(kardec_dfm, spiritualism_keywords, "spiritualism")
 

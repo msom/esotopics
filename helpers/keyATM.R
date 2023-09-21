@@ -214,28 +214,38 @@ keyATM_find_no_keyword_topics <- function(
   return(result)
 }
 
-keyATM_compare_models_by_words <- function(x, y, n = 10, include_others = FALSE) {
+keyATM_compare_models_by_words <- function(x, y, m = 100, include_others = FALSE) {
   #'
   #' Compare two models by comparing their top words.
   #'
   #' @param x the first keyATM model
   #' @param y the second keyATM model
-  #' @param n the number of terms to include, only for by_distribution = FALSE, default is 10
+  #' @param m the maximum number of terms to include, default is 100
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @return An k vector with the proportion of common top words
   #'
   match = ifelse(include_others, ".*", "\\d_.*")
-  words_x <- top_words(x, n, show_keyword = FALSE) %>%
+  words_x <- top_words(x, m, show_keyword = FALSE) %>%
     select(matches(match))
-  words_y <- top_words(y, n, show_keyword = FALSE) %>%
+  words_y <- top_words(y, m, show_keyword = FALSE) %>%
     select(matches(match))
 
-  result <- vector(length = ncol(words_x))
-  for (index in 1:length(colnames(words_x))) {
-    name <- colnames(words_x)[index]
-    result[index] <- length(unlist(intersect(words_x[name], words_y[name]))) / n
+  result <- data.frame(matrix(NA, nrow = m-1, ncol = 1 + length(colnames(words_x))))
+  colnames(result) <- c("n", colnames(words_x))
+  result$n <- 2:m
+
+  for (name in colnames(words_x)) {
+    for (n in 2:m) {
+      result[n-1, name] <- length(
+        unlist(
+          intersect(
+            words_x[1:n, name],
+            words_y[1:n, name])
+        )
+      ) / n
+    }
   }
-  names(result) <- colnames(words_x)
+
   return(result)
 }
 
