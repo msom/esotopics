@@ -28,7 +28,8 @@ preprocess <- function(corpus) {
       nouns=c(
         "spiritualism", "spiritualist",
         "spiritism", "spiritist",
-        "reincarnation", "incarnation"
+        "reincarnation", "incarnation",
+        "clairvoyance", "clairvoyant"
       )
     ) %>%
     dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
@@ -154,9 +155,9 @@ kardec_model <- keyATM(
   ),
 )
 vocabulary_compare(kardec_dfm, spiritualism_dfm)$known
-keyATM_keyword_search(kardec_dfm, spiritualism_keywords)
 keyATM_compare_models_by_words(spiritualism_model, kardec_model, n=100)
 keyATM_compare_models_by_distribution(spiritualism_model, kardec_model)
+keyATM_plot_keyword_occurrences(kardec_dfm, spiritualism_keywords, "spiritualism")
 
 # vvvvv cleanup vvvvvvv
 
@@ -167,14 +168,17 @@ udpipe_extract_phrases(
   are sleeping with magents. After death, his spirit lived on. The form of these spirits.
   Of this, in this, magnetic he. Magnetic Sleep, magnetic Sleep, Magnetic Sleep.
   Allan said this and that. The was a true spiritist. Spiritist Doctrine.
-  The law of progress is central. Law of progression, law of progress.
+  The law of progress is central. Law of progression, law of progress. Clairvoyance.
+  The clairvoyants. The sleep-walker is a clairvoyant. A clairvoyante.
   ",
   "AN|N(P+D*(A|N)*N)",
   # "AN|NN"
   # "N|AN"
   # as_columns = TRUE,
   # nouns = c("spiritist", "spiritualist")
+  nouns = c("clairvoyance", "clairvoyant")
   # adjectives = c("spiritist", "spiritualist")
 )
+
 
 # TODO: add functionality to search by keywords

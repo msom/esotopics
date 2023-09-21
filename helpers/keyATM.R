@@ -366,6 +366,34 @@ keyATM_plot_topic_occurrences <- function(model, dfm, topic) {
     ylab("Theta")
 }
 
+keyATM_plot_keyword_occurrences <- function(dfm, keywords, topic) {
+  #'
+  #' Plot the occurrences of keywords within a DFM
+  #'
+  #' @param dfm the feature matrix
+  #' @param keywords the keywords to search for
+  #' @param topic the topic within the keywords to use
+  #'
+  occurrences <- keyATM_keyword_search(dfm, keywords)
+  occurrences[[topic]] %>%
+    mutate(name = rownames(.)) %>%
+    separate_wider_delim(
+      name,
+      delim = ".txt.",
+      names = c("book", "paragraph")
+    ) %>%
+    gather(key = "Keyword", value = "value", c(-book, -paragraph)) %>%
+    mutate(
+      paragraph = as.numeric(paragraph),
+      Keyword = as.factor(Keyword)
+    ) %>%
+    filter(value > 0) %>%
+    ggplot(aes(x = paragraph, y = value, color = Keyword)) +
+    geom_col() +
+    xlab("Paragraph") +
+    ylab("Occurrence")
+}
+
 keyATM_plot_topic_correlation <- function(model, dfm) {
   #'
   #' Plot the topic correlations within each current
@@ -373,7 +401,6 @@ keyATM_plot_topic_correlation <- function(model, dfm) {
   #' @param model the keyATM model
   #' @param dfm the esocorpus based DFM used with the model
   #'
-
   theta <- model$theta %>%
     as.data.frame() %>%
     mutate(name = rownames(dfm)) %>%
