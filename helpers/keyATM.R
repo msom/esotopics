@@ -88,6 +88,29 @@ keyATM_topic_exclusiveness <- function(
   return(result)
 }
 
+keyATM_topic_ranksum <- function(model, keywords) {
+  #'
+  #' Calculate the sum of the ranks of the predefined keywords
+  #'
+  #' @param model the keyATM model
+  #' @param keywords the predefined keywords
+  #' @return a named vector with the ranksum of each topic normalized to 0...1,
+  #'         the higher the value, the higher the ranks of the predefined keywords
+  #'
+  n <- nrow(model$theta)
+  words <- top_words(model, n, show_keyword = FALSE) %>%
+    select(matches("\\d_.*"))
+  result <- vector(length = ncol(words))
+  for (index in 1:length(keywords)) {
+    name <- names(keywords[index])
+    col <- sub(" ", "_", paste(index, name))
+    indexes <- which(words[,index] %in% unlist(keywords[index]))
+    result[index] <- sum(1:length(indexes)) / sum(indexes)
+  }
+  result <- setNames(result, colnames(words))
+  return(result)
+}
+
 keyATM_fit_and_measure_model <- function(
     docs, dfm, keywords, no_keyword_topics, n = 10, iterations = 1500, seed = NULL
 ) {
@@ -116,7 +139,8 @@ keyATM_fit_and_measure_model <- function(
   result <- data.frame(
     topics=no_keyword_topics,
     coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
-    exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n))
+    exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n)),
+    ranksum=mean(keyATM_topic_ranksum(model, keywords))
   )
   return(result)
 }
@@ -156,7 +180,7 @@ keyATM_find_no_keyword_topics <- function(
     clusterExport(
       cluster,
       c("keyATM_fit_and_measure_model", "keyATM_topic_coherence",
-        "keyATM_topic_exclusiveness")
+        "keyATM_topic_exclusiveness", "keyATM_topic_ranksum")
     )
     clusterEvalQ(cluster, library(dplyr))
     clusterEvalQ(cluster, library(keyATM))
@@ -194,10 +218,11 @@ keyATM_find_no_keyword_topics <- function(
       )
       cli_alert_info(
         sprintf(
-          "%i topics: coherence %f, exclusiveness %f",
+          "%i topics: coherence %f, exclusiveness %f, ranksum %f",
           number,
           round(mean(values$coherence), digits = 1),
-          round(mean(values$exclusiveness), digits = 1)
+          round(mean(values$exclusiveness), digits = 1),
+          round(mean(values$ranksum), digits = 1)
         )
       )
       result[[length(result)+1]] <- values
