@@ -24,7 +24,7 @@ spiritualism_corpus <- esocorpus %>%
 preprocess <- function(corpus) {
   result <- corpus %>%
     udpipe_phrases(
-      "AN|N(P+D*(A|N)*N)",
+      "AN|NPN", #"AN|N(P+D*(A|N)*N)",
       nouns=c(
         "spiritualism", "spiritualist",
         "spiritism", "spiritist",
@@ -33,11 +33,13 @@ preprocess <- function(corpus) {
       )
     ) %>%
     dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
+  # todo: extracts noun only but trim to distinctive = not frequent over all documents
   return(result)
 }
 spiritualism_dfm <- preprocess(spiritualism_corpus)
-vocabulary_save(spiritualism_dfm, "out/spiritualism_features.txt")
+ncol(spiritualism_dfm)
 save(spiritualism_dfm, file="out/spiritualism_dfm.RData")
+vocabulary_save(spiritualism_dfm, "out/spiritualism_features.txt", TRUE)
 
 # Read texts
 spiritualism_docs <- keyATM_read(texts = spiritualism_dfm)
@@ -71,25 +73,29 @@ visualize_keywords(
   keywords = spiritualism_keywords
 )
 
-# Find number of topics (we are looking for the top left)
+# Find number of topics (we are looking for the top left, but also consider rank)
 spiritualism_metrics <- keyATM_find_no_keyword_topics(
   spiritualism_docs,
   spiritualism_dfm,
   spiritualism_keywords,
-  seq(1, 50),  # TODO: 50 topics might be too less
-  iterations=100,  # TODO: 100 iterations are too less, models converge typically around 500
+  seq(5, 50),  # TODO: 50 topics might be too less
+  iterations=200,  # TODO: 200 iterations might be too less
   seed = 123,
   parallel = 4
 )
 save(spiritualism_metrics, file="out/spiritualism_metrics.RData")
-
-spiritualism_topics <- spiritualism_metrics[1, "topics"]
 spiritualism_metrics %>%
   ggplot(aes(x=coherence, y=exclusiveness)) +
   geom_point() +
   geom_text(aes(label=topics), vjust=1.5) +
   xlab("Coherence")  +
   ylab(label="Exclusiveness")
+
+spiritualism_topics <- spiritualism_metrics[1:5,] %>%
+  arrange(-ranksum) %>%
+  first() %>%
+  select(topics) %>%
+  unlist()
 
 # Create model
 spiritualism_model <- keyATM(
@@ -155,7 +161,7 @@ kardec_model <- keyATM(
   ),
 )
 vocabulary_compare(kardec_dfm, spiritualism_dfm)$known
-keyATM_compare_models_by_words(spiritualism_model, kardec_model, m = 100) %>%
+keyATM_compare_models_by_words(spiritualism_model, kardec_model, m = 200) %>%
   pivot_longer(-n) %>%
   ggplot(aes(x = n, y = value, color = name)) +
   geom_line()
@@ -182,6 +188,8 @@ udpipe_extract_phrases(
   nouns = c("clairvoyance", "clairvoyant")
   # adjectives = c("spiritist", "spiritualist")
 )
+
+# udpipe_extract_phrases("The law of progress was told by spirits", "N(P+D*(A|N)*N)")
 
 
 # TODO: add functionality to search by keywords
