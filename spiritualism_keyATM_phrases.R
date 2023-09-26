@@ -114,10 +114,12 @@ save(spiritualism_model, file="out/spiritualism_model.RData")
 plot_modelfit(spiritualism_model)
 plot_alpha(spiritualism_model)
 plot_topicprop(spiritualism_model)
-View(top_words(spiritualism_model))
+top_words(spiritualism_model) %>%
+  View()
 top_words(spiritualism_model, n = 100, show_keyword = FALSE) %>%
   write.csv("out/spiritualism_topics.csv")
-keyATM_top_docs_texts(spiritualism_model, spiritualism_corpus, spiritualism_dfm)
+keyATM_top_docs_texts(spiritualism_model, spiritualism_corpus, spiritualism_dfm) %>%
+  View()
 
 # Show topic in texts
 keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "1_magnetic_sleep")
@@ -143,7 +145,11 @@ kardec_metrics <- keyATM_find_no_keyword_topics(
   seed = 123,
   parallel = 4
 )
-kardec_topics <- kardec_metrics[1, "topics"]
+kardec_topics <- kardec_metrics[1:5,] %>%
+  arrange(-ranksum) %>%
+  first() %>%
+  select(topics) %>%
+  unlist()
 kardec_metrics %>%
   ggplot(aes(x=coherence, y=exclusiveness)) +
   geom_point() +
