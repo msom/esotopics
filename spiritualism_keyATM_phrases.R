@@ -19,23 +19,6 @@ spiritualism_corpus <- esocorpus %>%
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-
-# Extract (proper) noun phrases and some highly specific nouns
-preprocess <- function(corpus) {
-  result <- corpus %>%
-    udpipe_phrases(
-      "AN|NPN", #"AN|N(P+D*(A|N)*N)",
-      nouns=c(
-        "spiritualism", "spiritualist",
-        "spiritism", "spiritist",
-        "reincarnation", "incarnation",
-        "clairvoyance", "clairvoyant"
-      )
-    ) %>%
-    dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
-  # todo: extracts noun only but trim to distinctive = not frequent over all documents
-  return(result)
-}
 spiritualism_dfm <- preprocess(spiritualism_corpus)
 ncol(spiritualism_dfm)
 save(spiritualism_dfm, file="out/spiritualism_dfm.RData")
@@ -48,10 +31,10 @@ spiritualism_docs <- keyATM_read(texts = spiritualism_dfm)
 spiritualism_keywords <- list(
   magnetic_sleep = c(
     "magnetic.sleep",
-    # "magnetic.crisis", not found often
-    # "peaceful.sleep",  not found
+    # "magnetic.crisis", not found often?
+    # "peaceful.sleep",  not found?
     "magnetic.state",
-    # "state.of.somnambulism",  not captured by preprocessing
+    "state.of.somnambulism",
     "magnetic.somnambulism"
   ),
   spiritualism = c(
@@ -173,29 +156,3 @@ keyATM_compare_models_by_words(spiritualism_model, kardec_model, m = 200) %>%
   geom_line()
 keyATM_compare_models_by_distribution(spiritualism_model, kardec_model)
 keyATM_plot_keyword_occurrences(kardec_dfm, spiritualism_keywords, "spiritualism")
-
-# vvvvv cleanup vvvvvvv
-
-# TODO: move this to a test file
-udpipe_extract_phrases(
-  "He believed in the immortality of the soul. All humans have immortal
-  souls. Men's soul is immortal. He went into a magnetic sleep. Magnetic sleeps
-  are sleeping with magents. After death, his spirit lived on. The form of these spirits.
-  Of this, in this, magnetic he. Magnetic Sleep, magnetic Sleep, Magnetic Sleep.
-  Allan said this and that. The was a true spiritist. Spiritist Doctrine.
-  The law of progress is central. Law of progression, law of progress. Clairvoyance.
-  The clairvoyants. The sleep-walker is a clairvoyant. A clairvoyante.
-  ",
-  "AN|N(P+D*(A|N)*N)",
-  # "AN|NN"
-  # "N|AN"
-  # as_columns = TRUE,
-  # nouns = c("spiritist", "spiritualist")
-  nouns = c("clairvoyance", "clairvoyant")
-  # adjectives = c("spiritist", "spiritualist")
-)
-
-# udpipe_extract_phrases("The law of progress was told by spirits", "N(P+D*(A|N)*N)")
-
-
-# TODO: add functionality to search by keywords

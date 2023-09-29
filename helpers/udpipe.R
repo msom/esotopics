@@ -141,3 +141,21 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL) {
   names(result) <- make.names(names(result))
   return(as.dfm(result))
 }
+
+test_udpipe_extract_phrases <- function() {
+  result <- udpipe_extract_phrases(
+    "He believed in the immortality of the soul. All humans have immortal
+    souls. Men's soul is immortal. He went into a magnetic sleep. Magnetic sleeps
+    are sleeping with magents. After death, his spirit lived on. The form of these spirits.
+    Of this, in this, magnetic he. Magnetic Sleep, magnetic Sleep, Magnetic Sleep.
+    Allan said this and that. The was a true spiritist. Spiritist Doctrine.
+    The law of progress is central. Law of progression, law of progress. Clairvoyance.
+    The clairvoyants. The sleep-walker is a clairvoyant. A clairvoyante. Seance, séance.
+    ",
+    "AN|N(P+D*(A|N)*N)",
+    nouns = c("clairvoyance", "clairvoyant", "seance", "séance")
+  )
+  stopifnot(nrow(result) == 12)
+}
+
+

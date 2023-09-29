@@ -427,6 +427,7 @@ keyATM_plot_keyword_occurrences <- function(dfm, keywords, topic) {
     geom_col() +
     xlab("Paragraph") +
     ylab("Occurrence")
+  # todo: scale x
 }
 
 keyATM_plot_topic_correlation <- function(model, dfm) {

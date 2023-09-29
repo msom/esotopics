@@ -1,4 +1,3 @@
-..second.sight
 .ofy.mount
 .re..ligo
 a.decided.interest
@@ -188,7 +187,6 @@ abundant.supply
 abundant.sympathy
 abuse.in.society
 abuse.of.animal
-abusive.destruction
 abusive.exercise
 abusive.sacrifice
 abyss.of.evil
@@ -9052,7 +9050,6 @@ freedom.of.choice
 freedom.of.conception
 freedom.of.conscience
 freedom.of.thought
-freedomnatural.freedom
 freely.dis
 freeness.of.expression
 freer.from.prejudice
@@ -11699,7 +11696,6 @@ ihey.in.order
 ihey.world
 ii.tr
 iiiki.ghosto.eeiiig
-iiincarnation.of.spiritspurpose
 ijie.place
 ike.advice
 ike.middle
@@ -13671,7 +13667,6 @@ italic.type
 itardy.marc
 itinerant.fiddler
 iut.didicere
-ixintervention.of.spirit
 j..and
 j.etois.exalte.au
 jacob.bbhm
@@ -14331,7 +14326,6 @@ law.of.retaliation
 law.of.self
 law.of.sensation
 law.of.society
-law.of.societynecessity
 law.of.spiritualism
 law.of.state
 law.of.static
@@ -16318,7 +16312,6 @@ mental.freedom
 mental.happiness
 mental.illness
 mental.illumination
-mental.impairment
 mental.impulsion
 mental.indisposition
 mental.law
@@ -26418,7 +26411,6 @@ soul.perceive
 soul.return
 soul.see
 soul.sight
-soul.sleep
 soul.suffer
 soul.to.fool
 soul.to.religion
@@ -26834,7 +26826,6 @@ spirits.in.reply
 spirits.on.earth
 spirits.still.other
 spirits.to.earth
-spiritspurpose.of.incarnation
 spiritual.accumulation
 spiritual.affection
 spiritual.analysis
@@ -27939,7 +27930,6 @@ such.reli
 such.religion
 such.remark
 such.remedy
-such.respect
 such.restraint
 such.result
 such.revelation
@@ -28079,7 +28069,6 @@ sum.of.happiness
 sum.of.money
 sum.of.perfection
 sum.of.spirituality
-summary.of.somnambulism
 summary.of.spiritism
 summer.to.winter
 sun.by.virtue
@@ -29065,7 +29054,6 @@ three.individual
 three.infinite
 three.ireek
 three.kingdom
-three.kingdomsmineral
 three.kreutzer
 three.lady
 three.laurel
@@ -31688,7 +31676,6 @@ vision.of.thing
 vision.through.space
 visit.at.lord
 visit.from.m
-visit.of.live
 visit.to.paris
 visiting.of.martha
 visual.organ
@@ -32451,25 +32438,19 @@ X.ai.biw
 X.ailous.cure
 X.american.nation
 X.an.idea
-X.apparent.death.
 X.ascending.form
 X.bfficultie.of.printibg
-X.capital.punishment
 X.corporeal.world
 X.covert.influence
 X.decided.adaptation
 X.distributed.race
 X.e.mystery
-X.earthly.sympathy
-X.ecstatic.trance
 X.en.douter
 X.ending.source
 X.ending.torture
 X.er.of.christ
 X.established.superstition
 X.existent.creature
-X.family.tie
-X.free.will
 X.great.system
 X.guardian.angel
 X.ho.pray
@@ -32494,7 +32475,6 @@ X.soul.mate
 X.speechless.paper
 X.spirit.during.war
 X.spirit.sympathy
-X.spirit.visit
 X.t.theophrastus
 X.taient.t.moin
 X.talent.accompagn6
@@ -32502,15 +32482,11 @@ X.talent.resit
 X.temporary.atonement
 X.their.brother
 X.theoretical.essay
-X.theoretical.explanation
-X.theoretical.summary
 X.these.spirit
-X.transitional.worlds
+X.transitional.world
 X.tudier.les
-X.union.of.body
 X.vegetable.kingdom
 X.vital.soul
-X.war...murder
 X.world.by.spirit
 X01.der
 X1.1th
