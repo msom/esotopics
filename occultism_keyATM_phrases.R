@@ -37,15 +37,16 @@ occultism_keywords <- list(
   occultism = c(
     "occultism",
     "occult.science",
-    "occultist"
-  ),
-  veil = c(
-    "veil"
+    "occultist",
+    "alchemy",
+    "astrology",
+    "kabbalah"
   ),
   tarot = c(
     "tarot",
     "book.of.thoth",
-    "kabbalistic.tarot"
+    "kabbalistic.tarot",
+    "kabbalah"
   ),
   astral_light = c(
     "astral.light",
@@ -53,12 +54,7 @@ occultism_keywords <- list(
     "primordial.light",
     "terrestrial.fluid",
     "magnetic.agent"
-  ),
-  sages = c(
-    "cagliostro"
   )
-  #   martines de pasqually
-  #   saint-germain
 )
 
 visualize_keywords(
@@ -84,7 +80,7 @@ occultism_metrics %>%
   xlab("Coherence")  +
   ylab(label="Exclusiveness")
 
-occultism_topics <- occultism_metrics[1:5,] %>%
+occultism_topics <- occultism_metrics[1:4,] %>%
   arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
@@ -116,10 +112,8 @@ keyATM_top_docs_texts(occultism_model, occultism_corpus, occultism_dfm) %>%
 
 # Show topic in texts
 keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "1_occultism")
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "2_veil")
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "3_tarot")
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "4_astral_light")
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "5_sages")
+keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "2_tarot")
+keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "3_astral_light")
 keyATM_plot_topic_occurrences(occultism_model, occultism_dfm)
 
 # Test with one of levis other texts
@@ -140,7 +134,7 @@ levi_metrics <- keyATM_find_no_keyword_topics(
   seed = 123,
   parallel = 4
 )
-levi_topics <- levi_metrics[1:5,] %>%
+levi_topics <- levi_metrics[1:2,] %>%
   arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
@@ -167,6 +161,7 @@ keyATM_compare_models_by_words(occultism_model, levi_model, m = 200) %>%
   ggplot(aes(x = n, y = value, color = name)) +
   geom_line()
 keyATM_compare_models_by_distribution(occultism_model, levi_model)
+keyATM_plot_keyword_occurrences(levi_dfm, occultism_keywords, "occultism")
 keyATM_plot_keyword_occurrences(levi_dfm, occultism_keywords, "astral_light")
 keyATM_plot_keyword_occurrences(levi_dfm, occultism_keywords, "tarot")
 

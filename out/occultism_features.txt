@@ -509,6 +509,7 @@ albertus.magnus
 alchemical.powder
 alchemical.symbol
 alchemist.through.pythagora
+alchemy
 alchemy.of.raymund
 alexander.vi
 alexandrian.school
@@ -1227,6 +1228,7 @@ astrological.system
 astrological.systems
 astrological.tarot
 astrological.work
+astrology
 astronomical.application
 astronomical.correspondence
 astronomical.cross
@@ -1809,7 +1811,6 @@ book.of.solomon
 book.of.st
 book.of.symbol
 book.of.thct
-book.of.thot
 book.of.thoth
 book.of.thoth.
 book.of.zoroaster
@@ -1956,7 +1957,6 @@ cadaverous.odou
 caduceus.of.hermanubis
 caduceus.of.herme
 cæsarian.idolatry
-cagliostro
 cain.for.love
 cainite.of.indion
 cainite.sect
@@ -20707,6 +20707,7 @@ trace.of.habit
 trace.of.poison
 trace.of.violence
 track.of.blood
+tradition
 tradition.in.question
 tradition.of.ecstatic
 tradition.of.egypt
@@ -22017,7 +22018,6 @@ vehicle.of.light
 vehicle.of.magnetism
 vehmic.court
 vehmic.dagger
-veil
 veil.in.order
 veil.of.isis
 veil.of.mary

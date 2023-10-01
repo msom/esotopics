@@ -25,7 +25,7 @@ udpipe_load_cached_model <- function() {
 
 udpipe_extract_phrases <- function(
     text, pattern, as_columns = FALSE, model = NULL, proper_nouns_only = TRUE,
-    nouns = NULL
+    nouns = NULL, verbs = NULL
 ) {
   #'
   #' Extracts phrases with the given pattern from the given text.
@@ -43,6 +43,7 @@ udpipe_extract_phrases <- function(
   #' @param model the udpipe model to be used
   #' @param proper_nouns_only if TRUE, pronouns are translated to O, else N
   #' @param nouns an optional list of nouns (lemmas) to include
+  #' @param verbs an optional list of verbs (lemmas) to include
   #' @return a data frame with lemmatized phrases and frequency
   #'
 
@@ -87,6 +88,21 @@ udpipe_extract_phrases <- function(
       )
   }
 
+  if (!is.null(verbs)) {
+    result <- result %>%
+      rbind(
+        phrases(
+          annotations$phrase_tag,
+          term = annotations$lemma,
+          pattern = 'V',
+          is_regex = TRUE,
+          detailed = FALSE
+        ) %>%
+          select(-ngram) %>%
+          filter(keyword %in% verbs)
+      )
+  }
+
   # transform to data frame
   if (as_columns) {
     column_names <- result$keyword
@@ -96,7 +112,7 @@ udpipe_extract_phrases <- function(
   return(result)
 }
 
-udpipe_phrases <- function(corpus, pattern, nouns = NULL) {
+udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   #'
   #' Create a DFM like data frame with phrases
   #'
@@ -110,10 +126,11 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL) {
   #'    P: preposition
   #'    O: other elements
   #' @param nouns an optional list of nouns (lemmas) to include
+  #' @param verbs an optional list of verbs (lemmas) to include
   #' @return a DFM with phrases and frequency per document
   #'
   cluster <- makeCluster(detectCores())
-  clusterExport(cluster, c("corpus", "pattern", "nouns"), envir = environment())
+  clusterExport(cluster, c("corpus", "pattern", "nouns", "verbs"), envir = environment())
   clusterExport(cluster, c("udpipe_extract_phrases","udpipe_load_cached_model"))
   clusterEvalQ(cluster, library(udpipe))
   clusterEvalQ(cluster, library(dplyr))
@@ -126,7 +143,7 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL) {
     FUN = function(name) {
       return(
         udpipe_extract_phrases(
-          corpus[[name]], pattern, nouns = nouns,
+          corpus[[name]], pattern, nouns = nouns, verbs = verbs,
           as_columns = TRUE, model = model
         )
       )
@@ -151,11 +168,14 @@ test_udpipe_extract_phrases <- function() {
     Allan said this and that. The was a true spiritist. Spiritist Doctrine.
     The law of progress is central. Law of progression, law of progress. Clairvoyance.
     The clairvoyants. The sleep-walker is a clairvoyant. A clairvoyante. Seance, séance.
-    ",
-    "AN|N(P+D*(A|N)*N)",
-    nouns = c("clairvoyance", "clairvoyant", "seance", "séance")
+    Occult science, occult sciences. Unveiling the veil. Should we unveil it or not.
+    Saint-Germain was an ambassador.",
+    # "AN|N(P+D*(A|N)*N)|NN",
+    "AN|NPN",
+    nouns = c("clairvoyance", "clairvoyant", "seance", "séance"),
+    verbs = c("unveil")
   )
-  stopifnot(nrow(result) == 12)
+  stopifnot(nrow(result) == 13)
 }
 
 
