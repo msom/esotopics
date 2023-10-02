@@ -5,7 +5,7 @@ data(esocorpus)
 
 # load helper functions
 source("helpers/keyATM.R")
-source("helpers/udpipe.R")
+source("helpers/preprocessing.R")
 source("helpers/vocabulary.R")
 
 # Create corpus. Use text from esoteric animal magnetism, spiritualism and
@@ -75,7 +75,7 @@ spiritualism_metrics %>%
   ylab(label="Exclusiveness")
 
 spiritualism_topics <- spiritualism_metrics[1:5,] %>%
-  arrange(-ranksum) %>%
+  # arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
   unlist()
@@ -97,7 +97,7 @@ save(spiritualism_model, file="out/spiritualism_model.RData")
 plot_modelfit(spiritualism_model)
 plot_alpha(spiritualism_model)
 plot_topicprop(spiritualism_model)
-top_words(spiritualism_model) %>%
+top_words(spiritualism_model, n = 30) %>%
   View()
 top_words(spiritualism_model, n = 100, show_keyword = FALSE) %>%
   write.csv("out/spiritualism_topics.csv")
@@ -110,13 +110,13 @@ keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "2_spirituali
 keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "3_progress")
 keyATM_plot_topic_occurrences(spiritualism_model, spiritualism_dfm)
 
-# Test with one of Kardecs other texts
+# Compare to one of Kardecs other texts
 kardec_corpus <- esocorpus %>%
   corpus() %>%
   corpus_subset(title == "The Mediums Book") %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-kardec_dfm <- preprocess(kardec_corpus)
+kardec_dfm <- preprocess(kardec_corpus, FALSE)
 kardec_docs <- keyATM_read(texts = kardec_dfm)
 visualize_keywords(kardec_docs, spiritualism_keywords)
 kardec_metrics <- keyATM_find_no_keyword_topics(

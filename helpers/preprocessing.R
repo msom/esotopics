@@ -1,12 +1,15 @@
 source("helpers/udpipe.R")
 
-preprocess <- function(x) {
+preprocess <- function(x, drop_unique = TRUE) {
   #'
   #' Extract (proper) noun phrases and some highly specific nouns.
+  #'
+  #' Only keeps
   #'
   #' Also streamlines some spelling.
   #'
   #' @param x a corpus
+  #' @param drop_unique if TRUE, drops phrases and nouns only occuring in a single document
   #' @return a DFM
 
   cleaned <- gsub("[kq]u?abb?all?ah?", "kabbalah", x, ignore.case = TRUE)
@@ -34,6 +37,14 @@ preprocess <- function(x) {
         "tarot", "kabbalah", "alchemy", "astrology"
       )
     ) %>%
+    dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
+
+  if (drop_unique) {
+    result <- result %>%
+      dfm_trim(min_docfreq = 2)
+  }
+
+  result <- result %>%
     dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
 
   return(result)

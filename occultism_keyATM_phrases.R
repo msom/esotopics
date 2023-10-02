@@ -5,7 +5,6 @@ data(esocorpus)
 
 # load helper functions
 source("helpers/keyATM.R")
-source("helpers/udpipe.R")
 source("helpers/preprocessing.R")
 source("helpers/vocabulary.R")
 
@@ -81,7 +80,7 @@ occultism_metrics %>%
   ylab(label="Exclusiveness")
 
 occultism_topics <- occultism_metrics[1:4,] %>%
-  arrange(-ranksum) %>%
+  # arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
   unlist()
@@ -122,7 +121,7 @@ levi_corpus <- esocorpus %>%
   corpus_subset(title == "The Great Secret") %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-levi_dfm <- preprocess(levi_corpus)
+levi_dfm <- preprocess(levi_corpus, FALSE)
 levi_docs <- keyATM_read(texts = levi_dfm)
 visualize_keywords(levi_docs, occultism_keywords)
 levi_metrics <- keyATM_find_no_keyword_topics(
@@ -135,7 +134,7 @@ levi_metrics <- keyATM_find_no_keyword_topics(
   parallel = 4
 )
 levi_topics <- levi_metrics[1:2,] %>%
-  arrange(-ranksum) %>%
+  # arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
   unlist()
