@@ -4,12 +4,12 @@ preprocess <- function(x, drop_unique = TRUE) {
   #'
   #' Extract (proper) noun phrases and some highly specific nouns.
   #'
-  #' Only keeps
+  #' Only keeps phrases occurring at least in two different documents.
   #'
   #' Also streamlines some spelling.
   #'
   #' @param x a corpus
-  #' @param drop_unique if TRUE, drops phrases and nouns only occuring in a single document
+  #' @param drop_unique if TRUE, drops phrases and nouns only occurring in a single document
   #' @return a DFM
 
   cleaned <- gsub("[kq]u?abb?all?ah?", "kabbalah", x, ignore.case = TRUE)
