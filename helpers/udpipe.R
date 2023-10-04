@@ -156,7 +156,9 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   result[is.na(result)] <- 0
   rownames(result) <- names(corpus)
   names(result) <- make.names(names(result))
-  return(as.dfm(result))
+  result <- as.dfm(result)
+  docvars(result) <- docvars(corpus)
+  return(result)
 }
 
 test_udpipe_extract_phrases <- function() {
@@ -175,6 +177,16 @@ test_udpipe_extract_phrases <- function() {
     nouns = c("clairvoyance", "clairvoyant", "seance", "séance"),
     verbs = c("unveil")
   )
+  stopifnot(nrow(result) == 13)
+}
+
+test_udpipe_phrases <- function() {
+  corp <- corpus(
+    "He believed in the immortality of the soul. All humans have immortal
+    souls.",
+    docvars = data.frame(author=c("Papus"))
+  ) %>% corpus_reshape(to = "sentences")
+  result <- udpipe_phrases(corp, "AN")
   stopifnot(nrow(result) == 13)
 }
 
