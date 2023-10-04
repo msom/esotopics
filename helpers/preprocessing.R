@@ -21,7 +21,8 @@ preprocess <- function(x, drop_unique = TRUE) {
 
   result <- cleaned %>%
     udpipe_phrases(
-      "AN|NPN",
+      # "AN|NPN",
+      "AN|NPN|NN|N(P+D*(A|N)*N)",
       nouns=c(
         # spiritualism, spiritism
         "spiritualism", "spiritualist",
