@@ -14,8 +14,12 @@ source("helpers/vocabulary.R")
 spiritualism_corpus <- esocorpus %>%
   corpus() %>%
   corpus_subset(
-    current %in% c("Animal Magnetism", "Spiritualism") |
-    title %in% c("The Spirits Book")
+    title %in% c(
+      "An Introduction to the Study of Animal Magnetism",
+      "The Celestial Telegraph",
+      "The seeress of Prevorst",
+      "The Spirits Book"
+    )
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
@@ -64,7 +68,7 @@ spiritualism_metrics <- keyATM_find_no_keyword_topics(
   seq(5, 50),  # TODO: 50 topics might be too less
   iterations=200,  # TODO: 200 iterations might be too less
   seed = 123,
-  parallel = 4
+  parallel = 6
 )
 save(spiritualism_metrics, file="out/spiritualism_metrics.RData")
 spiritualism_metrics %>%
@@ -75,7 +79,7 @@ spiritualism_metrics %>%
   ylab(label="Exclusiveness")
 
 spiritualism_topics <- spiritualism_metrics[1:5,] %>%
-  # arrange(-ranksum) %>%
+  arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
   unlist()

@@ -69,7 +69,7 @@ occultism_metrics <- keyATM_find_no_keyword_topics(
   seq(5, 50),  # TODO: 50 topics might be too less
   iterations=200,  # TODO: 200 iterations might be too less
   seed = 123,
-  parallel = 4
+  parallel = 6
 )
 save(occultism_metrics, file="out/occultism_metrics.RData")
 occultism_metrics %>%
@@ -80,7 +80,7 @@ occultism_metrics %>%
   ylab(label="Exclusiveness")
 
 occultism_topics <- occultism_metrics[1:4,] %>%
-  # arrange(-ranksum) %>%
+  arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
   unlist()
