@@ -141,5 +141,5 @@ keyATM_plot_topic_occurrence(eso_model, eso_dfm, "4_magnetic_sleep")
 keyATM_plot_topic_occurrence(eso_model, eso_dfm, "5_spiritualism")
 keyATM_plot_topic_occurrence(eso_model, eso_dfm, "6_progress")
 keyATM_plot_topic_occurrences(eso_model, eso_dfm)
-
+keyATM_plot_topic_correlation(eso_model, eso_dfm)
 

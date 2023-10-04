@@ -362,7 +362,7 @@ keyATM_plot_topic_occurrence <- function(model, dfm, topic)
     ) %>%
     ggplot(aes(x = paragraph, y = .data[[topic]])) +
     geom_line() +
-    geom_smooth(span = 0.1, se = FALSE) +
+    # geom_smooth(span = 0.1, se = FALSE) +
     facet_wrap(~ book, ncol = 1) +
     xlab("") +
     ylab("Theta") +
@@ -394,7 +394,7 @@ keyATM_plot_topic_occurrences <- function(model, dfm, topic) {
     ggplot(
       aes(x = paragraph, y = value, color = topic, linetype = other)
     ) +
-    geom_smooth(span = 0.1, se = FALSE) +
+    # geom_smooth(span = 0.1, se = FALSE) +
     scale_linetype(guide = "none") +
     facet_wrap(~ book, ncol = 1) +
     xlab("") +
@@ -439,13 +439,7 @@ keyATM_plot_topic_correlation <- function(model, dfm) {
   #'
   theta <- model$theta %>%
     as.data.frame() %>%
-    mutate(name = rownames(dfm)) %>%
-    separate_wider_delim(
-      name,
-      delim = "_",
-      names = c("current", "name", "surname", "year", "title")
-    ) %>%
-    select(-name, -surname, -year, -title)
+    mutate(current = docvars(dfm)$current)
 
   for (name in unique(theta$current)) {
     theta %>%
