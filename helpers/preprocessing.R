@@ -42,11 +42,9 @@ preprocess <- function(x, drop_unique = TRUE) {
 
   if (drop_unique) {
     result <- result %>%
-      dfm_trim(min_docfreq = 2)
+      dfm_trim(min_docfreq = 2) %>%
+      dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
   }
-
-  result <- result %>%
-    dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
 
   return(result)
 }

@@ -2,10 +2,10 @@ library(cli)
 library(dplyr)
 library(parallel)
 library(pbapply)
-library(plyr)
 library(quanteda)
 library(udpipe)
 
+source("helpers/rbind.fill.modified.R")
 
 udpipe_load_cached_model <- function() {
   #'
@@ -152,8 +152,7 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   stopCluster(cluster)
 
   cli_alert_info("Creating a DFM")
-  result <- rbind.fill(result)
-  result[is.na(result)] <- 0
+  result <- rbind.fill.modified(result)
   rownames(result) <- names(corpus)
   names(result) <- make.names(names(result))
   result <- as.dfm(result)
