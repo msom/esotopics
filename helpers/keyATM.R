@@ -26,7 +26,11 @@ keyATM_top_docs_texts <- function(
   docs <- top_docs(model, n) %>%
     select(matches(match))
   for (name in colnames(docs)) {
-    docs[,name] <- corpus[rownames(dfm)[docs[,name]]]
+    docs[,name] <- paste(
+      rownames(dfm)[docs[,name]],
+      corpus[rownames(dfm)[docs[,name]]],
+      sep = ": "
+    )
   }
   return(docs)
 }
