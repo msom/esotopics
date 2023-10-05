@@ -8858,6 +8858,7 @@ profound.sleep
 profound.slumber
 profound.study
 profound.symbol
+progress
 progress.of.all.thing
 progress.of.enlightenment
 progress.of.human.knowledge
@@ -8867,6 +8868,7 @@ progress.of.science
 progress.of.the.human.mind
 progress.of.the.human.race
 progress.of.the.science
+progression
 progression.of.all.thing
 progression.of.matter
 progressive.ascension

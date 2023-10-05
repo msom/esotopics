@@ -28,7 +28,7 @@ preprocess <- function(x, drop_unique = TRUE) {
         "spiritualism", "spiritualist",
         "spiritism", "spiritist",
         # progress
-        "reincarnation", "incarnation",
+        "reincarnation", "incarnation", "progress", "progression",
         # magnetic sleep
         "clairvoyance", "clairvoyant",
         "seance", "séance","sitting",

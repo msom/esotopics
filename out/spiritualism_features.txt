@@ -6031,6 +6031,7 @@ profound.mystery
 profound.silence
 profound.sleep
 profound.slumber
+progress
 progress.of.all.thing
 progress.of.enlightenment
 progress.of.human.knowledge
@@ -6039,6 +6040,7 @@ progress.of.knowledge
 progress.of.science
 progress.of.the.human.race
 progress.of.the.science
+progression
 progression.of.all.thing
 progression.of.matter
 progressive.ascension

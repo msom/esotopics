@@ -52,7 +52,9 @@ spiritualism_keywords <- list(
     "law.of.progress",
     "law.of.progression",
     "reincarnation",
-    "incarnation"
+    "incarnation",
+    "progress",
+    "progression"
   )
 )
 
