@@ -143,3 +143,33 @@ keyATM_plot_topic_occurrence(eso_model, eso_dfm, "6_progress")
 keyATM_plot_topic_occurrences(eso_model, eso_dfm)
 keyATM_plot_topic_correlation(eso_model, eso_dfm)
 
+# covariate model
+vars <- docvars(eso_corpus) %>%
+  select(current)
+eso_model_covariate <- keyATM(
+  docs = eso_docs,
+  model = "covariates",
+  model_settings = list(
+    covariates_data    = vars,
+    covariates_formula = ~ current
+  ),
+  no_keyword_topics = eso_topics,
+  keywords = eso_keywords,
+  options = list(
+    seed = 123,
+    iterations = 2000
+  )
+)
+covariates_info(eso_model_covariate)
+strata_topic <- by_strata_DocTopic(
+  eso_model_covariate,
+  by_var = "currentFrench Occultism",
+  labels = c(0, 1)
+  # labels = c("18_19c", "20_21c")
+)
+plot(
+  strata_topic,
+  var_name = "currentFrench Occultism",
+  show_topic = 1:6,
+  # by = "covariate"
+)
