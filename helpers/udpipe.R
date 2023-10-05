@@ -2,10 +2,9 @@ library(cli)
 library(dplyr)
 library(parallel)
 library(pbapply)
+library(plyr)
 library(quanteda)
 library(udpipe)
-
-source("helpers/rbind.fill.modified.R")
 
 udpipe_load_cached_model <- function() {
   #'
@@ -152,9 +151,9 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   stopCluster(cluster)
 
   cli_alert_info("Creating a DFM")
-  result <- rbind.fill.modified(result)
-  # TODO: try applying cell wise instead for nulling!
-  # result <- lapply(result, function(x) ifelse(is.na(x), 0, x))
+  result <- rbind.fill(result)
+  result <- lapply(result, function(x) ifelse(is.na(x), 0, x)) %>%
+    as.data.frame()
   rownames(result) <- names(corpus)
   names(result) <- make.names(names(result))
   result <- as.dfm(result)
