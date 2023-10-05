@@ -19,6 +19,7 @@ eso_corpus <- esocorpus %>%
       "The Celestial Telegraph",
       "The seeress of Prevorst",
       "The Spirits Book",
+      "The Principles of Nature",
       "Transcendental magic, its doctrine and ritual",
       "The History of Magic",
       "The Key of the Mysteries",
