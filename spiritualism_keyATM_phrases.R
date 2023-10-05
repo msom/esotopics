@@ -18,7 +18,8 @@ spiritualism_corpus <- esocorpus %>%
       "An Introduction to the Study of Animal Magnetism",
       "The Celestial Telegraph",
       "The seeress of Prevorst",
-      "The Spirits Book"
+      "The Spirits Book",
+      "The Principles of Nature"
     )
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
