@@ -2550,6 +2550,8 @@ profound.peace
 profound.sleep
 profound.study
 profound.symbol
+progress
+progression
 progressive.initiation
 projection.of.the.astral.light
 proper.form
@@ -2584,6 +2586,7 @@ race.of.man
 radiant.light
 radiating.light
 rapid.glance
+rapping
 rational.basis
 rational.order
 ray.of.light

@@ -15,13 +15,13 @@ preprocess <- function(x, drop_unique = TRUE) {
   cleaned <- gsub("[kq]u?abb?all?ah?", "kabbalah", x, ignore.case = TRUE)
   cleaned <- gsub("[kq]u?abb?all?i([a-z]*)", "kabbali\\1", cleaned, ignore.case = TRUE)
   cleaned <- gsub("thoth?", "thoth", cleaned, ignore.case = TRUE)
+  cleaned <- gsub("séance?", "seance", cleaned, ignore.case = TRUE)
 
   # todo: should we also extracts noun only but trim them to
   #       distinctive only nouns (= not frequent over all documents)?
 
   result <- cleaned %>%
     udpipe_phrases(
-      # "AN|NPN",
       "AN|NPN|NN|N(P+D*(A|N)*N)",
       nouns=c(
         # spiritualism, spiritism
@@ -31,7 +31,7 @@ preprocess <- function(x, drop_unique = TRUE) {
         "reincarnation", "incarnation", "progress", "progression",
         # magnetic sleep
         "clairvoyance", "clairvoyant",
-        "seance", "séance","sitting",
+        "seance", "sitting", "sitter", "rapping",
         "ether",
         # occultism
         "occultism", "occultist", "tradition",

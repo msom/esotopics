@@ -192,7 +192,9 @@ keyATM_find_no_keyword_topics <- function(
 
     # Models with a lot of topics taking longer, we calculate them first so
     # that the progress bar estimation is pessimistic rather than optimistic
-    # in the beginning
+    # in the beginning. Note that shuffling the numbers won't work well, since
+    # it seems that only batches of nCores are spawned at a time and then
+    # waited for all cores to be finished before spanwning a new batch...
     result <- pblapply(
       cl = cluster,
       X = sort(numbers, decreasing = TRUE),
@@ -453,4 +455,17 @@ keyATM_plot_topic_correlation <- function(model, dfm) {
       corrplot(title = name, method = "color", type = "lower")
   }
 }
+
+# todo: add a plot to show phi of the terms
+# library(forcats)
+# eso_model$phi %>%
+#   t() %>%
+#   as.data.frame() %>%
+#   mutate(name=rownames(.)) %>%
+#   select(name, `4_magnetic_sleep`) %>%
+#   arrange(-`4_magnetic_sleep`) %>%
+#   head(30) %>%
+#   ggplot(aes(x = fct_reorder(name, `4_magnetic_sleep`), y = `4_magnetic_sleep`)) +
+#   geom_col() +
+#   coord_flip()
 

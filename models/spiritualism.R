@@ -36,25 +36,32 @@ spiritualism_docs <- keyATM_read(texts = spiritualism_dfm)
 spiritualism_keywords <- list(
   magnetic_sleep = c(
     "magnetic.sleep",
-    # "magnetic.crisis", not found often?
-    # "peaceful.sleep",  not found?
+    "magnetic.crisis",
+    # "peaceful.sleep", pruned
     "magnetic.state",
     "state.of.somnambulism",
     "magnetic.somnambulism"
   ),
   spiritualism = c(
     "spiritualist",
-    "spiritualism",
+    "spiritualism"
+  ),
+  spiritism = c(
     "spiritism",
     "spiritist"
   ),
-  progress = c(
-    "law.of.progress",
+  progression = c(
+    # davis
     "law.of.progression",
+    "progression",
+    "progress"
+  ),
+  progress = c(
+    # kardec
+    "law.of.progress",
     "reincarnation",
     "incarnation",
-    "progress",
-    "progression"
+    "progress"
   )
 )
 
@@ -63,12 +70,12 @@ visualize_keywords(
   keywords = spiritualism_keywords
 )
 
-# Find number of topics (we are looking for the top left, but also consider rank)
+# Find number of topics (we are looking for the top left)
 spiritualism_metrics <- keyATM_find_no_keyword_topics(
   spiritualism_docs,
   spiritualism_dfm,
   spiritualism_keywords,
-  seq(5, 50),  # TODO: 50 topics might be too less
+  seq(20, 120),  # TODO: 120 topics might be too less
   iterations=200,  # TODO: 200 iterations might be too less
   seed = 123,
   parallel = 6
@@ -86,6 +93,7 @@ spiritualism_topics <- spiritualism_metrics[1:5,] %>%
   first() %>%
   select(topics) %>%
   unlist()
+# spiritualism_topics <- 78  # better compromise
 
 # Create model
 spiritualism_model <- keyATM(
@@ -104,9 +112,9 @@ save(spiritualism_model, file="out/spiritualism_model.RData")
 plot_modelfit(spiritualism_model)
 plot_alpha(spiritualism_model)
 plot_topicprop(spiritualism_model)
-top_words(spiritualism_model, n = 30) %>%
+top_words(spiritualism_model, n = 200) %>%
   View()
-top_words(spiritualism_model, n = 100, show_keyword = FALSE) %>%
+top_words(spiritualism_model, n = 200, show_keyword = FALSE) %>%
   write.csv("out/spiritualism_topics.csv")
 keyATM_top_docs_texts(spiritualism_model, spiritualism_corpus, spiritualism_dfm) %>%
   View()
@@ -114,7 +122,9 @@ keyATM_top_docs_texts(spiritualism_model, spiritualism_corpus, spiritualism_dfm)
 # Show topic in texts
 keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "1_magnetic_sleep")
 keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "2_spiritualism")
-keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "3_progress")
+keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "3_spiritism")
+keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "4_progression")
+keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "5_progress")
 keyATM_plot_topic_occurrences(spiritualism_model, spiritualism_dfm)
 
 # Compare to one of Kardecs other texts

@@ -49,37 +49,43 @@ eso_keywords <- list(
   tarot = c(
     "tarot",
     "book.of.thoth",
-    "kabbalistic.tarot",
+    # "kabbalistic.tarot", pruned
     "kabbalah"
   ),
   astral_light = c(
     "astral.light",
+    "magnetic.fluid",
     "universal.agent",
-    "primordial.light",
-    "terrestrial.fluid",
+    # "primordial.light", pruned
+    # "terrestrial.fluid", pruned
     "magnetic.agent"
   ),
   magnetic_sleep = c(
     "magnetic.sleep",
-    # "magnetic.crisis", not found often?
-    # "peaceful.sleep",  not found?
+    "magnetic.crisis",
+    # "peaceful.sleep",  pruned
     "magnetic.state",
     "state.of.somnambulism",
     "magnetic.somnambulism"
   ),
   spiritualism = c(
     "spiritualist",
-    "spiritualism",
+    "spiritualism"
+  ),
+  spiritism = c(
     "spiritism",
     "spiritist"
   ),
-  progress = c(
-    "law.of.progress",
+  progression = c( # Davis
     "law.of.progression",
+    "progression",
+    "progress"
+  ),
+  progress = c( # Kardec
+    "law.of.progress",
     "reincarnation",
     "incarnation",
-    "progress",
-    "progression"
+    "progress"
   )
 )
 
@@ -93,7 +99,7 @@ eso_metrics <- keyATM_find_no_keyword_topics(
   eso_docs,
   eso_dfm,
   eso_keywords,
-  seq(5, 50),  # TODO: 50 topics might be too less
+  seq(20, 120),  # TODO: 120 topics might be too less
   iterations=200,  # TODO: 200 iterations might be too less
   seed = 123,
   parallel = 6
@@ -106,8 +112,8 @@ eso_metrics %>%
   xlab("Coherence")  +
   ylab(label="Exclusiveness")
 
-eso_topics <- eso_metrics[1:4,] %>%
-  # arrange(-ranksum) %>%
+eso_topics <- eso_metrics[1:5,] %>%
+  arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
   unlist()
@@ -129,9 +135,9 @@ save(eso_model, file="out/eso_model.RData")
 plot_modelfit(eso_model)
 plot_alpha(eso_model)
 plot_topicprop(eso_model)
-top_words(eso_model, 30) %>%
+top_words(eso_model, 200) %>%
   View()
-top_words(eso_model, n = 100, show_keyword = FALSE) %>%
+top_words(eso_model, n = 200, show_keyword = FALSE) %>%
   write.csv("out/eso_topics.csv")
 keyATM_top_docs_texts(eso_model, eso_corpus, eso_dfm) %>%
   View()
@@ -142,7 +148,9 @@ keyATM_plot_topic_occurrence(eso_model, eso_dfm, "2_tarot")
 keyATM_plot_topic_occurrence(eso_model, eso_dfm, "3_astral_light")
 keyATM_plot_topic_occurrence(eso_model, eso_dfm, "4_magnetic_sleep")
 keyATM_plot_topic_occurrence(eso_model, eso_dfm, "5_spiritualism")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "6_progress")
+keyATM_plot_topic_occurrence(eso_model, eso_dfm, "6_spiritism")
+keyATM_plot_topic_occurrence(eso_model, eso_dfm, "7_progression")
+keyATM_plot_topic_occurrence(eso_model, eso_dfm, "8_progress")
 keyATM_plot_topic_occurrences(eso_model, eso_dfm)
 keyATM_plot_topic_correlation(eso_model, eso_dfm)
 

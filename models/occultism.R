@@ -8,9 +8,9 @@ source("helpers/keyATM.R")
 source("helpers/preprocessing.R")
 source("helpers/vocabulary.R")
 
-# Create corpus. Use text from esoteric animal magnetism, occultism and
-# Kardecs main text. Only include paragraphs with at least 30 words. Reshape to
-# paragraphs, since we assume to topic may change by paragraphs.
+# Create corpus. Use text from Lévi and Papus. Only include paragraphs with
+# at least 30 words. Reshape to paragraphs, since we assume to topic may
+# change by paragraphs.
 occultism_corpus <- esocorpus %>%
   corpus() %>%
   corpus_subset(
@@ -44,14 +44,15 @@ occultism_keywords <- list(
   tarot = c(
     "tarot",
     "book.of.thoth",
-    "kabbalistic.tarot",
+    # "kabbalistic.tarot", pruned
     "kabbalah"
   ),
   astral_light = c(
     "astral.light",
+    "magnetic.fluid",
     "universal.agent",
-    "primordial.light",
-    "terrestrial.fluid",
+    # "primordial.light", pruned
+    # "terrestrial.fluid", pruned
     "magnetic.agent"
   )
 )
@@ -66,7 +67,7 @@ occultism_metrics <- keyATM_find_no_keyword_topics(
   occultism_docs,
   occultism_dfm,
   occultism_keywords,
-  seq(5, 50),  # TODO: 50 topics might be too less
+  seq(20, 120),  # TODO: 120 topics might be too less
   iterations=200,  # TODO: 200 iterations might be too less
   seed = 123,
   parallel = 6
@@ -79,7 +80,7 @@ occultism_metrics %>%
   xlab("Coherence")  +
   ylab(label="Exclusiveness")
 
-occultism_topics <- occultism_metrics[1:4,] %>%
+occultism_topics <- occultism_metrics[1:5,] %>%
   arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
@@ -102,9 +103,9 @@ save(occultism_model, file="out/occultism_model.RData")
 plot_modelfit(occultism_model)
 plot_alpha(occultism_model)
 plot_topicprop(occultism_model)
-top_words(occultism_model, 30) %>%
+top_words(occultism_model, 200) %>%
   View()
-top_words(occultism_model, n = 100, show_keyword = FALSE) %>%
+top_words(occultism_model, n = 200, show_keyword = FALSE) %>%
   write.csv("out/occultism_topics.csv")
 keyATM_top_docs_texts(occultism_model, occultism_corpus, occultism_dfm) %>%
   View()
