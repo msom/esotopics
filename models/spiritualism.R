@@ -62,6 +62,10 @@ spiritualism_keywords <- list(
     "reincarnation",
     "incarnation",
     "progress"
+  ),
+  seance = c(
+    "seance",
+    "sitting"
   )
 )
 
@@ -125,6 +129,7 @@ keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "2_spirituali
 keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "3_spiritism")
 keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "4_progression")
 keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "5_progress")
+keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "6_seance")
 keyATM_plot_topic_occurrences(spiritualism_model, spiritualism_dfm)
 
 # Compare to one of Kardecs other texts

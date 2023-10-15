@@ -29,9 +29,12 @@ preprocess <- function(x, drop_unique = TRUE) {
         "spiritism", "spiritist",
         # progress
         "reincarnation", "incarnation", "progress", "progression",
+        # seance
+        "seance", "sitting", "sitter", "rapping", "apparition", "tipping",
+        "manifestation", "spectres", "materialization",
         # magnetic sleep
         "clairvoyance", "clairvoyant",
-        "seance", "sitting", "sitter", "rapping",
+        # astral light
         "ether",
         # occultism
         "occultism", "occultist", "tradition",

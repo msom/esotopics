@@ -235,6 +235,7 @@ apparent.contradiction
 apparent.discrepancy
 apparent.evil
 apparent.state
+apparition
 apparition.of.adele
 apparition.of.m
 apparition.of.soul
@@ -3954,6 +3955,7 @@ man.with.gray.hair
 manifest.form
 manifest.reason
 manifest.sympathy
+manifestation
 manifestation.in.nature
 manifestation.of.all.thing
 manifestation.of.divine
@@ -4120,6 +4122,7 @@ material.system
 material.thing
 material.universe
 material.world
+materialization
 maternal.love
 mathematical.calculation
 mathematical.demonstration
