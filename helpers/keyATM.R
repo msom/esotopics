@@ -375,15 +375,19 @@ keyATM_plot_topic_occurrence <- function(model, dfm, topic)
     labs(title = topic)
 }
 
-keyATM_plot_topic_occurrences <- function(model, dfm, topic) {
+keyATM_plot_topic_occurrences <- function(model, dfm, include_others = FALSE) {
   #'
   #' Plot the occurrences of the topic within the documents.
   #'
   #' @param model the keyATM model
   #' @param dfm the esocorpus based DFM used with the model
   #'
+  others = c(FALSE)
+  if (include_others) {
+    others = c(TRUE, FALSE)
+  }
   model$theta %>%
-  as.data.frame() %>%
+    as.data.frame() %>%
     mutate(name = rownames(dfm)) %>%
     separate_wider_delim(
       name,
@@ -397,10 +401,13 @@ keyATM_plot_topic_occurrences <- function(model, dfm, topic) {
       topic = as.factor(topic),
       book = as.factor(book),
     ) %>%
+    filter(
+      other %in% others
+    ) %>%
     ggplot(
       aes(x = paragraph, y = value, color = topic, linetype = other)
     ) +
-    # geom_smooth(span = 0.1, se = FALSE) +
+    geom_smooth(span = 0.01, se = FALSE) +
     scale_linetype(guide = "none") +
     facet_wrap(~ book, ncol = 1) +
     xlab("") +
