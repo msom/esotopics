@@ -24,8 +24,9 @@ preprocess <- function(x, drop_unique = TRUE) {
     udpipe_phrases(
       "AN|NPN|NN|N(P+D*(A|N)*N)",
       nouns=c(
-        # spiritualism, spiritism
+        # spiritualism
         "spiritualism", "spiritualist",
+        # spiritism
         "spiritism", "spiritist",
         # progress
         "reincarnation", "incarnation", "progress", "progression",
@@ -35,10 +36,14 @@ preprocess <- function(x, drop_unique = TRUE) {
         # magnetic sleep
         "clairvoyance", "clairvoyant",
         # astral light
-        "ether",
+        "ether", "fohat",
         # occultism
         "occultism", "occultist", "tradition",
-        "tarot", "kabbalah", "alchemy", "astrology"
+        "tarot", "kabbalah", "alchemy", "astrology",
+        # master
+        "master", "mahatma",
+        # karma-nemesis
+        "karma", "nirvana"
       )
     ) %>%
     dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
