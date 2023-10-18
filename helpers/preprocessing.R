@@ -22,7 +22,7 @@ preprocess <- function(x, drop_unique = TRUE) {
 
   result <- cleaned %>%
     udpipe_phrases(
-      pattern="AN|NPN|NN|N(P+D*(A|N)*N)", # alternatively "AN|NPN|NN"
+      pattern="A+N|NPN|NN|N(P+D*(A|N)*N)", # alternatively "A+N|NPN|NN"
       nouns=c(
         # spiritualism
         "spiritualism", "spiritualist",

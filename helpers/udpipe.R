@@ -170,13 +170,13 @@ test_udpipe_extract_phrases <- function() {
     The law of progress is central. Law of progression, law of progress. Clairvoyance.
     The clairvoyants. The sleep-walker is a clairvoyant. A clairvoyante. Seance, séance.
     Occult science, occult sciences. Unveiling the veil. Should we unveil it or not.
-    Saint-Germain was an ambassador.",
+    Saint-Germain was an ambassador. The astral light is an electric vital fluid.",
     # "AN|N(P+D*(A|N)*N)|NN",
-    "AN|NPN",
+    "A+N|NPN",
     nouns = c("clairvoyance", "clairvoyant", "seance", "séance"),
     verbs = c("unveil")
   )
-  stopifnot(nrow(result) == 13)
+  stopifnot(nrow(result) == 16)
 }
 
 test_udpipe_phrases <- function() {
