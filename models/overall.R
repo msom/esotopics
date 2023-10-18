@@ -19,11 +19,16 @@ eso_corpus <- esocorpus %>%
       "The Celestial Telegraph",
       "The seeress of Prevorst",
       "The Spirits Book",
-      "The Principles of Nature",
+      # "The Principles of Nature",
       "Transcendental magic, its doctrine and ritual",
-      "The History of Magic",
-      "The Key of the Mysteries",
-      "The Tarot of the Bohemians"
+      # "The History of Magic",
+      # "The Key of the Mysteries",
+      "The Tarot of the Bohemians",
+      # "Isis Unveiled",
+      "The Secret Doctrine Vol 1",
+      # "The Secret Doctrine Vol 2",
+      # "The Secret Doctrine Vol 3"
+      "The Key to Theosophy"
     )
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
@@ -38,28 +43,7 @@ eso_docs <- keyATM_read(texts = eso_dfm)
 
 # Create keywords
 eso_keywords <- list(
-  occultism = c(
-    "occultism",
-    "occult.science",
-    "occultist",
-    "alchemy",
-    "astrology",
-    "kabbalah"
-  ),
-  tarot = c(
-    "tarot",
-    "book.of.thoth",
-    # "kabbalistic.tarot", pruned
-    "kabbalah"
-  ),
-  astral_light = c(
-    "astral.light",
-    "magnetic.fluid",
-    "universal.agent",
-    # "primordial.light", pruned
-    # "terrestrial.fluid", pruned
-    "magnetic.agent"
-  ),
+  # Animal Magnetism
   magnetic_sleep = c(
     "magnetic.sleep",
     "magnetic.crisis",
@@ -68,24 +52,62 @@ eso_keywords <- list(
     "state.of.somnambulism",
     "magnetic.somnambulism"
   ),
-  spiritualism = c(
-    "spiritualist",
-    "spiritualism"
+  # Spiritualism
+  seance = c(
+    "seance",
+    "sitting"
   ),
-  spiritism = c(
-    "spiritism",
-    "spiritist"
+  # spiritualism = c(
+  #   "spiritualist",
+  #   "spiritualism"
+  # ),
+  # progression = c( # Davis
+  #   "law.of.progression",
+  #   "progression",
+  #   "progress"
+  # ),
+  # Spiritism
+  # spiritism = c(
+  #   "spiritism",
+  #   "spiritist"
+  # ),
+  # progress = c( # Kardec
+  #   "law.of.progress",
+  #   "reincarnation",
+  #   "incarnation",
+  #   "progress"
+  # )
+  # Occultism
+  astral_light = c(
+    "astral.light",
+    "magnetic.fluid",
+    "universal.agent",
+    "primordial.light",
+    # "terrestrial.fluid", pruned
+    "magnetic.agent",
+    "ether"
+    # "fohat" pruned
   ),
-  progression = c( # Davis
-    "law.of.progression",
-    "progression",
-    "progress"
+  # occultism = c(
+  #   "occultism",
+  #   "occult.science",
+  #   "occultist",
+  #   "alchemy",
+  #   "astrology",
+  #   "kabbalah"
+  # ),
+  # French Occultism
+  kabbalistic_tarot = c(
+    "tarot",
+    "book.of.thoth",
+    # "kabbalistic.tarot", pruned
+    "kabbalah"
   ),
-  progress = c( # Kardec
-    "law.of.progress",
-    "reincarnation",
-    "incarnation",
-    "progress"
+  # Theosophic Society
+  karma_nemesis = c(
+    "karma..nemesis",
+    "karma",
+    "reincarnation"
   )
 )
 
@@ -143,14 +165,11 @@ keyATM_top_docs_texts(eso_model, eso_corpus, eso_dfm) %>%
   View()
 
 # Show topic in texts
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "1_occultism")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "2_tarot")
+keyATM_plot_topic_occurrence(eso_model, eso_dfm, "1_magnetic_sleep")
+keyATM_plot_topic_occurrence(eso_model, eso_dfm, "2_seance")
 keyATM_plot_topic_occurrence(eso_model, eso_dfm, "3_astral_light")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "4_magnetic_sleep")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "5_spiritualism")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "6_spiritism")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "7_progression")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "8_progress")
+keyATM_plot_topic_occurrence(eso_model, eso_dfm, "4_kabbalistic_tarot")
+keyATM_plot_topic_occurrence(eso_model, eso_dfm, "5_karma_nemesis")
 keyATM_plot_topic_occurrences(eso_model, eso_dfm)
 keyATM_plot_topic_correlation(eso_model, eso_dfm)
 
