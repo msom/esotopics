@@ -34,6 +34,7 @@ spiritualism_docs <- keyATM_read(texts = spiritualism_dfm)
 
 # Create keywords
 spiritualism_keywords <- list(
+  # Animal Magnetism
   magnetic_sleep = c(
     "magnetic.sleep",
     "magnetic.crisis",
@@ -42,31 +43,34 @@ spiritualism_keywords <- list(
     "state.of.somnambulism",
     "magnetic.somnambulism"
   ),
-  spiritualism = c(
-    "spiritualist",
-    "spiritualism"
-  ),
-  spiritism = c(
-    "spiritism",
-    "spiritist"
-  ),
-  progression = c(
-    # davis
-    "law.of.progression",
-    "progression",
-    "progress"
-  ),
-  progress = c(
-    # kardec
-    "law.of.progress",
-    "reincarnation",
-    "incarnation",
-    "progress"
-  ),
+  # Spiritualism
   seance = c(
     "seance",
     "sitting"
+    # "sitter", pruned
+    # "rapping", pruned
+    # "tipping" pruned
   )
+  # spiritualism = c(
+  #   "spiritualist",
+  #   "spiritualism"
+  # ),
+  # progression = c( # Davis
+  #   "law.of.progression",
+  #   "progression",
+  #   "progress"
+  # ),
+  # Spiritism
+  # spiritism = c(
+  #   "spiritism",
+  #   "spiritist"
+  # ),
+  # progress = c( # Kardec
+  #   "law.of.progress",
+  #   "reincarnation",
+  #   "incarnation",
+  #   "progress"
+  # )
 )
 
 visualize_keywords(
@@ -177,4 +181,4 @@ keyATM_compare_models_by_words(spiritualism_model, kardec_model, m = 200) %>%
   ggplot(aes(x = n, y = value, color = name)) +
   geom_line()
 keyATM_compare_models_by_distribution(spiritualism_model, kardec_model)
-keyATM_plot_keyword_occurrences(kardec_dfm, spiritualism_keywords, "spiritualism")
+keyATM_plot_keyword_occurrences(kardec_dfm, spiritualism_keywords, "seance")

@@ -55,7 +55,10 @@ eso_keywords <- list(
   # Spiritualism
   seance = c(
     "seance",
-    "sitting"
+    "sitting",
+    # "sitter", pruned
+    # "rapping", pruned
+    "tipping"
   ),
   # spiritualism = c(
   #   "spiritualist",
