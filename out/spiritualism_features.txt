@@ -92,8 +92,8 @@ adaptation.of.part
 adaptation.of.thing
 adele.asleep
 adele.exclaim
-adele.magnot
 adele.resume
+adele.turn
 adequate.conception
 adequate.explanation
 adjoining.chamber
@@ -141,7 +141,6 @@ agriculturist.association
 agriculturist.firm
 air.of.pomposity
 air.under.the.invisible.wand
-air.v
 airy.form
 alarming.state
 alarming.symptom
@@ -224,7 +223,6 @@ ann.lee
 answer.of.m
 answer.to.this.question
 antagonistic.principle
-anterior.existence
 antiphlogistic.treatment
 antique.costume
 antoinette.carre
@@ -236,7 +234,6 @@ apparent.discrepancy
 apparent.evil
 apparent.state
 apparition
-apparition.of.adele
 apparition.of.m
 apparition.of.soul
 apparition.of.spirit
@@ -283,7 +280,6 @@ ask.for.m
 asleep.in.one.minute
 aspect.of.the.whole.earth
 aspect.of.thing
-assemblage.of.thought
 assistance.of.magnetism
 assistance.of.the.eyes
 assistance.of.the.spirit
@@ -363,6 +359,7 @@ barren.desert
 basis.of.reasoning
 bath.of.barege
 beastly.gratification
+beautiful.blue.sky
 beautiful.city
 beautiful.countenance
 beautiful.expression
@@ -427,7 +424,6 @@ black.eye
 black.hair
 black.head
 black.man
-blessing.of.god
 blessing.of.life
 blind.man
 blind.people
@@ -513,6 +509,7 @@ building.of.the.tower
 bulky.form
 burial.spot
 bygone.age
+c..class
 calculation.in.reference
 cap.with.flat.band
 capital.punishment
@@ -604,6 +601,7 @@ centre.of.the.sun
 centre.to.the.circumference
 centrifugal.force
 century.after.century
+certain.abnormal.condition
 certain.amount
 certain.analogy
 certain.animal
@@ -625,6 +623,7 @@ certain.individual
 certain.kind
 certain.man
 certain.motion
+certain.nervous.complaint
 certain.number
 certain.part
 certain.person
@@ -694,6 +693,7 @@ child.of.nature
 child.of.the.eternal.one
 child.to.eternal.banishment
 childish.fear
+childish.fright
 chimerical.conception
 chinese.language
 chinese.mythology
@@ -774,6 +774,7 @@ coating.of.the.earth
 code.of.law
 collateral.evidence
 collection.of.fact
+colonel.r
 color.of.the.hair
 combination.of.beauty
 combination.of.element
@@ -816,6 +817,7 @@ comparative.anatomy
 comparative.sense
 competent.observer
 complete.disregard
+complete.physical.insensibility
 complete.somnambulism
 complete.state
 complete.success
@@ -1059,14 +1061,15 @@ curiious.fact
 curing.disease
 curious.experiment
 curious.fact
+current.human.race
 current.state
 custom.of.those.day
 customary.mode
 cutaneous.perspiration
 cylindrical.form
-d.orval.prediction
 daily.basis
 daily.life
+dark.blue.eye
 dark.clothes
 dark.color
 dark.eye
@@ -1084,11 +1087,11 @@ dawn.of.a.new.era
 dawn.of.time
 dawning.of.a.new.era
 day.after.day
+day.after.this.sitting
 day.m
 day.of.creation
 dazzling.whiteness
 de.longueville
-de.mallet
 de.medecine
 de.sante
 de.yopuysegu
@@ -1255,7 +1258,6 @@ devils.appeal
 devotion.to.the.principle
 diabolical.power
 diameter.of.the.planet
-diaphanous.body
 diastolic.motion
 difference.in.the.result
 difference.of.opinion
@@ -1331,6 +1333,7 @@ direct.influence
 direct.interposition
 direct.magnetisation
 direct.opposition
+direct.positive.evidence
 direction.of.wisdom
 director.of.the.printing
 disappointed.affection
@@ -1340,7 +1343,6 @@ discerning.mind
 disclosure.of.the.seeress
 discovery.of.animal
 discovery.of.animal.magnetism
-discussion.on.the.power
 disease.by.the.touch
 disease.of.the.chest
 disease.produce
@@ -1462,7 +1464,6 @@ droll.dress
 drop.of.water
 dry.cough
 dry.land
-du.potet
 due.time
 dugald.stewart
 durable.material
@@ -1564,6 +1565,7 @@ egyptian.priest
 eight.beatitude
 eight.day
 eight.hour
+eight.hundred.year
 eight.minute
 eight.month
 eight.week
@@ -1611,6 +1613,7 @@ eminent.individual
 eminent.man
 eminent.pathologist
 eminent.physician
+eminent.scientific.man
 emmanuel.swedenborg
 emperor.constantine
 en.rapport
@@ -1642,7 +1645,9 @@ entire.confirmation
 entire.conviction
 entire.faith
 entire.life
+entire.new.creation
 entire.past
+entire.past.unfurl
 entire.stranger
 entire.universe
 envelope.of.the.earth
@@ -1657,6 +1662,7 @@ equal.degree
 equal.distribution
 equal.justice
 equal.love
+equal.number
 equal.rights
 equilibrium.in.every.part
 equilibrium.of.the.atmosphere
@@ -1704,6 +1710,7 @@ eternal.misery
 eternal.motion
 eternal.nature
 eternal.one
+eternal.positive.mind
 eternal.power
 eternal.principle
 eternal.progression
@@ -1767,6 +1774,8 @@ excellent.clairvoyante
 excellent.health
 excellent.heart
 excellent.lucidity
+excellent.soft.bark
+excellent.work
 excessive.development
 exchange.of.particle
 excited.imagination
@@ -1931,7 +1940,6 @@ family.affair
 family.consideration
 family.tie
 fanatical.hostility
-fanny.binet
 farthest.point
 farthest.satellite
 fast.asleep
@@ -1954,6 +1962,7 @@ feline.tribe
 fell.asleep
 fellow.being
 fellow.creature
+fellow.human.being
 female.figure
 female.form
 female.friend
@@ -1992,6 +2001,8 @@ few.page
 few.particular
 few.passage
 few.person
+few.prefatory.remark
+few.psychological.question
 few.question
 few.remark
 few.remedy
@@ -1999,6 +2010,7 @@ few.sceptic
 few.seconds
 few.step
 few.tear
+few.timorous.conscience
 few.truth
 few.week
 few.word
@@ -2018,6 +2030,7 @@ fiery.gulf
 fiery.mass
 fiery.ocean
 fifteen.day
+fifteen.hundred.year
 fifteen.minute
 fifteen.year
 fifth.circle
@@ -2038,10 +2051,14 @@ figure.of.a.man
 figure.of.speech
 final.cause
 finding.of.this.paper
+fine.black.eye
+fine.black.hair
+fine.corpulent.man
 fine.eye
 fine.forehead
 fine.fruit
 fine.garden
+fine.open.forehead
 finer.material
 finger.of.the.right.hand
 finger.on.the.edge
@@ -2052,7 +2069,6 @@ firm.belief
 firm.step
 first.act
 first.animal
-first.apparition
 first.appearance
 first.ascension
 first.assumption
@@ -2117,6 +2133,7 @@ first.stage
 first.state
 first.step
 first.thought
+first.three.night
 first.time
 first.train
 first.trial
@@ -2126,10 +2143,10 @@ first.week
 first.word
 fit.of.delirium
 fit.of.epilepsy
-fit.of.madness
 fit.of.passion
 fit.of.somnambulism
 fit.state
+five.hundred.leagu
 five.member
 five.minute
 five.per
@@ -2263,6 +2280,7 @@ four.night
 four.o.clock
 four.person
 four.step
+four.thousand.year
 four.time
 four.week
 four.year
@@ -2292,7 +2310,6 @@ french.academy
 french.commissioner
 french.language
 frequent.cause
-fresh.notions
 fresh.particular
 fresh.proof
 friendly.aspect
@@ -2557,12 +2574,14 @@ great.catastrophe
 great.cause
 great.caution
 great.center
+great.central.mass
 great.chain
 great.change
 great.circle
 great.coat
 great.concentration
 great.convulsion
+great.creative.cause
 great.danger
 great.deal
 great.degree
@@ -2584,10 +2603,13 @@ great.egg
 great.elasticity
 great.end
 great.error
+great.eternal.cause
+great.eternal.sun
 great.excitement
 great.extent
 great.faith
 great.fiery
+great.first.cause
 great.flood
 great.focus
 great.food
@@ -2600,16 +2622,19 @@ great.head
 great.height
 great.hope
 great.horror
+great.human.body
 great.importance
 great.injustice
 great.joy
 great.law
 great.man
+great.many.time
 great.mass
 great.measure
 great.merit
 great.mind
 great.misfortune
+great.moral.reformer
 great.motion
 great.mountain
 great.mystery
@@ -2617,11 +2642,14 @@ great.nation
 great.number
 great.ocean
 great.origin
+great.original.source
 great.pain
 great.part
 great.pleasure
 great.point
 great.portion
+great.positive.mind
+great.positive.power
 great.power
 great.principle
 great.principles
@@ -2636,6 +2664,7 @@ great.soul
 great.source
 great.sphere
 great.spirit
+great.spiritual.sun
 great.strength
 great.structure
 great.subject
@@ -2772,7 +2801,6 @@ hereditary.belief
 hereditary.impression
 hereditary.impressions
 hereditary.opinion
-hidden.treasure
 hideous.head
 hieroglyphical.character
 hieroglyphical.expression
@@ -2800,6 +2828,7 @@ higher.formation
 higher.grade
 higher.habitation
 higher.level
+higher.magnetic.phenomena
 higher.one
 higher.order
 higher.perspective
@@ -2835,6 +2864,7 @@ highest.order
 highest.organization
 highest.point
 highest.position
+highest.possible.degree
 highest.rank
 highest.respect
 highest.seat
@@ -3434,6 +3464,7 @@ interrupt.adele
 interval.of.time
 intervention.of.spirit
 intimate.connection
+intimate.friend
 intimate.session
 intimate.union
 intrinsic.beauty
@@ -3469,11 +3500,11 @@ irresistible.impression
 irresistible.impulse
 isis.revelata
 j..j
-jean.marie
 jesus.christ
 jesus.to.the.word
 jewish.birth
 jewish.nation
+jewish.rabbinical.writer
 jewish.rabbis
 journal.de
 journal.do
@@ -3486,6 +3517,7 @@ judicious.treatment
 jule.cloquet
 key.to.the.revelation
 kind.of.animal
+kind.of.clairvoyance
 kind.of.communication
 kind.of.death
 kind.of.dream
@@ -3567,6 +3599,7 @@ last.breath
 last.century
 last.chapter
 last.day
+last.fifty.year
 last.fit
 last.moment
 last.moments
@@ -3578,6 +3611,8 @@ last.sitting
 last.stage
 last.system
 last.thought
+last.three.week
+last.three.year
 last.time
 last.visit
 last.word
@@ -3667,6 +3702,7 @@ less.degree
 less.dense
 less.distinctness
 less.extent
+less.happy.depending
 less.heat
 less.material
 less.pleasure
@@ -3744,6 +3780,7 @@ little.knowledge
 little.modification
 little.niece
 little.of.the.fruit
+little.old.woman
 little.patient
 little.reward
 little.signifcance
@@ -3861,6 +3898,8 @@ lucid.vision
 lucidity.of.adele
 luminous.atmosphere
 luxurious.clothing
+m..do
+madame.d
 madame.duteil
 madame.gouget
 madame.osborn
@@ -3979,6 +4018,7 @@ many.account
 many.ag
 many.age
 many.ages
+many.allegorical.narrative
 many.animal
 many.being
 many.cafe
@@ -3989,8 +4029,10 @@ many.child
 many.circumstance
 many.city
 many.conception
+many.continuous.ag
 many.cure
 many.degree
+many.different.kind
 many.disease
 many.doctrine
 many.effort
@@ -4004,8 +4046,11 @@ many.generation
 many.gods
 many.hour
 many.hundred
+many.hundred.year
+many.important.discoveries
 many.individual
 many.instance
+many.interior.truth
 many.magnetizer
 many.man
 many.mansion
@@ -4019,6 +4064,8 @@ many.occasion
 many.occurrence
 many.opinion
 many.other
+many.other.person
+many.other.thing
 many.page
 many.part
 many.particular
@@ -4034,9 +4081,12 @@ many.place
 many.point
 many.portion
 many.prophecy
+many.remarkable.cure
 many.remedy
 many.revelation
 many.saying
+many.scientific.man
+many.similar.one
 many.species
 many.sphere
 many.spirit
@@ -4046,18 +4096,19 @@ many.substance
 many.theologian
 many.theory
 many.thing
+many.thousand.year
 many.time
 many.tree
 many.tribe
 many.truth
 many.way
 many.witness
+many.worthy.person
 many.writer
 many.year
 marine.plant
 marine.productions
 mark.of.distinction
-marriage.in.heaven
 marsupial.animal
 marsupial.mammifer
 marvellous.effect
@@ -4399,6 +4450,10 @@ more.knowledge
 more.light
 more.minute
 more.pain
+more.perfect.end
+more.perfect.form
+more.perfect.order
+more.perfect.organization
 more.person
 more.power
 more.question
@@ -4436,6 +4491,7 @@ mount.sinai
 mountain.air
 mountain.in.asia
 mountain.of.ice
+mouth.middling
 movement.of.all.thing
 movement.of.man
 movement.of.nature
@@ -4682,11 +4738,14 @@ new.one
 new.order
 new.organization
 new.particle
+new.physical.existence
+new.physical.life
 new.position
 new.power
 new.principle
 new.principles
 new.quality
+new.red.sandstone
 new.science
 new.situation
 new.species
@@ -4727,6 +4786,7 @@ night.of.the.27th
 night.of.the.31st
 nine.hour
 nine.o.clock
+nine.thousand.mile
 nine.year
 nineteen.year
 nineteenth.century
@@ -4751,7 +4811,6 @@ northern.portion
 nose.outwards
 notion.of.god
 notion.of.justice
-notions.on.magnetism
 notorious.fact
 number.of.age
 number.of.fact
@@ -4846,12 +4905,15 @@ one.foundation
 one.generation
 one.germ
 one.god
+one.grand.circle
+one.grand.system
 one.half
 one.hand
 one.idea
 one.inch
 one.individual
 one.infinite
+one.infinite.circle
 one.instance
 one.interest
 one.language
@@ -4865,6 +4927,7 @@ one.member
 one.minute
 one.moment
 one.month
+one.more.step
 one.morning
 one.nation
 one.night
@@ -4878,6 +4941,7 @@ one.part
 one.particle
 one.party
 one.patient
+one.perfect.form
 one.period
 one.person
 one.place
@@ -4909,11 +4973,14 @@ one.system
 one.thing
 one.think
 one.thought
+one.thousand.year
 one.time
 one.tribe
 one.truth
 one.type
+one.unbroken.chain
 one.v
+one.vast.rebellion
 one.way
 one.word
 one.world
@@ -4933,6 +5000,7 @@ only.principle
 only.principles
 only.process
 only.study
+only.true.god
 only.type
 only.way
 oolite.bed
@@ -4996,6 +5064,7 @@ ordinary.condition
 ordinary.course
 ordinary.effect
 ordinary.eye
+ordinary.human.being
 ordinary.language
 ordinary.law
 ordinary.life
@@ -5123,6 +5192,7 @@ other.direction
 other.disease
 other.eart
 other.earth
+other.eastern.tribe
 other.ecstatic
 other.element
 other.end
@@ -5131,10 +5201,12 @@ other.evidence
 other.existence
 other.fact
 other.faculty
+other.figurative.expressions
 other.form
 other.formation
 other.gentleman
 other.hand
+other.human.being
 other.hypothesis
 other.idea
 other.in.habit
@@ -5159,6 +5231,7 @@ other.member
 other.mode
 other.mountain
 other.nation
+other.nations
 other.object
 other.occasion
 other.of.like.affinity
@@ -5268,6 +5341,7 @@ own.eye
 own.family
 own.fault
 own.feeling
+own.free.will
 own.good
 own.habitation
 own.hand
@@ -5285,6 +5359,7 @@ own.independence
 own.individuality
 own.industry
 own.interest
+own.interior.nature
 own.judgment
 own.land
 own.language
@@ -5313,6 +5388,7 @@ own.room
 own.sake
 own.sensation
 own.sister
+own.solar.system
 own.species
 own.spirit
 own.survival
@@ -5337,6 +5413,7 @@ painful.malady
 painful.operation
 painful.position
 painful.sensation
+painful.surgical.operation
 palaetiological.science
 palaetiological.sciences
 palm.of.the.hand
@@ -5459,7 +5536,6 @@ peculiar.susceptibility
 peculiar.temperament
 people.on.earth
 per.cent
-perceive.spot
 perception.of.mexico
 perception.of.thing
 perceptive.power
@@ -5484,6 +5560,7 @@ perfect.form
 perfect.happiness
 perfect.harmony
 perfect.health
+perfect.human.form
 perfect.insensibility
 perfect.knowledge
 perfect.language
@@ -5500,6 +5577,7 @@ perfect.precision
 perfect.principle
 perfect.purity
 perfect.race
+perfect.recollection
 perfect.representation
 perfect.representative
 perfect.soul
@@ -5732,7 +5810,6 @@ portion.of.the.soul
 portion.of.the.vegetable
 portion.of.the.world
 portion.of.this.planet
-portrait.of.m
 position.in.relation
 position.in.society
 position.in.the.order
@@ -5767,11 +5844,13 @@ possible.mean
 possible.means
 possible.number
 possible.source
+possible.union
 possible.use
 possible.way
 potential.essence
 power.of.a.spirit
 power.of.action
+power.of.christ
 power.of.comprehension
 power.of.concentration
 power.of.conception
@@ -5792,7 +5871,6 @@ power.of.observation
 power.of.perception
 power.of.self
 power.of.speech
-power.of.spirit
 power.of.spiritual.perception
 power.of.stone
 power.of.the.heaven
@@ -6222,7 +6300,6 @@ reference.to.the.origin
 reference.to.the.whole.system
 refinement.of.matter
 refinement.of.particle
-reflection.on.this.subject
 refraction.of.light
 regard.to.the.nature
 regard.to.this.point
@@ -6236,7 +6313,6 @@ relation.to.the.granite
 relation.to.the.outer.world
 relation.to.the.sun
 relation.with.the.external.world
-relation.with.the.universe
 relative.degree
 relative.distance
 relative.perfection
@@ -6437,6 +6513,7 @@ same.force
 same.form
 same.foundation
 same.fruit
+same.general.law
 same.gesture
 same.goal
 same.god
@@ -6523,6 +6600,7 @@ same.time
 same.trial
 same.variation
 same.vision
+same.vital.principle
 same.way
 same.woman
 same.word
@@ -6565,7 +6643,6 @@ seat.of.the.disease
 seat.of.the.soul
 second.apparition
 second.book
-second.brother
 second.circle
 second.class
 second.confinement
@@ -6671,6 +6748,7 @@ servants.of.god
 set.asleep
 set.of.principle
 seven.day
+seven.hundred.year
 seven.minute
 seven.month
 seven.o.clock
@@ -6707,6 +6785,7 @@ several.minute
 several.month
 several.occasion
 several.other
+several.other.gentleman
 several.part
 several.patient
 several.person
@@ -6714,6 +6793,7 @@ several.persons
 several.place
 several.question
 several.species
+several.supreme.being
 several.time
 several.witness
 several.work
@@ -6729,6 +6809,7 @@ sheathing.of.truths
 sheet.of.paper
 shelter.under.a.tree
 shepherd.of.the.land
+short.dark.spirit
 short.distance
 short.hose
 short.interval
@@ -6821,6 +6902,7 @@ six.day
 six.farm
 six.foot
 six.hour
+six.hundred.year
 six.man
 six.mile
 six.minute
@@ -6828,6 +6910,8 @@ six.month
 six.o.clock
 six.satellite
 six.series
+six.thousand.mile
+six.thousand.year
 six.time
 six.week
 six.year
@@ -6857,6 +6941,7 @@ slightest.trace
 small.basket
 small.coffin
 small.dos
+small.gray.eye
 small.leather
 small.mouth
 small.piece
@@ -7142,7 +7227,6 @@ spiritual.power
 spiritual.principle
 spiritual.principles
 spiritual.progress
-spiritual.property
 spiritual.qualifications
 spiritual.quality
 spiritual.refinement
@@ -7239,7 +7323,6 @@ state.of.rest
 state.of.sleep
 state.of.society
 state.of.somnambulism
-state.of.somnolency
 state.of.the.case
 state.of.the.patient
 state.of.the.science
@@ -7256,7 +7339,6 @@ strange.feeling
 strange.noise
 strange.sensation
 strange.sign
-strange.spirit
 strata.of.formation
 strata.of.society
 strata.of.the.atmosphere
@@ -7321,7 +7403,6 @@ subsequent.period
 subsequent.writer
 substance.in.existence
 substance.of.lime
-substance.of.spirit
 substance.of.the.earth
 substantial.evidence
 substantial.reason
@@ -7418,12 +7499,12 @@ such.spirit
 such.spirits
 such.subject
 such.substance
+such.superficial.evidence
 such.teaching
 such.theory
 such.thing
 such.thought
 such.time
-such.transmission
 such.trifle
 such.truth
 such.use
@@ -7561,6 +7642,7 @@ system.of.theology
 system.of.worlds
 system.of.worship
 systematic.work
+tall.dark.form
 tall.man
 tangible.apparition
 tangible.effect
@@ -7645,7 +7727,6 @@ thing.of.the.earth
 thing.of.this.kind
 thing.of.this.nature
 thing.of.this.world
-third.apparition
 third.chapter
 third.circle
 third.day
@@ -7675,6 +7756,7 @@ thousand.of.individual
 thousand.of.spirit
 thousand.of.time
 thousand.other
+thousand.other.thing
 thousand.time
 thousand.way
 thousand.year
@@ -7684,14 +7766,19 @@ three.cellar
 three.class
 three.day
 three.degree
+three.distinct.nation
+three.distinct.society
+three.distinct.tribe
 three.fact
 three.finger
 three.foot
 three.fourt
 three.function
+three.general.class
 three.generation
 three.heaven
 three.hour
+three.hundred.year
 three.kingdom
 three.minute
 three.month
@@ -7702,10 +7789,12 @@ three.part
 three.principle
 three.pull
 three.series
+three.specific.degree
 three.sphere
 three.thing
 three.time
 three.tribe
+three.violent.ring
 three.week
 three.year
 thrice.thanks
@@ -7793,6 +7882,7 @@ true.justice
 true.light
 true.meaning
 true.mechanic
+true.moral.principle
 true.nature
 true.philosopher
 true.philosophy
@@ -7825,6 +7915,7 @@ truth.of.these.apparition
 truth.of.these.detail
 truth.of.these.perception
 truth.of.thing
+truth.of.this.apparition
 truth.v
 truthful.conception
 truthful.conclusion
@@ -7833,6 +7924,7 @@ truthful.history
 truthful.intimation
 truthful.prophecy
 truthful.thought
+truthful.young.girl
 twelve.day
 twelve.foot
 twelve.hour
@@ -7847,11 +7939,13 @@ two.account
 two.argument
 two.being
 two.body
-two.camp
 two.cause
 two.child
 two.condition
 two.day
+two.different.answer
+two.distinct.class
+two.distinct.nation
 two.door
 two.extreme
 two.figure
@@ -7862,6 +7956,7 @@ two.friend
 two.gentleman
 two.hemisphere
 two.hour
+two.human.form
 two.individual
 two.kind
 two.kingdom
@@ -7895,6 +7990,8 @@ two.surface
 two.thing
 two.third
 two.thirds
+two.thousand.mile
+two.thousand.year
 two.voice
 two.volume
 two.way
@@ -7971,6 +8068,7 @@ understanding.of.nature
 understanding.of.the.law
 understanding.of.the.nature
 understanding.of.the.subject
+underwent.unusual.modification
 undeveloped.quality
 undeveloped.state
 undeviating.law
@@ -8005,8 +8103,10 @@ unholy.situation
 uniform.ascension
 uniform.development
 uniform.movement
+uniform.of.a.dragoon
 uniformity.of.motion
 unimaginable.ocean
+unimpeachable.moral.integrity
 uninformed.mind
 uninformed.spirit
 union.of.spirit
@@ -8107,6 +8207,7 @@ unvarying.law
 unvarying.manifestation
 unvarying.teaching
 unwonted.energy
+upper.cretaceous.strata
 upper.lip
 upper.part
 upper.portion
@@ -8135,6 +8236,7 @@ useful.truth
 useless.life
 useless.material
 useless.organ
+usual.magnetic.sleep
 usual.mode
 usual.pass
 usual.state
@@ -8199,6 +8301,7 @@ various.movement
 various.nation
 various.object
 various.observation
+various.other.portion
 various.part
 various.person
 various.phenomena
@@ -8226,6 +8329,7 @@ various.theory
 various.thought
 various.time
 various.tribe
+various.unusual.sensation
 various.way
 various.world
 vascular.system
@@ -8260,6 +8364,7 @@ vegetation.of.the.earth
 velocity.of.motion
 velocity.of.rotary.motion
 venerable.man
+venerable.old.man
 venerable.swedenborg
 verbal.communication
 verbal.expression
@@ -8271,6 +8376,7 @@ very.element
 very.essence
 very.existence
 very.fact
+very.hour
 very.man
 very.moment
 very.morning
@@ -8397,6 +8503,7 @@ whole.be
 whole.being
 whole.body
 whole.book
+whole.christian.world
 whole.class
 whole.column
 whole.composition
@@ -8411,6 +8518,7 @@ whole.day
 whole.display
 whole.domain
 whole.earth
+whole.eastern.world
 whole.eternity
 whole.fabric
 whole.face
@@ -8419,6 +8527,8 @@ whole.form
 whole.frame
 whole.globe
 whole.history
+whole.human.race
+whole.human.world
 whole.institution
 whole.life
 whole.mass
@@ -8437,6 +8547,7 @@ whole.process
 whole.produce
 whole.race
 whole.sentence
+whole.sinful.life
 whole.society
 whole.sphere
 whole.state
