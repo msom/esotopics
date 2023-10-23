@@ -101,7 +101,7 @@ spiritualism_topics <- spiritualism_metrics[1:5,] %>%
   first() %>%
   select(topics) %>%
   unlist()
-# spiritualism_topics <- 78  # better compromise
+spiritualism_topics <- 90  # better compromise
 
 # Create model
 spiritualism_model <- keyATM(
