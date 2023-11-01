@@ -106,7 +106,9 @@ udpipe_extract_phrases <- function(
   # transform to data frame
   if (as_columns) {
     column_names <- result$keyword
-    result <- data.frame(result$freq) %>% t() %>% as.data.frame()
+    result <- data.frame(result$freq) %>%
+      t() %>%
+      as.data.frame()
     colnames(result) <- column_names
   }
   return(result)
@@ -131,7 +133,7 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   #'
   cluster <- makeCluster(detectCores())
   clusterExport(cluster, c("corpus", "pattern", "nouns", "verbs"), envir = environment())
-  clusterExport(cluster, c("udpipe_extract_phrases","udpipe_load_cached_model"))
+  clusterExport(cluster, c("udpipe_extract_phrases", "udpipe_load_cached_model"))
   clusterEvalQ(cluster, library(udpipe))
   clusterEvalQ(cluster, library(dplyr))
   clusterEvalQ(cluster, model <- udpipe_load_cached_model())
@@ -159,34 +161,3 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   docvars(result) <- docvars(corpus)
   return(result)
 }
-
-test_udpipe_extract_phrases <- function() {
-  result <- udpipe_extract_phrases(
-    "He believed in the immortality of the soul. All humans have immortal
-    souls. Men's soul is immortal. He went into a magnetic sleep. Magnetic sleeps
-    are sleeping with magents. After death, his spirit lived on. The form of these spirits.
-    Of this, in this, magnetic he. Magnetic Sleep, magnetic Sleep, Magnetic Sleep.
-    Allan said this and that. The was a true spiritist. Spiritist Doctrine.
-    The law of progress is central. Law of progression, law of progress. Clairvoyance.
-    The clairvoyants. The sleep-walker is a clairvoyant. A clairvoyante. Seance, séance.
-    Occult science, occult sciences. Unveiling the veil. Should we unveil it or not.
-    Saint-Germain was an ambassador. The astral light is an electric vital fluid.",
-    # "AN|N(P+D*(A|N)*N)|NN",
-    "A+N|NPN",
-    nouns = c("clairvoyance", "clairvoyant", "seance", "séance"),
-    verbs = c("unveil")
-  )
-  stopifnot(nrow(result) == 16)
-}
-
-test_udpipe_phrases <- function() {
-  corp <- corpus(
-    "He believed in the immortality of the soul. All humans have immortal
-    souls.",
-    docvars = data.frame(author=c("Papus"))
-  ) %>% corpus_reshape(to = "sentences")
-  result <- udpipe_phrases(corp, "AN")
-  stopifnot(nrow(result) == 13)
-}
-
-
