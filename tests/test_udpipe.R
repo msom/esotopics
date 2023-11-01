@@ -42,8 +42,15 @@ test_udpipe_phrases <- function() {
     docvars = data.frame(author=c("Papus"))
   ) %>% corpus_reshape(to = "sentences")
 
-  print("Test phrase extraction")
-  result <- udpipe_phrases(corp, "AN", nouns = c("séance"), verbs = c("communicate"))
+  print("Test phrase extraction with data frame")
+  result <- udpipe_phrases(corp, "AN", nouns = c("séance"), verbs = c("communicate"), sparse = FALSE)
+  print(result)
+  stopifnot(ncol(result)==4)
+  stopifnot(nrow(result)==4)
+  stopifnot(sum(result)==6)
+
+  print("Test phrase extraction with sparse matrix")
+  result <- udpipe_phrases(corp, "AN", nouns = c("séance"), verbs = c("communicate"), sparse = TRUE)
   print(result)
   stopifnot(ncol(result)==4)
   stopifnot(nrow(result)==4)

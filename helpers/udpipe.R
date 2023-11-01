@@ -1,7 +1,10 @@
 library(cli)
 library(dplyr)
+library(hash)
+library(Matrix)
 library(parallel)
 library(pbapply)
+library(progress)
 library(quanteda)
 library(udpipe)
 
@@ -114,7 +117,7 @@ udpipe_extract_phrases <- function(
   return(result)
 }
 
-udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
+udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL, sparse = TRUE) {
   #'
   #' Create a DFM like data frame with phrases
   #'
@@ -129,6 +132,8 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   #'    O: other elements
   #' @param nouns an optional list of nouns (lemmas) to include
   #' @param verbs an optional list of verbs (lemmas) to include
+  #' @param sparse create a DFM using a sparse matrix instead of a data frame.
+  #'    might work better for big corpora.
   #' @return a DFM with phrases and frequency per document
   #'
   cluster <- makeCluster(detectCores())
@@ -153,11 +158,57 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   )
   stopCluster(cluster)
 
-  cli_alert_info("Creating a DFM")
-  result <- rbind.fill.modified(result)
-  rownames(result) <- names(corpus)
-  names(result) <- make.names(names(result))
-  result <- as.dfm(result)
-  docvars(result) <- docvars(corpus)
+  if (sparse) {
+    cli_alert_info("Creating a DFM using a sparse matrix")
+    progress <- progress_bar$new(
+      format = "  |:bar| :percent :elapsed",
+      total = length(result),
+      complete = "+",
+      current = "-",
+      incomplete = " ",
+      clear = FALSE
+    )
+    phrase_names <- hash()  # dimnames:columns
+    document_indexes <- list()  # rows
+    phrase_indexes <- list()  # columns
+    phrase_counts <- list()  # values
+
+    for (document_index in seq(length.out = length(result))) {
+      df <- result[[document_index]]
+
+      for (phrase_index in seq(length.out = ncol(df))) {
+        phrase_name <- make.names(names(df)[phrase_index])
+        phrase_count <- df["result.freq", phrase_index]
+        phrase_index <- phrase_names[[phrase_name]]
+        if (is.null(phrase_index)) {
+          phrase_index = length(phrase_names) + 1
+          phrase_names[[phrase_name]] <- phrase_index
+        }
+
+        document_indexes[[length(document_indexes) + 1]] <- document_index
+        phrase_indexes[[length(phrase_indexes) + 1]] <- phrase_index
+        phrase_counts[[length(phrase_counts) + 1]] <- phrase_count
+      }
+      progress$tick()
+    }
+
+    result <- sparseMatrix(
+      i = unlist(document_indexes),
+      j = unlist(phrase_indexes),
+      x = unlist(phrase_counts),
+      dimnames = list(
+        names(corpus),
+        values(phrase_names) %>% sort() %>% names()
+      )
+    ) %>% as.dfm()
+    docvars(result) <- docvars(corpus)
+  } else {
+    cli_alert_info("Creating a DFM using a data framme")
+    result <- rbind.fill.modified(result)
+    rownames(result) <- names(corpus)
+    names(result) <- make.names(names(result))
+    result <- as.dfm(result)
+    docvars(result) <- docvars(corpus)
+  }
   return(result)
 }

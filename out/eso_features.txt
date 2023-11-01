@@ -147,8 +147,8 @@ additional.matter
 additional.proof
 adele.asleep
 adele.exclaim
-adele.magnot
 adele.resume
+adele.turn
 adequate.explanation
 adequate.punishment
 adjoining.chamber
@@ -186,7 +186,6 @@ aim.as.the.present.society
 ain.suph
 air.above.the.water
 air.under.the.invisible.wand
-air.v
 airy.form
 âkâsha.of.the.hindû
 alarming.state
@@ -340,7 +339,6 @@ answer.of.m
 answer.to.these.question
 answer.to.this.question
 antediluvian.giant
-anterior.existence
 anthropomorphic.creator
 anthropomorphic.deity
 anthropomorphic.god
@@ -358,7 +356,6 @@ apparent.death
 apparent.injustice
 apparent.state
 apparition
-apparition.of.adele
 apparition.of.m
 apparition.of.soul
 apparition.of.spirit
@@ -458,7 +455,6 @@ aspect.of.the.heaven
 aspect.of.the.one
 aspect.of.the.one.reality
 aspect.of.vishnu
-assemblage.of.thought
 assimilation.of.many.successive.personality
 assistance.of.magnetism
 assistance.of.the.eyes
@@ -695,7 +691,6 @@ black.water
 blade.of.grass
 blazing.divine
 blazing.star
-blessing.of.god
 blind.chance
 blind.course
 blind.eye
@@ -838,6 +833,7 @@ bungling.failure
 burden.of.life
 burden.of.sins
 burial.spot
+c..class
 calendar.of.tycho
 calendar.of.tycho.brahe
 calm.water
@@ -1068,6 +1064,7 @@ child.fail
 child.of.god
 child.to.eternal.banishment
 childish.fear
+childish.fright
 chinese.buddhism
 chinese.buddhist
 chinese.scholar
@@ -1188,6 +1185,7 @@ collective.host
 collective.humanity
 collective.wisdom
 colonel.olcott
+colonel.r
 colonel.wilford
 color.of.the.hair
 colour.of.the.prism
@@ -1382,7 +1380,6 @@ corporeal.existence
 corporeal.life
 corporeal.organisation
 corporeal.state
-corporeal.substance
 corporeal.world
 corpulent.man
 corpuscular.theory
@@ -1537,7 +1534,6 @@ cyclic.change
 cyclic.evolution
 cyclic.law
 cyclic.year
-d.orval.prediction
 daily.basis
 daily.exercise
 daily.experience
@@ -1581,6 +1577,7 @@ david.brewster
 dawn.of.christianity
 dawn.of.time
 day.after.day
+day.after.this.sitting
 day.by.day
 day.in.indion
 day.m
@@ -1599,7 +1596,6 @@ de.gébelin
 de.guaita
 de.longueville
 de.maistre
-de.mallet
 de.medecine
 de.mirandola
 de.mirville
@@ -1739,7 +1735,6 @@ diameter.line
 diameter.of.a.circle
 diameter.to.the.circumference
 diamond.type
-diaphanous.body
 difference.between.these.feeling
 difference.in.the.result
 difference.of.opinion
@@ -1850,7 +1845,6 @@ discoveries.of.geology
 discoveries.of.science
 discovery.of.animal
 discovery.of.animal.magnetism
-discussion.on.the.power
 disease.by.the.touch
 disease.of.language
 disease.of.the.chest
@@ -2040,7 +2034,6 @@ drop.of.the.ocean
 drop.of.water
 drop.push
 dry.cough
-du.potet
 duad.of.pythagora
 dual.action
 dual.aspect
@@ -2775,7 +2768,6 @@ family.affair
 family.consideration
 family.tie
 famous.hypothesis
-fanny.binet
 fast.asleep
 fast.line
 fatal.attraction
@@ -2805,6 +2797,7 @@ fear.of.death
 feat.of.skill
 february.18th
 feeble.hand
+feeble.mind
 feeble.ray
 feeling.of.anxiety
 feeling.of.oppression
@@ -2975,7 +2968,6 @@ firm.ground
 firm.step
 firmament.in.the.midst
 first.age
-first.apparition
 first.appearance
 first.arcana
 first.arcanum
@@ -3096,7 +3088,6 @@ first.word
 first.work
 fit.of.delirium
 fit.of.epilepsy
-fit.of.madness
 fit.of.passion
 fit.of.somnambulism
 fit.state
@@ -3336,7 +3327,6 @@ frequent.reference
 fresh.flower
 fresh.karma
 fresh.knowledge
-fresh.notions
 fresh.particular
 fresh.proof
 fresh.supply
@@ -3712,6 +3702,7 @@ great.german
 great.god
 great.gods
 great.heat
+great.height
 great.hierophant
 great.horror
 great.illusion
@@ -3977,7 +3968,6 @@ hidden.mystery
 hidden.power
 hidden.secret
 hidden.thing
-hidden.treasure
 hidden.truth
 hierarchy.of.the.dhyân.chohan
 hieroglyph.of.the.tarot
@@ -4629,6 +4619,7 @@ intimate.association
 intimate.astral.inner.man
 intimate.connection
 intimate.conviction
+intimate.friend
 intimate.session
 intimate.union
 intricate.path
@@ -4675,7 +4666,6 @@ jaina.cross
 january.number
 japanese.system
 jealous.god
-jean.marie
 jesus.christ
 jesus.to.the.word
 jew.aristobulus
@@ -4744,6 +4734,7 @@ key.of.the.tarot
 key.to.heaven
 key.to.the.mystery
 kind.of.bliss
+kind.of.clairvoyance
 kind.of.communication
 kind.of.consciousness
 kind.of.death
@@ -4932,6 +4923,7 @@ law.of.justice
 law.of.karma
 law.of.life
 law.of.love
+law.of.matter
 law.of.mose
 law.of.motion
 law.of.nature
@@ -5068,7 +5060,6 @@ likeness.of.a.man
 likeness.of.the.person
 limbo.of.all.such.utopias
 limit.of.this.work
-limit.time
 limitation.of.circumstance
 limited.number
 limited.sense
@@ -5278,8 +5269,10 @@ lunar.worship
 lunar.year
 luxuriant.tree
 luxurious.clothing
+m..do
 macgregor.mather
 macrocosmic.prototype
+madame.d
 madame.duteil
 madame.gouget
 madame.osborn
@@ -5540,7 +5533,6 @@ many.word
 many.year
 marginal.note
 mark.of.distinction
-marriage.in.heaven
 marriage.of.contrary
 marvellous.cure
 marvellous.effect
@@ -6052,6 +6044,7 @@ motion.of.the.universe
 mount.meru
 mountain.air
 mounting.spirit
+mouth.middling
 mouth.of.man
 mouth.to.mouth
 movable.zodiac
@@ -6401,7 +6394,6 @@ new.sect
 new.shoots
 new.situation
 new.soul
-new.spiritual.clairvoyance
 new.state
 new.study
 new.system
@@ -6485,7 +6477,6 @@ note.on.the.bhagavad
 note.on.the.bhagavad.gîtâ
 notion.of.god
 notion.of.justice
-notions.on.magnetism
 notorious.fact
 noumenal.world
 noumenon.of.matter
@@ -7057,6 +7048,7 @@ other.motive
 other.mystery
 other.name
 other.nation
+other.nations
 other.object
 other.occasion
 other.option
@@ -7362,7 +7354,6 @@ peculiar.state
 peculiar.susceptibility
 people.of.antiquity
 people.on.earth
-perceive.spot
 perception.of.mexico
 perception.of.thing
 perceptive.faculty
@@ -7387,6 +7378,7 @@ perfect.nature
 perfect.number
 perfect.purity
 perfect.race
+perfect.recollection
 perfect.serpent
 perfect.spirit
 perfect.square
@@ -7753,7 +7745,6 @@ portion.of.mankind
 portion.of.the.esoteric.teaching
 portion.of.the.globe
 portion.of.the.soul
-portrait.of.m
 position.in.the.world
 position.of.the.heavenly.body
 position.of.the.star
@@ -7772,6 +7763,7 @@ possible.harm
 possible.means
 possible.perception
 possible.source
+possible.union
 possible.way
 post.mortem.existence
 post.mortem.life
@@ -7796,13 +7788,13 @@ power.of.motion
 power.of.nature
 power.of.observation
 power.of.resistance
-power.of.spirit
 power.of.stone
 power.of.the.heaven
 power.of.the.human.soul
 power.of.the.magnetiser
 power.of.the.mother
 power.of.the.soul
+power.of.the.universe
 power.of.the.will
 power.of.the.word
 power.of.vision
@@ -8337,7 +8329,6 @@ red.velvet
 reference.to.creation
 reflection.of.the.astral.light
 reflection.of.the.past.life
-reflection.on.this.subject
 reformation.john
 refulgent.glory
 refuse.of.the.earth
@@ -8362,7 +8353,6 @@ relation.between.cause
 relation.between.mind
 relation.to.earth
 relation.with.the.external.world
-relation.with.the.universe
 relative.importance
 relative.life
 relative.omnipotence
@@ -8881,7 +8871,6 @@ seat.of.the.disease
 seat.of.the.soul
 second.advent
 second.apparition
-second.brother
 second.card
 second.chapter
 second.class
@@ -8935,6 +8924,7 @@ secret.knowledge
 secret.mean
 secret.meaning
 secret.name
+secret.of.heaven
 secret.of.initiation
 secret.of.life
 secret.of.magic
@@ -9789,7 +9779,6 @@ spiritual.plasm
 spiritual.potency
 spiritual.power
 spiritual.principle
-spiritual.property
 spiritual.prototype
 spiritual.quality
 spiritual.ray
@@ -9815,7 +9804,6 @@ spiritualist.magnetizer
 spiritualist.one
 spiritualist.wax
 spontaneous.movement
-spot.in.the.sun
 spre.from.king
 spreads.in.milk
 spring.of.water
@@ -9902,7 +9890,6 @@ state.of.purity
 state.of.sleep
 state.of.society
 state.of.somnambulism
-state.of.somnolency
 state.of.the.patient
 state.of.the.science
 state.of.the.soul
@@ -9928,7 +9915,6 @@ strange.feeling
 strange.noise
 strange.sensation
 strange.sign
-strange.spirit
 strange.symbol
 stream.of.evolution
 strict.sense
@@ -10089,7 +10075,6 @@ such.term
 such.thing
 such.thought
 such.time
-such.transmission
 such.trifle
 such.truth
 such.union
@@ -10396,7 +10381,6 @@ thing.of.this.world
 thing.on.earth
 think.divine
 think.faculty
-third.apparition
 third.card
 third.century
 third.day
@@ -10683,6 +10667,7 @@ truth.of.these.apparition
 truth.of.these.detail
 truth.of.these.perception
 truth.of.thing
+truth.of.this.apparition
 truth.of.this.assertion
 truth.v
 truthful.young.girl
@@ -10719,7 +10704,6 @@ two.being
 two.belief
 two.body
 two.breathings
-two.camp
 two.cause
 two.chain
 two.child
@@ -10911,6 +10895,7 @@ unfortunate.woman
 ungrounded.creed
 unhappy.man
 unhappy.spirit
+uniform.of.a.dragoon
 unimpeachable.moral.integrity
 uninstructed.person
 union.of.spirit
@@ -11159,6 +11144,7 @@ very.existence
 very.fact
 very.form
 very.foundation
+very.hour
 very.idea
 very.letter
 very.life
@@ -11303,6 +11289,7 @@ way.of.thinking
 weak.mortal
 weak.nature
 weak.point
+weak.sight
 weakest.point
 weakness.in.the.leg
 weakness.of.human.nature
@@ -11593,6 +11580,7 @@ X1st.septenary
 X2.d
 X2.vol
 X20th.march
+X21st.of.may
 X22.great.arcana
 X22.hebrew
 X22.letter
