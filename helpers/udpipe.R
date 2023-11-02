@@ -42,7 +42,8 @@ udpipe_extract_phrases <- function(
   #'    N: (proper) noun
   #'    P: preposition
   #'    O: other elements
-  #' @param as_columns return the phrases as colums instead of rows, default is FALSE
+  #' @param as_columns return the phrases as colums instead of rows,
+  #'    default is FALSE
   #' @param model the udpipe model to be used
   #' @param proper_nouns_only if TRUE, pronouns are translated to O, else N
   #' @param nouns an optional list of nouns (lemmas) to include
@@ -117,9 +118,9 @@ udpipe_extract_phrases <- function(
   return(result)
 }
 
-udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL, sparse = TRUE) {
+udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   #'
-  #' Create a DFM like data frame with phrases
+  #' Create a DFM with phrases.
   #'
   #' @param corpus the corpus
   #' @param pattern the (regex) pattern using POS tags:
@@ -132,18 +133,20 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL, sparse =
   #'    O: other elements
   #' @param nouns an optional list of nouns (lemmas) to include
   #' @param verbs an optional list of verbs (lemmas) to include
-  #' @param sparse create a DFM using a sparse matrix instead of a data frame.
-  #'    might work better for big corpora.
   #' @return a DFM with phrases and frequency per document
-  #'
+
+  # Extract phrases using all cores for parallel processing.
+  cli_alert_info("Extracting phrases...")
   cluster <- makeCluster(detectCores())
-  clusterExport(cluster, c("corpus", "pattern", "nouns", "verbs"), envir = environment())
-  clusterExport(cluster, c("udpipe_extract_phrases", "udpipe_load_cached_model"))
+  clusterExport(
+    cluster, c("corpus", "pattern", "nouns", "verbs"), envir = environment()
+  )
+  clusterExport(
+    cluster, c("udpipe_extract_phrases", "udpipe_load_cached_model")
+  )
   clusterEvalQ(cluster, library(udpipe))
   clusterEvalQ(cluster, library(dplyr))
   clusterEvalQ(cluster, model <- udpipe_load_cached_model())
-
-  cli_alert_info("Extracting phrases...")
   result <- pblapply(
     cl = cluster,
     X = names(corpus),
@@ -158,57 +161,63 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL, sparse =
   )
   stopCluster(cluster)
 
-  if (sparse) {
-    cli_alert_info("Creating a DFM using a sparse matrix")
-    progress <- progress_bar$new(
-      format = "  |:bar| :percent :elapsed",
-      total = length(result),
-      complete = "+",
-      current = "-",
-      incomplete = " ",
-      clear = FALSE
-    )
-    phrase_names <- hash()  # dimnames:columns
-    document_indexes <- list()  # rows
-    phrase_indexes <- list()  # columns
-    phrase_counts <- list()  # values
+  # Create a DFM using a sparse matrix and hash table for memory and speed
+  # reasons.
+  # The sparse matrix is constructed using row (document) indexes, column
+  # (phrase) indexes and values (phrase counts). The hash table stores the
+  # phrase and index to the phrase names.
+  # To minimize copying issues when growing indexes, lists instead of vectors
+  # are used. To minimize long search times, a hash table instead of lists
+  # or vectors are used for the phrase names.
+  cli_alert_info("Creating a DFM")
+  phrase_names <- hash()  # dimnames:columns
+  document_indexes <- list()  # rows
+  phrase_indexes <- list()  # columns
+  phrase_counts <- list()  # values
 
-    for (document_index in seq(length.out = length(result))) {
-      df <- result[[document_index]]
+  # Use a progress bar, although it might underestimate progress in the
+  # beginning due to longer hash lookups later on.
+  progress <- progress_bar$new(
+    format = "  |:bar| :percent :elapsed",
+    total = length(result),
+    complete = "+",
+    current = "-",
+    incomplete = " ",
+    clear = FALSE
+  )
 
-      for (phrase_index in seq(length.out = ncol(df))) {
-        phrase_name <- make.names(names(df)[phrase_index])
-        phrase_count <- df["result.freq", phrase_index]
-        phrase_index <- phrase_names[[phrase_name]]
-        if (is.null(phrase_index)) {
-          phrase_index = length(phrase_names) + 1
-          phrase_names[[phrase_name]] <- phrase_index
-        }
+  # Add a triplet with document index, phrase index and phrase count for each
+  # phrase in each document.
+  for (document_index in seq(length.out = length(result))) {
+    df <- result[[document_index]]
 
-        document_indexes[[length(document_indexes) + 1]] <- document_index
-        phrase_indexes[[length(phrase_indexes) + 1]] <- phrase_index
-        phrase_counts[[length(phrase_counts) + 1]] <- phrase_count
+    for (phrase_index in seq(length.out = ncol(df))) {
+      phrase_name <- make.names(names(df)[phrase_index])
+      phrase_count <- df["result.freq", phrase_index]
+      phrase_index <- phrase_names[[phrase_name]]
+      if (is.null(phrase_index)) {
+        phrase_index = length(phrase_names) + 1
+        phrase_names[[phrase_name]] <- phrase_index
       }
-      progress$tick()
-    }
 
-    result <- sparseMatrix(
-      i = unlist(document_indexes),
-      j = unlist(phrase_indexes),
-      x = unlist(phrase_counts),
-      dimnames = list(
-        names(corpus),
-        values(phrase_names) %>% sort() %>% names()
-      )
-    ) %>% as.dfm()
-    docvars(result) <- docvars(corpus)
-  } else {
-    cli_alert_info("Creating a DFM using a data framme")
-    result <- rbind.fill.modified(result)
-    rownames(result) <- names(corpus)
-    names(result) <- make.names(names(result))
-    result <- as.dfm(result)
-    docvars(result) <- docvars(corpus)
+      document_indexes[[length(document_indexes) + 1]] <- document_index
+      phrase_indexes[[length(phrase_indexes) + 1]] <- phrase_index
+      phrase_counts[[length(phrase_counts) + 1]] <- phrase_count
+    }
+    progress$tick()
   }
+
+  # Create the sparse matrix, convert to a DFM and add the docvars
+  result <- sparseMatrix(
+    i = unlist(document_indexes),
+    j = unlist(phrase_indexes),
+    x = unlist(phrase_counts),
+    dimnames = list(
+      names(corpus),
+      values(phrase_names) %>% sort() %>% names()
+    )
+  ) %>% as.dfm()
+  docvars(result) <- docvars(corpus)
+
   return(result)
 }

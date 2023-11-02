@@ -44,8 +44,7 @@ preprocess <- function(x, drop_unique = TRUE) {
         "master", "mahatma",
         # karma-nemesis
         "karma", "nirvana"
-      ),
-      sparse = TRUE
+      )
     ) %>%
     dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
 
