@@ -8,8 +8,6 @@ library(progress)
 library(quanteda)
 library(udpipe)
 
-source("helpers/rbind.fill.modified.R")
-
 udpipe_load_cached_model <- function() {
   #'
   #' Load the English udpipe model.
