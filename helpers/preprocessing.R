@@ -44,6 +44,9 @@ preprocess <- function(x, drop_unique = TRUE) {
         "master", "mahatma",
         # karma-nemesis
         "karma", "nirvana"
+      ),
+      noun_tuples=list(
+        c("tarot", "kabbalah")
       )
     ) %>%
     dfm_subset(ntoken(.) > 0, drop_docid = FALSE)

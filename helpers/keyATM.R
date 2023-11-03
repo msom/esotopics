@@ -35,7 +35,6 @@ keyATM_top_docs_texts <- function(
   return(docs)
 }
 
-
 keyATM_topic_coherence <- function(
     model, dfm, n = 10, include_others = FALSE
 ) {

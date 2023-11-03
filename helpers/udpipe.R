@@ -26,7 +26,7 @@ udpipe_load_cached_model <- function() {
 
 udpipe_extract_phrases <- function(
     text, pattern, as_columns = FALSE, model = NULL, proper_nouns_only = TRUE,
-    nouns = NULL, verbs = NULL
+    nouns = NULL, noun_tuples = NULL, verbs = NULL
 ) {
   #'
   #' Extracts phrases with the given pattern from the given text.
@@ -45,6 +45,8 @@ udpipe_extract_phrases <- function(
   #' @param model the udpipe model to be used
   #' @param proper_nouns_only if TRUE, pronouns are translated to O, else N
   #' @param nouns an optional list of nouns (lemmas) to include
+  #' @param noun_tuples an optional list of noun tuples (lemmas) to include,
+  #'    these are nouns co-occuring in a single document treated as a phrase
   #' @param verbs an optional list of verbs (lemmas) to include
   #' @return a data frame with lemmatized phrases and frequency
   #'
@@ -75,22 +77,36 @@ udpipe_extract_phrases <- function(
   ) %>%
     select(-ngram)
 
-  if (!is.null(nouns)) {
-    result <- result %>%
-      rbind(
-        phrases(
-          annotations$phrase_tag,
-          term = annotations$lemma,
-          pattern = 'N',
-          is_regex = TRUE,
-          detailed = FALSE
-        ) %>%
+  if (!is.null(nouns) | !is.null(noun_tuples)) {
+    noun_phrases <- phrases(
+      annotations$phrase_tag,
+      term = annotations$lemma,
+      pattern = 'N',
+      is_regex = TRUE,
+      detailed = FALSE
+    )
+    if (!is.null(nouns)) {
+      # FIXME: rbind might create duplicate entries when pattern is "N"
+      result <- result %>% rbind(
+        noun_phrases %>%
           select(-ngram) %>%
           filter(keyword %in% nouns)
       )
+    }
+    if (!is.null(noun_tuples)) {
+      for (noun_tuple in noun_tuples) {
+        intersection = intersect(noun_tuple, noun_phrases$keyword)
+        if (length(intersection) == length(noun_tuple)) {
+          name = paste(noun_tuple, collapse = "-")
+          # FIXME: this might create duplicate entries when pattern is "NN+"
+          result[nrow(result) + 1,] = list(name, 1)
+        }
+      }
+    }
   }
 
   if (!is.null(verbs)) {
+    # FIXME: rbind might create duplicate entries when patterns is "V"
     result <- result %>%
       rbind(
         phrases(
@@ -116,7 +132,7 @@ udpipe_extract_phrases <- function(
   return(result)
 }
 
-udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
+udpipe_phrases <- function(corpus, pattern, nouns = NULL, noun_tuples = NULL, verbs = NULL) {
   #'
   #' Create a DFM with phrases.
   #'
@@ -130,6 +146,8 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   #'    P: preposition
   #'    O: other elements
   #' @param nouns an optional list of nouns (lemmas) to include
+  #' @param noun_tuples an optional list of noun tuples (lemmas) to include,
+  #'    these are nouns co-occuring in a single document treated as a phrase
   #' @param verbs an optional list of verbs (lemmas) to include
   #' @return a DFM with phrases and frequency per document
 
@@ -137,7 +155,8 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
   cli_alert_info("Extracting phrases...")
   cluster <- makeCluster(detectCores())
   clusterExport(
-    cluster, c("corpus", "pattern", "nouns", "verbs"), envir = environment()
+    cluster, c("corpus", "pattern", "nouns", "noun_tuples", "verbs"),
+    envir = environment()
   )
   clusterExport(
     cluster, c("udpipe_extract_phrases", "udpipe_load_cached_model")
@@ -151,8 +170,8 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, verbs = NULL) {
     FUN = function(name) {
       return(
         udpipe_extract_phrases(
-          corpus[[name]], pattern, nouns = nouns, verbs = verbs,
-          as_columns = TRUE, model = model
+          corpus[[name]], pattern, nouns = nouns, noun_tuples = noun_tuples,
+          verbs = verbs, as_columns = TRUE, model = model
         )
       )
     }

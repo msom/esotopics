@@ -10,9 +10,9 @@ test_udpipe_extract_phrases <- function() {
   stopifnot(nrow(result) == 1)
 
   print("Test additional nouns and verbs")
-  result <- udpipe_extract_phrases(text, "AN", nouns = c("man"), verbs = c("have"))
+  result <- udpipe_extract_phrases(text, "AN", nouns = c("man"), noun_tuples = list(c("man", "soul")), verbs = c("have"))
   print(result)
-  stopifnot(nrow(result) == 3)
+  stopifnot(nrow(result) == 4)
 
   print("Test proper nouns")
   result <- udpipe_extract_phrases(text, "AN", proper_nouns_only = FALSE)
@@ -43,11 +43,20 @@ test_udpipe_phrases <- function() {
   ) %>% corpus_reshape(to = "sentences")
 
   print("Test phrase extraction")
-  result <- udpipe_phrases(corp, "AN", nouns = c("séance"), verbs = c("communicate"))
+  result <- udpipe_phrases(
+    corp,
+    pattern = "AN",
+    nouns = c("séance"),
+    noun_tuples = list(
+      c("immortality", "soul"),
+      c("séance", "soul")
+    ),
+    verbs = c("communicate")
+  )
   print(result)
-  stopifnot(ncol(result)==4)
+  stopifnot(ncol(result)==6)
   stopifnot(nrow(result)==4)
-  stopifnot(sum(result)==6)
+  stopifnot(sum(result)==8)
 }
 
 test_udpipe_extract_phrases()

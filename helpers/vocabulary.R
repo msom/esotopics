@@ -5,7 +5,6 @@ vocabulary_extract <- function(x) {
   #' Extract the vocabulary of a dfm
   #'
   #' @param x the document feature matrix
-  #' @param filename the filename
   #'
   if ("dfm" %in% class(x)) {
     return(colnames((x)))
