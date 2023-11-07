@@ -213,17 +213,21 @@ keyATM_measure_models <- function(dfm, numbers, keywords, path, n = 10) {
   #'  and ranksum
   #'
 
-  result <- list()
-  for (topics in numbers) {
-    model <- keyATM_load_model(topics, path)
-    stopifnot(topics == model$no_keyword_topics)
-    result[[length(result)+1]] <- data.frame(
-      topics=topics,
-      coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
-      exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n)),
-      ranksum=mean(keyATM_topic_ranksum(model, keywords))
-    )
-  }
+  result <- pblapply(
+    numbers, function(topics) {
+      model <- keyATM_load_model(topics, path)
+      stopifnot(topics == model$no_keyword_topics)
+      return(
+        data.frame(
+          topics=topics,
+          coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
+          exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n)),
+          ranksum=mean(keyATM_topic_ranksum(model, keywords))
+        )
+      )
+    }
+  )
+
   result <- rbind.fill(result) %>%
     mutate(
       coherence.scaled = normalize(-coherence),

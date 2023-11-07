@@ -139,6 +139,7 @@ eso_metrics <- keyATM_measure_models(
   "models/overall/"
 )
 save(eso_metrics, file="models/overall/metrics.RData")
+# 72, 37, 64 are top left, 63 is best ranksum
 eso_metrics %>%
   ggplot(aes(x=coherence, y=exclusiveness)) +
   geom_point() +
