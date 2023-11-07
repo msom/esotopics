@@ -1,13 +1,16 @@
 library(cli)
 library(corrplot)
 library(datawizard)
-library(keyATM)
 library(dplyr)
 library(ggplot2)
+library(keyATM)
+library(parallel)
+library(pbapply)
 library(philentropy)
+library(plyr)
 library(tidyr)
-library(topicmodels)
 library(topicdoc)
+library(topicmodels)
 
 keyATM_top_docs_texts <- function(
     model, corpus, dfm, n = 10, include_others = FALSE
@@ -114,126 +117,113 @@ keyATM_topic_ranksum <- function(model, keywords) {
   return(result)
 }
 
-keyATM_fit_and_measure_model <- function(
-    docs, dfm, keywords, no_keyword_topics, n = 10, iterations = 1500, seed = NULL
-) {
+keyATM_save_model <- function(model, k, path) {
   #'
-  #' Fit a model and measure the coherence and exclusiveness.
+  #' Save a model to the file system
   #'
-  #' @param docs the keyATM docs
-  #' @param dfm the document feature matrix
-  #' @param keywords the keyATM keywords
-  #' @param no_keyword_topics the number of non-keyword topics
-  #' @param n the number of top words to consider, default is 10
-  #' @param iterations the number of iterations, default is 1500
-  #' @param seed the random seed, default is chosing a seed randomly
-  #' @return a data frame with the number of topics, coherence and exclusivity
-  #'
-  model <- keyATM(
-    docs = docs,
-    model = "base",
-    no_keyword_topics = no_keyword_topics,
-    keywords = keywords,
-    options = list(
-      seed = seed,
-      iterations = iterations
-    )
-  )
-  result <- data.frame(
-    topics=no_keyword_topics,
-    coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
-    exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n)),
-    ranksum=mean(keyATM_topic_ranksum(model, keywords))
-  )
-  return(result)
+  #' @param model the model to save
+  #' @param k the numbers of no-keyword topics
+  #' @param path the path to safe the model
+  saveRDS(model, file=paste0(path, "model_", k, ".Rds"))
 }
 
-keyATM_find_no_keyword_topics <- function(
-    docs, dfm, keywords, numbers, n = 10, iterations = 1500, seed = NULL,
+keyATM_load_model <- function(k, path) {
+  #'
+  #' Load a model from file system
+  #'
+  #' @param k the numbers of no-keyword topics
+  #' @param path the path to safe the model
+  #' @return the modle
+  return(readRDS(file=paste0(path, "model_", k, ".Rds")))
+}
+
+keyATM_fit_models <- function(
+    docs, dfm, keywords, numbers, path, iterations = 1500, seed = NULL,
     parallel = TRUE
 ) {
   #'
-  #' Try a range of no_keyword_topics and return their coherence and exclusivity
-  #'
-  #' Taken from Luigi Curinis Big Data Analytics course
+  #' Try a range of no_keyword_topics and safe the models to the filesystem.
   #'
   #' @param docs the keyATM docs
   #' @param dfm the document feature matrix
   #' @param keywords the keyATM keywords
-  #' @param n the number of top words to consider, default is 10
+  #' @param numbers the numbers of no-keyword topics
+  #' @param path the path to safe the model
   #' @param iterations the number of iterations, default is 1500
   #' @param parallel fit models using the given number of cores or all
-  #'                 available cores (TRUE), default is TRUE
+  #'                 available cores (default)
   #' @param seed the random seed, default is chosing a seed randomly
   #' @return a data frame with the number of topics, coherence and exclusivity
   #'
+  nCores <- ifelse(parallel == TRUE, detectCores(), parallel)
+  cluster <- makeCluster(nCores)
+  clusterExport(
+    cluster,
+    c("docs", "dfm", "keywords", "path", "iterations","seed"),
+    envir = environment()
+  )
+  clusterExport(
+    cluster,
+    c("keyATM_save_model")
+  )
+  clusterEvalQ(cluster, library(dplyr))
+  clusterEvalQ(cluster, library(keyATM))
+  clusterEvalQ(cluster, library(quanteda))
 
-  if (parallel != FALSE) {
-    stopifnot(require(parallel))
-    stopifnot(require(plyr))
-    stopifnot(require(pbapply))
-
-    nCores <- ifelse(parallel == TRUE, detectCores(), parallel)
-    cluster <- makeCluster(nCores)
-    clusterExport(
-      cluster,
-      c("docs", "dfm", "keywords", "n", "iterations","seed"),
-      envir = environment()
-    )
-    clusterExport(
-      cluster,
-      c("keyATM_fit_and_measure_model", "keyATM_topic_coherence",
-        "keyATM_topic_exclusiveness", "keyATM_topic_ranksum")
-    )
-    clusterEvalQ(cluster, library(dplyr))
-    clusterEvalQ(cluster, library(keyATM))
-    clusterEvalQ(cluster, library(quanteda))
-
-    # Models with a lot of topics taking longer, we calculate them first so
-    # that the progress bar estimation is pessimistic rather than optimistic
-    # in the beginning. Note that shuffling the numbers won't work well, since
-    # it seems that only batches of nCores are spawned at a time and then
-    # waited for all cores to be finished before spanwning a new batch...
-    result <- pblapply(
-      cl = cluster,
-      X = sort(numbers, decreasing = TRUE),
-      FUN = function(no_keyword_topics) {
-        tryCatch(
-          {
-            return(
-              keyATM_fit_and_measure_model(
-                docs, dfm, keywords, no_keyword_topics,
-                n = n, iterations = iterations, seed = seed
-              )
+  # Models with a lot of topics taking longer, we calculate them first so
+  # that the progress bar estimation is pessimistic rather than optimistic
+  # in the beginning. Note that shuffling the numbers won't work well, since
+  # it seems that only batches of nCores are spawned at a time and then
+  # waited for all cores to be finished before spanwning a new batch...
+  result <- pblapply(
+    cl = cluster,
+    X = sort(numbers, decreasing = TRUE),
+    FUN = function(no_keyword_topics) {
+      tryCatch(
+        {
+          model <- keyATM(
+            docs = docs,
+            model = "base",
+            no_keyword_topics = no_keyword_topics,
+            keywords = keywords,
+            options = list(
+              seed = seed,
+              iterations = iterations
             )
-          },
-          error = function(e) {
-            return(data.frame())
-          }
-        )
-      }
-    )
-    stopCluster(cluster)
-  } else {
-    result <- list()
-    for (number in numbers) {
-      values <- keyATM_fit_and_measure_model(
-        docs, dfm, keywords, number,
-        n = n, iterations = iterations, seed = seed
+          )
+          keyATM_save_model(model, no_keyword_topics, path)
+        },
+        error = function(e) {}
       )
-      cli_alert_info(
-        sprintf(
-          "%i topics: coherence %f, exclusiveness %f, ranksum %f",
-          number,
-          round(mean(values$coherence), digits = 1),
-          round(mean(values$exclusiveness), digits = 1),
-          round(mean(values$ranksum), digits = 1)
-        )
-      )
-      result[[length(result)+1]] <- values
     }
-  }
+  )
+  stopCluster(cluster)
+}
 
+keyATM_measure_models <- function(dfm, numbers, keywords, path, n = 10) {
+  #'
+  #' Measure the coherence, exclusiveness and ranksum of different models.
+  #'
+  #' @param dfm the document feature matrix
+  #' @param numbers the numbers of no-keyword topics
+  #' @param keywords the keyATM keywords
+  #' @param path the path where the models are safed
+  #' @param n the number of top words to consider, default is 10
+  #' @return a data frame with the number of topics, coherence, exclusivity
+  #'  and ranksum
+  #'
+
+  result <- list()
+  for (topics in numbers) {
+    model <- keyATM_load_model(topics, path)
+    stopifnot(topics == model$no_keyword_topics)
+    result[[length(result)+1]] <- data.frame(
+      topics=topics,
+      coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
+      exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n)),
+      ranksum=mean(keyATM_topic_ranksum(model, keywords))
+    )
+  }
   result <- rbind.fill(result) %>%
     mutate(
       coherence.scaled = normalize(-coherence),
@@ -241,6 +231,7 @@ keyATM_find_no_keyword_topics <- function(
       metric = sqrt(coherence.scaled^2 + exclusiveness.scaled^2)
     ) %>%
     arrange(-metric)
+
   return(result)
 }
 

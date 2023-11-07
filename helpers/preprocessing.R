@@ -1,15 +1,12 @@
 source("helpers/udpipe.R")
 
-preprocess <- function(x, drop_unique = TRUE) {
+preprocess <- function(x) {
   #'
   #' Extract (proper) noun phrases and some highly specific nouns.
   #'
-  #' Only keeps phrases occurring at least in two different documents.
-  #'
-  #' Also streamlines some spelling.
+  #' Streamlines some spelling.
   #'
   #' @param x a corpus
-  #' @param drop_unique if TRUE, drops phrases and nouns only occurring in a single document
   #' @return a DFM
 
   cleaned <- gsub("[kq]u?abb?all?ah?", "kabbalah", x, ignore.case = TRUE)
@@ -24,38 +21,21 @@ preprocess <- function(x, drop_unique = TRUE) {
     udpipe_phrases(
       pattern="A+N|NPN|NN|N(P+D*(A|N)*N)", # alternatively "A+N|NPN|NN"
       nouns=c(
-        # spiritualism
-        "spiritualism", "spiritualist",
-        # spiritism
-        "spiritism", "spiritist",
-        # progress
-        "reincarnation", "incarnation", "progress", "progression",
-        # seance
-        "seance", "sitting", "sitter", "rapping", "apparition", "tipping",
-        "manifestation", "spectres", "materialization",
-        # magnetic sleep
-        "clairvoyance", "clairvoyant",
+        # the astral
+        "astral",
         # astral light
         "ether", "fohat",
-        # occultism
-        "occultism", "occultist", "tradition",
-        "tarot", "kabbalah", "alchemy", "astrology",
-        # master
-        "master", "mahatma",
-        # karma-nemesis
-        "karma", "nirvana"
+        # seance
+        "seance", "sitting", "sitter", "manifestation", "rapping", "materialization",
+        # progress(ion)
+        "progression", "progress", "incarnation", "reincarnation", "karma", "monad"
       ),
       noun_tuples=list(
+        # kabbalistic tarot
         c("tarot", "kabbalah")
       )
     ) %>%
     dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
-
-  if (drop_unique) {
-    result <- result %>%
-      dfm_trim(min_docfreq = 2) %>%
-      dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
-  }
 
   return(result)
 }
