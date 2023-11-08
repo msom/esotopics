@@ -24,12 +24,8 @@ eso_corpus <- esocorpus %>%
       "The Principles of Nature",
       "Transcendental magic, its doctrine and ritual",
       "The History of Magic",
-      # "The Key of the Mysteries",
       "The Tarot of the Bohemians",
-      # "Isis Unveiled",
       "The Secret Doctrine Vol 1",
-      # "The Secret Doctrine Vol 2",
-      # "The Secret Doctrine Vol 3"
       "The Key to Theosophy",
       "Astral Projection Ritual Magic and Alchemy"
     )
@@ -128,7 +124,7 @@ keyATM_fit_models(
   numbers = eso_topics_range,
   path = "models/overall/",
   seed = 123,
-  parallel = 6
+  parallel = 4
 )
 
 # Find number of topics (we are looking for the top left)
@@ -139,11 +135,14 @@ eso_metrics <- keyATM_measure_models(
   "models/overall/"
 )
 save(eso_metrics, file="models/overall/metrics.RData")
-# 72, 37, 64 are top left, 63 is best ranksum
 eso_metrics %>%
-  ggplot(aes(x=coherence, y=exclusiveness)) +
+  ggplot(aes(x=coherence, y=exclusiveness, color=ranksum)) +
   geom_point() +
   geom_text(aes(label=topics), vjust=1.5) +
+  scale_colour_gradient(
+    high = "#132B43",
+    low = "#56B1F7"
+  ) +
   xlab("Coherence")  +
   ylab(label="Exclusiveness")
 eso_topics <- eso_metrics[1:5,] %>%
