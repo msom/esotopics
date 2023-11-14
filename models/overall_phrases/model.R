@@ -13,7 +13,7 @@ source("helpers/vocabulary.R")
 # Only include paragraphs with at least 30 words. Reshape to paragraphs, since
 # we assume to topic may change by paragraphs. Drop all features occurring
 # only once.
-eso_corpus <- esocorpus %>%
+overall_phrases_corpus <- esocorpus %>%
   corpus() %>%
   corpus_subset(
     title %in% c(
@@ -32,21 +32,21 @@ eso_corpus <- esocorpus %>%
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-eso_dfm_all <- preprocess(eso_corpus)
-vocabulary_save(eso_dfm_all, "models/overall_phrases/features_all.txt", TRUE)
-eso_dfm <- eso_dfm_all %>%
+overall_phrases_dfm_all <- preprocess(overall_phrases_corpus)
+vocabulary_save(overall_phrases_dfm_all, "models/overall_phrases/features_all.txt", TRUE)
+overall_phrases_dfm <- overall_phrases_dfm_all %>%
   dfm_trim(min_docfreq = 2) %>%
   dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
-ncol(eso_dfm)  # phrases
-nrow(eso_dfm)  # paragraphs
-save(eso_dfm, file="models/overall_phrases/dfm.RData")
-vocabulary_save(eso_dfm, "models/overall_phrases/features.txt", TRUE)
+ncol(overall_phrases_dfm)  # phrases
+nrow(overall_phrases_dfm)  # paragraphs
+save(overall_phrases_dfm, file="models/overall_phrases/dfm.RData")
+vocabulary_save(overall_phrases_dfm, "models/overall_phrases/features.txt", TRUE)
 
 # Read texts
-eso_docs <- keyATM_read(texts = eso_dfm)
+overall_phrases_docs <- keyATM_read(texts = overall_phrases_dfm)
 
 # Create keywords
-eso_keywords <- list(
+overall_phrases_keywords <- list(
   the_astral = c(
     "astral",
     # "astral.realm", pruned
@@ -111,31 +111,31 @@ eso_keywords <- list(
 )
 
 visualize_keywords(
-  docs = eso_docs,
-  keywords = eso_keywords
+  docs = overall_phrases_docs,
+  keywords = overall_phrases_keywords
 )
 
 # Calculate models
-eso_topics_range <- seq(1, 120)  # TODO: 120 might be to few
+overall_phrases_topics_range <- seq(1, 120)  # TODO: 120 might be to few
 keyATM_fit_models(
-  docs = eso_docs,
-  dfm = eso_dfm,
-  keywords = eso_keywords,
-  numbers = eso_topics_range,
+  docs = overall_phrases_docs,
+  dfm = overall_phrases_dfm,
+  keywords = overall_phrases_keywords,
+  numbers = overall_phrases_topics_range,
   path = "models/overall_phrases/models/",
   seed = 123,
   parallel = 4
 )
 
 # Find number of topics (we are looking for the top left)
-eso_metrics <- keyATM_measure_models(
-  eso_dfm,
-  eso_topics_range,
-  eso_keywords,
+overall_phrases_metrics <- keyATM_measure_models(
+  overall_phrases_dfm,
+  overall_phrases_topics_range,
+  overall_phrases_keywords,
   "models/overall_phrases/models/"
 )
-save(eso_metrics, file="models/overall_phrases/metrics.RData")
-eso_metrics %>%
+save(overall_phrases_metrics, file="models/overall_phrases/metrics.RData")
+overall_phrases_metrics %>%
   ggplot(aes(x=coherence, y=exclusiveness, color=ranksum)) +
   geom_point() +
   geom_text(aes(label=topics), vjust=1.5) +
@@ -145,54 +145,54 @@ eso_metrics %>%
   ) +
   xlab("Coherence")  +
   ylab(label="Exclusiveness")
-eso_topics <- eso_metrics[1:5,] %>%
+overall_phrases_topics <- overall_phrases_metrics[1:5,] %>%
   arrange(-ranksum) %>%
   first() %>%
   select(topics) %>%
   unlist()
 
 # Load model
-eso_model <- keyATM_load_model(eso_topics, "models/overall_phrases/models/")
+overall_phrases_model <- keyATM_load_model(overall_phrases_topics, "models/overall_phrases/models/")
 
 # Validate
-plot_modelfit(eso_model)
-plot_alpha(eso_model)
-plot_topicprop(eso_model)
-eso_words <- top_words(eso_model, 200)
-View(eso_words)
-top_words(eso_model, n = 200, show_keyword = FALSE) %>%
+plot_modelfit(overall_phrases_model)
+plot_alpha(overall_phrases_model)
+plot_topicprop(overall_phrases_model)
+overall_phrases_words <- top_words(overall_phrases_model, 200)
+View(overall_phrases_words)
+top_words(overall_phrases_model, n = 200, show_keyword = FALSE) %>%
   write.csv("models/overall_phrases/topics.csv")
-eso_top_docs <- keyATM_top_docs_texts(eso_model, eso_corpus, eso_dfm, n = 200)
-save(eso_top_docs, file="models/overall_phrases/docs.RData")
-View(eso_top_docs)
+overall_phrases_top_docs <- keyATM_top_docs_texts(overall_phrases_model, overall_phrases_corpus, overall_phrases_dfm, n = 200)
+save(overall_phrases_top_docs, file="models/overall_phrases/docs.RData")
+View(overall_phrases_top_docs)
 
 # Show topic in texts
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "1_the_astral")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "2_astral_light")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "3_kabbalistic_tarot")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "4_magnetic_sleep")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "5_seance")
-keyATM_plot_topic_occurrence(eso_model, eso_dfm, "6_progression")
-keyATM_plot_topic_occurrences(eso_model, eso_dfm)
-keyATM_plot_topic_correlation(eso_model, eso_dfm)
+keyATM_plot_topic_occurrence(overall_phrases_model, overall_phrases_dfm, "1_the_astral")
+keyATM_plot_topic_occurrence(overall_phrases_model, overall_phrases_dfm, "2_astral_light")
+keyATM_plot_topic_occurrence(overall_phrases_model, overall_phrases_dfm, "3_kabbalistic_tarot")
+keyATM_plot_topic_occurrence(overall_phrases_model, overall_phrases_dfm, "4_magnetic_sleep")
+keyATM_plot_topic_occurrence(overall_phrases_model, overall_phrases_dfm, "5_seance")
+keyATM_plot_topic_occurrence(overall_phrases_model, overall_phrases_dfm, "6_progression")
+keyATM_plot_topic_occurrences(overall_phrases_model, overall_phrases_dfm)
+keyATM_plot_topic_correlation(overall_phrases_model, overall_phrases_dfm)
 
 # covariate model TODO: cleanup
-vars <- docvars(eso_corpus) %>%
+vars <- docvars(overall_phrases_corpus) %>%
   select(current)
-eso_model_covariate <- keyATM(
-  docs = eso_docs,
+overall_phrases_model_covariate <- keyATM(
+  docs = overall_phrases_docs,
   model = "covariates",
   model_settings = list(
     covariates_data    = vars,
     covariates_formula = ~ current
   ),
-  no_keyword_topics = eso_topics,
-  keywords = eso_keywords,
+  no_keyword_topics = overall_phrases_topics,
+  keywords = overall_phrases_keywords,
   options = list(seed = 123)
 )
-covariates_info(eso_model_covariate)
+covariates_info(overall_phrases_model_covariate)
 strata_topic <- by_strata_DocTopic(
-  eso_model_covariate,
+  overall_phrases_model_covariate,
   by_var = "currentFrench Occultism",
   labels = c(0, 1)
   # labels = c("18_19c", "20_21c")
