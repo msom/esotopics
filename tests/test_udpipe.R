@@ -17,7 +17,14 @@ test_udpipe_extract_phrases <- function() {
   print("Test proper nouns")
   result <- udpipe_extract_phrases(text, "AN", proper_nouns_only = FALSE)
   print(result)
+
+  print("Test adverbs/particles")
+  result <- udpipe_extract_phrases("He didn't look up quickly", "M", adverbs_only = FALSE)
+  print(result)
   stopifnot(nrow(result) == 2)
+  result <- udpipe_extract_phrases("He didn't look up quickly", "M", adverbs_only = TRUE)
+  print(result)
+  stopifnot(nrow(result) == 1)
 
   print("Test special characters/French")
   result <- udpipe_extract_phrases("Seance, séance", "N")

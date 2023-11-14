@@ -20,7 +20,7 @@ magic_corpus <- esocorpus %>%
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-magic_dfm_all <- preprocess(magic_corpus)
+magic_dfm_all <- preprocess_phrases(magic_corpus)
 vocabulary_save(magic_dfm_all, "models/magic/features_all.txt", TRUE)
 magic_dfm <- magic_dfm_all %>%
     dfm_trim(min_docfreq = 2) %>%

@@ -26,7 +26,7 @@ udpipe_load_cached_model <- function() {
 
 udpipe_extract_phrases <- function(
     text, pattern, as_columns = FALSE, model = NULL, proper_nouns_only = TRUE,
-    nouns = NULL, noun_tuples = NULL, verbs = NULL
+    adverbs_only = FALSE, nouns = NULL, noun_tuples = NULL, verbs = NULL
 ) {
   #'
   #' Extracts phrases with the given pattern from the given text.
@@ -39,11 +39,13 @@ udpipe_extract_phrases <- function(
   #'    M: modifier of verb
   #'    N: (proper) noun
   #'    P: preposition
+  #'    V: verb
   #'    O: other elements
   #' @param as_columns return the phrases as colums instead of rows,
   #'    default is FALSE
   #' @param model the udpipe model to be used
   #' @param proper_nouns_only if TRUE, pronouns are translated to O, else N
+  #' @param adverbs_only if TRUE, particles categorized as O, else M
   #' @param nouns an optional list of nouns (lemmas) to include
   #' @param noun_tuples an optional list of noun tuples (lemmas) to include,
   #'    these are nouns co-occuring in a single document treated as a phrase
@@ -65,6 +67,12 @@ udpipe_extract_phrases <- function(
   if (proper_nouns_only) {
     annotations <- annotations %>%
       mutate(phrase_tag = ifelse(upos == "PRON", "O", phrase_tag))
+  }
+
+  # fix particles being classified as verb
+  if (adverbs_only) {
+    annotations <- annotations %>%
+      mutate(phrase_tag = ifelse(upos == "PART", "O", phrase_tag))
   }
 
   # extract phrases using lemmas
@@ -132,7 +140,10 @@ udpipe_extract_phrases <- function(
   return(result)
 }
 
-udpipe_phrases <- function(corpus, pattern, nouns = NULL, noun_tuples = NULL, verbs = NULL) {
+udpipe_phrases <- function(
+    corpus, pattern, nouns = NULL, noun_tuples = NULL, verbs = NULL,
+    adverbs_only = FALSE
+) {
   #'
   #' Create a DFM with phrases.
   #'
@@ -144,18 +155,21 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, noun_tuples = NULL, ve
   #'    M: modifier of verb
   #'    N: noun or proper noun
   #'    P: preposition
+  #'    V: verb
   #'    O: other elements
   #' @param nouns an optional list of nouns (lemmas) to include
   #' @param noun_tuples an optional list of noun tuples (lemmas) to include,
   #'    these are nouns co-occuring in a single document treated as a phrase
   #' @param verbs an optional list of verbs (lemmas) to include
+  #' @param adverbs_only if TRUE, particles categorized as O, else M
   #' @return a DFM with phrases and frequency per document
 
   # Extract phrases using all cores for parallel processing.
   cli_alert_info("Extracting phrases...")
   cluster <- makeCluster(detectCores())
   clusterExport(
-    cluster, c("corpus", "pattern", "nouns", "noun_tuples", "verbs"),
+    cluster, c("corpus", "pattern", "nouns", "noun_tuples", "verbs",
+               "adverbs_only"),
     envir = environment()
   )
   clusterExport(
@@ -171,7 +185,8 @@ udpipe_phrases <- function(corpus, pattern, nouns = NULL, noun_tuples = NULL, ve
       return(
         udpipe_extract_phrases(
           corpus[[name]], pattern, nouns = nouns, noun_tuples = noun_tuples,
-          verbs = verbs, as_columns = TRUE, model = model
+          verbs = verbs, adverbs_only = adverbs_only, as_columns = TRUE,
+          model = model
         )
       )
     }

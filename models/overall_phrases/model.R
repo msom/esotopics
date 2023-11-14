@@ -32,7 +32,7 @@ overall_phrases_corpus <- esocorpus %>%
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-overall_phrases_dfm_all <- preprocess(overall_phrases_corpus)
+overall_phrases_dfm_all <- preprocess_phrases(overall_phrases_corpus)
 vocabulary_save(overall_phrases_dfm_all, "models/overall_phrases/features_all.txt", TRUE)
 overall_phrases_dfm <- overall_phrases_dfm_all %>%
   dfm_trim(min_docfreq = 2) %>%

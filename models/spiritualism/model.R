@@ -25,7 +25,7 @@ spiritualism_corpus <- esocorpus %>%
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-spiritualism_dfm_all <- preprocess(spiritualism_corpus)
+spiritualism_dfm_all <- preprocess_phrases(spiritualism_corpus)
 vocabulary_save(spiritualism_dfm_all, "models/spiritualism/features_all.txt", TRUE)
 spiritualism_dfm <- spiritualism_dfm_all %>%
   dfm_trim(min_docfreq = 2) %>%
@@ -157,7 +157,7 @@ kardec_corpus <- esocorpus %>%
   corpus_subset(title == "The Mediums Book") %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-kardec_dfm <- preprocess(kardec_corpus)
+kardec_dfm <- preprocess_phrases(kardec_corpus)
 kardec_docs <- keyATM_read(texts = kardec_dfm)
 visualize_keywords(kardec_docs, spiritualism_keywords)
 vocabulary_compare(kardec_dfm, spiritualism_dfm_all)$known

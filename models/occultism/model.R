@@ -25,7 +25,7 @@ occultism_corpus <- esocorpus %>%
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-occultism_dfm_all <- preprocess(occultism_corpus)
+occultism_dfm_all <- preprocess_phrases(occultism_corpus)
 vocabulary_save(occultism_dfm_all, "models/occultism/features_all.txt", TRUE)
 occultism_dfm <- occultism_dfm_all %>%
   dfm_trim(min_docfreq = 2) %>%
@@ -169,7 +169,7 @@ levi_corpus <- esocorpus %>%
   corpus_subset(title == "The Great Secret") %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-levi_dfm <- preprocess(levi_corpus)
+levi_dfm <- preprocess_phrases(levi_corpus)
 levi_docs <- keyATM_read(texts = levi_dfm)
 visualize_keywords(levi_docs, occultism_keywords)
 vocabulary_compare(levi_dfm, occultism_dfm_all)$known
