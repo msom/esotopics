@@ -91,7 +91,8 @@ overall_pos_keywords <- list(
     "possessed", "medium",
     # "seized",
     "materialization",
-    "good", "spirit",
+    "good",
+    "spirit",
     "evil",
     # "haunted",
     "spectre"
@@ -124,7 +125,7 @@ keyATM_fit_models(
   numbers = overall_pos_topics_range,
   path = "models/overall_pos/models/",
   seed = 123,
-  parallel = 4
+  parallel = 2
 )
 
 # Find number of topics (we are looking for the top left)
@@ -135,10 +136,16 @@ overall_pos_metrics <- keyATM_measure_models(
   "models/overall_pos/models/"
 )
 save(overall_pos_metrics, file="models/overall_pos/metrics.RData")
+labels <- overall_pos_metrics[
+  union(
+    chull(overall_pos_metrics$coherence, overall_pos_metrics$exclusiveness),
+    1:5
+  ),
+]
 overall_pos_metrics %>%
   ggplot(aes(x=coherence, y=exclusiveness, color=ranksum)) +
   geom_point() +
-  geom_text(aes(label=topics), vjust=1.5) +
+  geom_text(data=labels, mapping=aes(label=topics), vjust=1.5) +
   scale_colour_gradient(
     high = "#132B43",
     low = "#56B1F7"
