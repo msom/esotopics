@@ -3,6 +3,7 @@ library(corrplot)
 library(datawizard)
 library(dplyr)
 library(ggplot2)
+library(ggrepel)
 library(keyATM)
 library(parallel)
 library(pbapply)
@@ -479,16 +480,32 @@ keyATM_plot_topic_correlation <- function(model, dfm) {
   }
 }
 
-keyATM_plot_topic_measure_scatter <- function(metrics, topic_range) {
+keyATM_plot_topic_measure_scatter <- function(
+    metrics, topic_range, highlight = NULL
+) {
   #'
   #' Plot the measures of a model as a scatter plot.
   #'
   #' @param metrics the keyATM model metrics
   #' @param topic_range the number of topics to show
+  #' @param hightlight option metrics to highlight using a different shape
   #'
-  metrics %>%
+  data <- metrics %>%
+    mutate(shape = 17)
+  if (!is.null(highlight)) {
+    data[highlight,]$shape = 19
+  }
+  data %>%
     filter(topics %in% topic_range) %>%
-    ggplot(aes(x=coherence, y=exclusivity, color=ranksum, size=word_count)) +
+    ggplot(
+      aes(
+        x=coherence,
+        y=exclusivity,
+        color=ranksum,
+        size=word_count,
+        shape=as.factor(shape)
+      )
+    ) +
     geom_point() +
     geom_text_repel(mapping=aes(label=topics, size=500), vjust=-1.5) +
     scale_colour_gradient(

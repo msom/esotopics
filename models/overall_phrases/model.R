@@ -1,5 +1,4 @@
 library(esocorpus)
-library(ggrepel)
 
 # load data
 data(esocorpus)
@@ -148,7 +147,8 @@ keyATM_plot_topic_measure_trend(
 ggsave("models/overall_phrases/metrics_trend.pdf")
 keyATM_plot_topic_measure_scatter(
   overall_phrases_metrics,
-  c(seq(50, 125), 300)
+  c(seq(50, 125), 300),
+  highlight = c(106)
 )
 ggsave("models/overall_phrases/metrics_scatter.pdf")
 overall_phrases_topics <- 106
