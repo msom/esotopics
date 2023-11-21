@@ -115,7 +115,7 @@ visualize_keywords(
   keywords = overall_phrases_keywords
 )
 
-# Calculate models in rough range
+# Calculate models
 keyATM_fit_models(
   docs = overall_phrases_docs,
   dfm = overall_phrases_dfm,
@@ -147,14 +147,16 @@ keyATM_plot_topic_measure_trend(
 ggsave("models/overall_phrases/metrics_trend.pdf")
 keyATM_plot_topic_measure_scatter(
   overall_phrases_metrics,
-  c(seq(50, 125), 300),
+  c(seq(75, 125), 300),
   highlight = c(106)
 )
 ggsave("models/overall_phrases/metrics_scatter.pdf")
-overall_phrases_topics <- 106
 
 # Load model
-overall_phrases_model <- keyATM_load_model(overall_phrases_topics, "models/overall_phrases/models/")
+overall_phrases_model <- keyATM_load_model(
+  106,
+  "models/overall_phrases/models/"
+)
 
 # Statistics
 keyATM_plot_histogram(overall_phrases_model)
@@ -189,31 +191,3 @@ keyATM_plot_topic_occurrence(overall_phrases_model, overall_phrases_dfm, "5_sean
 keyATM_plot_topic_occurrence(overall_phrases_model, overall_phrases_dfm, "6_progression")
 keyATM_plot_topic_occurrences(overall_phrases_model, overall_phrases_dfm)
 keyATM_plot_topic_correlation(overall_phrases_model, overall_phrases_dfm)
-
-# covariate model TODO: cleanup
-vars <- docvars(overall_phrases_corpus) %>%
-  select(current)
-overall_phrases_model_covariate <- keyATM(
-  docs = overall_phrases_docs,
-  model = "covariates",
-  model_settings = list(
-    covariates_data    = vars,
-    covariates_formula = ~ current
-  ),
-  no_keyword_topics = overall_phrases_topics,
-  keywords = overall_phrases_keywords,
-  options = list(seed = 123)
-)
-covariates_info(overall_phrases_model_covariate)
-strata_topic <- by_strata_DocTopic(
-  overall_phrases_model_covariate,
-  by_var = "currentFrench Occultism",
-  labels = c(0, 1)
-  # labels = c("18_19c", "20_21c")
-)
-plot(
-  strata_topic,
-  var_name = "currentFrench Occultism",
-  show_topic = 1:6,
-  # by = "covariate"
-)

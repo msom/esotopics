@@ -507,11 +507,12 @@ keyATM_plot_topic_measure_scatter <- function(
       )
     ) +
     geom_point() +
-    geom_text_repel(mapping=aes(label=topics, size=500), vjust=-1.5) +
+    geom_text_repel(mapping=aes(label=topics), size = 4) +
     scale_colour_gradient(
       high = "#132B43",
       low = "#56B1F7"
     ) +
+    scale_shape_discrete(guide = "none") +
     xlab("Coherence")  +
     ylab("Exclusivity") +
     labs(color = "Ranks (ISR)", size = "Words")
@@ -537,9 +538,9 @@ keyATM_plot_topic_measure_trend <- function(metrics, topic_range) {
       names_to = "measure"
     ) %>%
     ggplot(aes(x=topics, y=value, color=measure)) +
-    geom_point() +
-    geom_smooth(se = FALSE, method = "lm", formula= (y ~ log(x)), linewidth = 0.5, linetype = "dashed") +
-    scale_y_continuous(limits = c(0, 1)) +
+    geom_point(position = position_jitter()) +
+    geom_smooth(se = FALSE, linewidth = 0.5, span = 10, linetype = "dashed") +
+    scale_y_continuous(limits = c(0, 1.01)) +
     scale_color_discrete(labels = c("Coherence", "Exclusivity", "Ranks (ISR)", "Words")) +
     xlab("Topics") +
     ylab("Normalized Value") +

@@ -117,54 +117,68 @@ visualize_keywords(
 )
 
 # Calculate models
-overall_pos_topics_range <- seq(1, 120)  # TODO: 120 might be to few
+# todo: calculate models 200
+# todo: calculate models >99?
 keyATM_fit_models(
   docs = overall_pos_docs,
   dfm = overall_pos_dfm,
   keywords = overall_pos_keywords,
-  numbers = overall_pos_topics_range,
+  numbers = c(seq(1, 100), 125, 150, 200, 250, 300),
   path = "models/overall_pos/models/",
   seed = 123,
-  parallel = 2
+  parallel = 3
 )
-
-# Find number of topics (we are looking for the top left)
 overall_pos_metrics <- keyATM_measure_models(
   overall_pos_dfm,
-  overall_pos_topics_range,
+  numbers = c(seq(1, 100), 125, 150, 250, 300),
   overall_pos_keywords,
   "models/overall_pos/models/"
 )
 save(overall_pos_metrics, file="models/overall_pos/metrics.RData")
-labels <- overall_pos_metrics[
-  union(
-    chull(overall_pos_metrics$coherence, overall_pos_metrics$exclusivity),
-    1:5
-  ),
-]
-overall_pos_metrics %>%
-  ggplot(aes(x=coherence, y=exclusivity, color=ranksum)) +
-  geom_point() +
-  geom_text(data=labels, mapping=aes(label=topics), vjust=1.5) +
-  scale_colour_gradient(
-    high = "#132B43",
-    low = "#56B1F7"
-  ) +
-  xlab("Coherence")  +
-  ylab(label="Exclusivity")
-overall_pos_topics <- overall_pos_metrics[1:5,] %>%
-  arrange(-ranksum) %>%
-  first() %>%
-  select(topics) %>%
-  unlist()
+
+# Find number of topics
+keyATM_plot_topic_measure_scatter(
+  overall_pos_metrics,
+  c(1, 10, 25, 50, 75, 100, 125, 150, 250, 300)
+  # c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
+)
+ggsave("models/overall_pos/metrics_scatter_overview.pdf")
+keyATM_plot_topic_measure_trend(
+  overall_pos_metrics,
+  c(1, 10, 10, 25, 50, 75, 100, 125, 150, 250, 300)
+  # c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
+)
+ggsave("models/overall_pos/metrics_trend.pdf")
+keyATM_plot_topic_measure_scatter(
+  overall_pos_metrics,
+  seq(75, 100),
+  # c(seq(50, 125), 300),
+  highlight = c(92)
+)
+ggsave("models/overall_pos/metrics_scatter.pdf")
 
 # Load model
-overall_pos_model <- keyATM_load_model(overall_pos_topics, "models/overall_pos/models/")
+overall_pos_model <- keyATM_load_model(
+  92,
+  "models/overall_pos/models/"
+)
+
+# Statistics
+keyATM_plot_histogram(overall_pos_model)
+ggsave("models/overall_pos/histogram.pdf")
+overall_pos_statistics = data.frame(
+  word_count=keyATM_topic_word_count(overall_pos_model),
+  coherence=keyATM_topic_coherence(overall_pos_model, overall_pos_dfm, n = 15),
+  exclusivity=keyATM_topic_exclusivity(overall_pos_model, n = 15),
+  ranksum=keyATM_topic_ranksum(overall_pos_model, overall_pos_keywords)
+)
+save(overall_pos_statistics, file="models/overall_pos/statistics.RData")
+View(overall_pos_statistics)
 
 # Validate
 plot_modelfit(overall_pos_model)
 plot_alpha(overall_pos_model)
-plot_topicprop(overall_pos_model)
+# plot_topicprop(overall_pos_model)
 overall_pos_words <- top_words(overall_pos_model, 200)
 View(overall_pos_words)
 top_words(overall_pos_model, n = 200, show_keyword = FALSE) %>%
@@ -182,31 +196,3 @@ keyATM_plot_topic_occurrence(overall_pos_model, overall_pos_dfm, "5_seance")
 keyATM_plot_topic_occurrence(overall_pos_model, overall_pos_dfm, "6_progression")
 keyATM_plot_topic_occurrences(overall_pos_model, overall_pos_dfm)
 keyATM_plot_topic_correlation(overall_pos_model, overall_pos_dfm)
-
-# covariate model TODO: cleanup
-vars <- docvars(overall_pos_corpus) %>%
-  select(current)
-overall_pos_model_covariate <- keyATM(
-  docs = overall_pos_docs,
-  model = "covariates",
-  model_settings = list(
-    covariates_data    = vars,
-    covariates_formula = ~ current
-  ),
-  no_keyword_topics = overall_pos_topics,
-  keywords = overall_pos_keywords,
-  options = list(seed = 123)
-)
-covariates_info(overall_pos_model_covariate)
-strata_topic <- by_strata_DocTopic(
-  overall_pos_model_covariate,
-  by_var = "currentFrench Occultism",
-  labels = c(0, 1)
-  # labels = c("18_19c", "20_21c")
-)
-plot(
-  strata_topic,
-  var_name = "currentFrench Occultism",
-  show_topic = 1:6,
-  # by = "covariate"
-)
