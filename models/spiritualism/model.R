@@ -118,11 +118,11 @@ spiritualism_metrics <- keyATM_measure_models(
 )
 save(spiritualism_metrics, file="models/spiritualism/metrics.RData")
 spiritualism_metrics %>%
-  ggplot(aes(x=coherence, y=exclusiveness)) +
+  ggplot(aes(x=coherence, y=exclusivity)) +
   geom_point() +
   geom_text(aes(label=topics), vjust=1.5) +
   xlab("Coherence")  +
-  ylab(label="Exclusiveness")
+  ylab(label="Exclusivity")
 spiritualism_topics <- spiritualism_metrics[1:5,] %>%
   arrange(-ranksum) %>%
   first() %>%

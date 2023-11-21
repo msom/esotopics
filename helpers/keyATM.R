@@ -8,6 +8,7 @@ library(parallel)
 library(pbapply)
 library(philentropy)
 library(plyr)
+library(stringr)
 library(tidyr)
 library(topicdoc)
 library(topicmodels)
@@ -64,11 +65,11 @@ keyATM_topic_coherence <- function(
   return(result)
 }
 
-keyATM_topic_exclusiveness <- function(
+keyATM_topic_exclusivity <- function(
     model, n = 10, include_others = FALSE, weight = 0.7
 ) {
   #'
-  #' Calculate the topic exclusiveness of a keyATM model
+  #' Calculate the topic exclusivity of a keyATM model
   #'
   #' Taken from Luigi Curinis Big Data Analytics course
   #'
@@ -76,7 +77,7 @@ keyATM_topic_exclusiveness <- function(
   #' @param n the number of top words to consider, default is 10
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @param weight weight to apply for FREX calculation, default is 0.7
-  #' @return a named vector with the exclusiveness of each topic
+  #' @return a named vector with the exclusivity of each topic
   #'
   phi <- t(model$phi)
   mat <- phi / rowSums(phi)
@@ -116,6 +117,30 @@ keyATM_topic_ranksum <- function(model, keywords) {
   result <- setNames(result, colnames(words))
   return(result)
 }
+
+keyATM_topic_word_count <- function(model, threshold = 0.05, include_others = FALSE) {
+  #'
+  #' Calculate the number of words in a topic
+  #'
+  #' @param model the keyATM model
+  #' @param threshold the theta value used for inclusion/exclusion, default is 0.05
+  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @return the number of words
+  #'
+  match = ifelse(include_others, ".*", "\\d_.*")
+  result <- model$theta %>%
+    as.data.frame() %>%
+    pivot_longer(matches(match)) %>%
+    select(name, value) %>%
+    filter(value > threshold) %>%
+    group_by(name) %>%
+    dplyr::summarize(count = n())
+
+  counts <- unlist(result["count"])
+  counts <- setNames(counts, unlist(result["name"]))
+  return(counts)
+}
+
 
 keyATM_save_model <- function(model, k, path) {
   #'
@@ -200,17 +225,21 @@ keyATM_fit_models <- function(
   stopCluster(cluster)
 }
 
-keyATM_measure_models <- function(dfm, numbers, keywords, path, n = 10) {
+keyATM_measure_models <- function(
+    dfm, numbers, keywords, path, n = 10, threshold = 0.05
+) {
   #'
-  #' Measure the coherence, exclusiveness and ranksum of different models.
+  #' Measure the coherence, exclusivity and ranksum of different models.
   #'
   #' @param dfm the document feature matrix
   #' @param numbers the numbers of no-keyword topics
   #' @param keywords the keyATM keywords
-  #' @param path the path where the models are safed
+  #' @param path the path where the models are saved
   #' @param n the number of top words to consider, default is 10
-  #' @return a data frame with the number of topics, coherence, exclusivity
-  #'  and ranksum
+  #' @param threshold the theta value used for inclusion/exclusion of number of
+  #'  words, default is 0.05
+  #' @return a data frame with the number of topics, number of words, coherence,
+  #'  exclusivity and ranksum
   #'
 
   result <- pblapply(
@@ -220,23 +249,16 @@ keyATM_measure_models <- function(dfm, numbers, keywords, path, n = 10) {
       return(
         data.frame(
           topics=topics,
+          word_count=mean(keyATM_topic_word_count(model, threshold = threshold)),
           coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
-          exclusiveness=mean(keyATM_topic_exclusiveness(model, n = n)),
+          exclusivity=mean(keyATM_topic_exclusivity(model, n = n)),
           ranksum=mean(keyATM_topic_ranksum(model, keywords))
         )
       )
     }
   )
 
-  result <- rbind.fill(result) %>%
-    mutate(
-      coherence.scaled = normalize(-coherence),
-      exclusiveness.scaled = normalize(exclusiveness),
-      metric = sqrt(coherence.scaled^2 + exclusiveness.scaled^2)
-    ) %>%
-    arrange(-metric)
-
-  return(result)
+  return(rbind.fill(result))
 }
 
 keyATM_compare_models_by_words <- function(x, y, m = 100, include_others = FALSE) {
@@ -457,16 +479,79 @@ keyATM_plot_topic_correlation <- function(model, dfm) {
   }
 }
 
-# todo: add a plot to show phi of the terms
-# library(forcats)
-# eso_model$phi %>%
-#   t() %>%
-#   as.data.frame() %>%
-#   mutate(name=rownames(.)) %>%
-#   select(name, `4_magnetic_sleep`) %>%
-#   arrange(-`4_magnetic_sleep`) %>%
-#   head(30) %>%
-#   ggplot(aes(x = fct_reorder(name, `4_magnetic_sleep`), y = `4_magnetic_sleep`)) +
-#   geom_col() +
-#   coord_flip()
+keyATM_plot_topic_measure_scatter <- function(metrics, topic_range) {
+  #'
+  #' Plot the measures of a model as a scatter plot.
+  #'
+  #' @param metrics the keyATM model metrics
+  #' @param topic_range the number of topics to show
+  #'
+  metrics %>%
+    filter(topics %in% topic_range) %>%
+    ggplot(aes(x=coherence, y=exclusivity, color=ranksum, size=word_count)) +
+    geom_point() +
+    geom_text_repel(mapping=aes(label=topics, size=500), vjust=-1.5) +
+    scale_colour_gradient(
+      high = "#132B43",
+      low = "#56B1F7"
+    ) +
+    xlab("Coherence")  +
+    ylab("Exclusivity") +
+    labs(color = "Ranks (ISR)", size = "Words")
+}
+
+keyATM_plot_topic_measure_trend <- function(metrics, topic_range) {
+  #'
+  #' Plot the measures of a model as trend lines.
+  #'
+  #' @param metrics the keyATM model metrics
+  #' @param topic_range the number of topics to show
+  #'
+  metrics %>%
+    filter(topics %in% topic_range) %>%
+    mutate(
+      word_count=as.double(normalize(word_count)),
+      coherence=as.double(normalize(coherence)),
+      exclusivity=as.double(normalize(exclusivity)),
+      ranksum=as.double(normalize(ranksum))
+    ) %>%
+    pivot_longer(
+      c(word_count, coherence, exclusivity, ranksum),
+      names_to = "measure"
+    ) %>%
+    ggplot(aes(x=topics, y=value, color=measure)) +
+    geom_point() +
+    geom_smooth(se = FALSE, method = "lm", formula= (y ~ log(x)), linewidth = 0.5, linetype = "dashed") +
+    scale_y_continuous(limits = c(0, 1)) +
+    scale_color_discrete(labels = c("Coherence", "Exclusivity", "Ranks (ISR)", "Words")) +
+    xlab("Topics") +
+    ylab("Normalized Value") +
+    labs(color = "Measure")
+}
+
+keyATM_plot_histogram <- function(model) {
+  #'
+  #' Plot the historgram of the words of a model
+  #'
+  #' @param model the keyATM model
+  #'
+  totals <- keyATM_topic_word_count(model)
+  model$theta %>%
+    as.data.frame() %>%
+    pivot_longer(matches("\\d_.*")) %>%
+    select(name, value) %>%
+    mutate(
+      name = name %>%
+        str_replace("\\d_", "") %>%
+        str_replace_all("_", " ") %>%
+        str_to_title() %>%
+        paste0(" (", totals[name], ")")
+    ) %>%
+    filter(value > 0.05) %>%
+    ggplot(mapping=aes(x=value)) +
+    geom_histogram() +
+    facet_wrap(~name) +
+    xlab("Theta") +
+    ylab("Count")
+}
 

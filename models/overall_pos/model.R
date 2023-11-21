@@ -138,12 +138,12 @@ overall_pos_metrics <- keyATM_measure_models(
 save(overall_pos_metrics, file="models/overall_pos/metrics.RData")
 labels <- overall_pos_metrics[
   union(
-    chull(overall_pos_metrics$coherence, overall_pos_metrics$exclusiveness),
+    chull(overall_pos_metrics$coherence, overall_pos_metrics$exclusivity),
     1:5
   ),
 ]
 overall_pos_metrics %>%
-  ggplot(aes(x=coherence, y=exclusiveness, color=ranksum)) +
+  ggplot(aes(x=coherence, y=exclusivity, color=ranksum)) +
   geom_point() +
   geom_text(data=labels, mapping=aes(label=topics), vjust=1.5) +
   scale_colour_gradient(
@@ -151,7 +151,7 @@ overall_pos_metrics %>%
     low = "#56B1F7"
   ) +
   xlab("Coherence")  +
-  ylab(label="Exclusiveness")
+  ylab(label="Exclusivity")
 overall_pos_topics <- overall_pos_metrics[1:5,] %>%
   arrange(-ranksum) %>%
   first() %>%

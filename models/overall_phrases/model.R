@@ -1,4 +1,5 @@
 library(esocorpus)
+library(ggrepel)
 
 # load data
 data(esocorpus)
@@ -115,44 +116,54 @@ visualize_keywords(
   keywords = overall_phrases_keywords
 )
 
-# Calculate models
-overall_phrases_topics_range <- seq(1, 120)  # TODO: 120 might be to few
+# Calculate models in rough range
+# todo: calculate 112-124
 keyATM_fit_models(
   docs = overall_phrases_docs,
   dfm = overall_phrases_dfm,
   keywords = overall_phrases_keywords,
-  numbers = overall_phrases_topics_range,
+  numbers = c(seq(1, 111), 125, 150, 200, 250, 300),
   path = "models/overall_phrases/models/",
   seed = 123,
   parallel = 4
 )
-
-# Find number of topics (we are looking for the top left)
 overall_phrases_metrics <- keyATM_measure_models(
   overall_phrases_dfm,
-  overall_phrases_topics_range,
+  c(seq(1, 111), 125, 150, 200, 250, 300),
   overall_phrases_keywords,
-  "models/overall_phrases/models/"
+  "models/overall_phrases/models/",
+  n = 15
 )
 save(overall_phrases_metrics, file="models/overall_phrases/metrics.RData")
-overall_phrases_metrics %>%
-  ggplot(aes(x=coherence, y=exclusiveness, color=ranksum)) +
-  geom_point() +
-  geom_text(aes(label=topics), vjust=1.5) +
-  scale_colour_gradient(
-    high = "#132B43",
-    low = "#56B1F7"
-  ) +
-  xlab("Coherence")  +
-  ylab(label="Exclusiveness")
-overall_phrases_topics <- overall_phrases_metrics[1:5,] %>%
-  arrange(-ranksum) %>%
-  first() %>%
-  select(topics) %>%
-  unlist()
+
+# Find number of topics
+keyATM_plot_topic_measure_scatter(
+  overall_phrases_metrics,
+  c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
+)
+keyATM_plot_topic_measure_trend(
+  overall_phrases_metrics,
+  c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
+)
+keyATM_plot_topic_measure_scatter(
+  overall_phrases_metrics,
+  c(10, seq(50, 125), 300)
+)
+overall_phrases_topics <- 106
 
 # Load model
 overall_phrases_model <- keyATM_load_model(overall_phrases_topics, "models/overall_phrases/models/")
+
+# Statistics
+keyATM_plot_histogram(overall_phrases_model)
+overall_phrases_statistics = data.frame(
+  word_count=keyATM_topic_word_count(overall_phrases_model),
+  coherence=keyATM_topic_coherence(overall_phrases_model, overall_phrases_dfm, n = 15),
+  exclusivity=keyATM_topic_exclusivity(overall_phrases_model, n = 15),
+  ranksum=keyATM_topic_ranksum(overall_phrases_model, overall_phrases_keywords)
+)
+save(overall_phrases_statistics, file="models/overall_phrases/statistics.RData")
+View(overall_phrases_statistics)
 
 # Validate
 plot_modelfit(overall_phrases_model)

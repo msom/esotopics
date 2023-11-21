@@ -128,11 +128,11 @@ occultism_metrics <- keyATM_measure_models(
 )
 save(occultism_metrics, file="models/occultism/metrics.RData")
 occultism_metrics %>%
-  ggplot(aes(x=coherence, y=exclusiveness)) +
+  ggplot(aes(x=coherence, y=exclusivity)) +
   geom_point() +
   geom_text(aes(label=topics), vjust=1.5) +
   xlab("Coherence")  +
-  ylab(label="Exclusiveness")
+  ylab(label="Exclusivity")
 occultism_topics <- occultism_metrics[1:5,] %>%
   arrange(-ranksum) %>%
   first() %>%

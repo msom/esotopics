@@ -110,11 +110,11 @@ magic_metrics <- keyATM_measure_models(
 )
 save(magic_metrics, file="models/magic/metrics.RData")
 magic_metrics %>%
-  ggplot(aes(x=coherence, y=exclusiveness)) +
+  ggplot(aes(x=coherence, y=exclusivity)) +
   geom_point() +
   geom_text(aes(label=topics), vjust=1.5) +
   xlab("Coherence")  +
-  ylab(label="Exclusiveness")
+  ylab(label="Exclusivity")
 magic_topics <- magic_metrics[1:5,] %>%
   arrange(-ranksum) %>%
   first() %>%
