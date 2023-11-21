@@ -117,19 +117,18 @@ visualize_keywords(
 )
 
 # Calculate models in rough range
-# todo: calculate 112-124
 keyATM_fit_models(
   docs = overall_phrases_docs,
   dfm = overall_phrases_dfm,
   keywords = overall_phrases_keywords,
-  numbers = c(seq(1, 111), 125, 150, 200, 250, 300),
+  numbers = c(seq(1, 124), 125, 150, 200, 250, 300),
   path = "models/overall_phrases/models/",
   seed = 123,
-  parallel = 4
+  parallel = 5
 )
 overall_phrases_metrics <- keyATM_measure_models(
   overall_phrases_dfm,
-  c(seq(1, 111), 125, 150, 200, 250, 300),
+  numbers = c(seq(1, 124), 125, 150, 200, 250, 300),
   overall_phrases_keywords,
   "models/overall_phrases/models/",
   n = 15
@@ -141,14 +140,17 @@ keyATM_plot_topic_measure_scatter(
   overall_phrases_metrics,
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
+ggsave("models/overall_phrases/metrics_scatter_overview.pdf")
 keyATM_plot_topic_measure_trend(
   overall_phrases_metrics,
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
+ggsave("models/overall_phrases/metrics_trend.pdf")
 keyATM_plot_topic_measure_scatter(
   overall_phrases_metrics,
-  c(10, seq(50, 125), 300)
+  c(seq(50, 125), 300)
 )
+ggsave("models/overall_phrases/metrics_scatter.pdf")
 overall_phrases_topics <- 106
 
 # Load model
@@ -156,6 +158,7 @@ overall_phrases_model <- keyATM_load_model(overall_phrases_topics, "models/overa
 
 # Statistics
 keyATM_plot_histogram(overall_phrases_model)
+ggsave("models/overall_phrases/histogram.pdf")
 overall_phrases_statistics = data.frame(
   word_count=keyATM_topic_word_count(overall_phrases_model),
   coherence=keyATM_topic_coherence(overall_phrases_model, overall_phrases_dfm, n = 15),
@@ -168,7 +171,7 @@ View(overall_phrases_statistics)
 # Validate
 plot_modelfit(overall_phrases_model)
 plot_alpha(overall_phrases_model)
-plot_topicprop(overall_phrases_model)
+# plot_topicprop(overall_phrases_model)
 overall_phrases_words <- top_words(overall_phrases_model, 200)
 View(overall_phrases_words)
 top_words(overall_phrases_model, n = 200, show_keyword = FALSE) %>%
