@@ -114,7 +114,13 @@ overall_pos_keywords <- list(
 visualize_keywords(
   docs = overall_pos_docs,
   keywords = overall_pos_keywords
+)$figure + scale_color_discrete(
+  labels = names(overall_pos_keywords) %>%
+    str_replace("\\d_", "") %>%
+    str_replace_all("_", " ") %>%
+    str_to_title()
 )
+ggsave("models/overall_pos/keywords.pdf")
 
 # Calculate models
 # todo: calculate models 200

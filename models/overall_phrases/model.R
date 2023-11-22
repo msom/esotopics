@@ -113,7 +113,13 @@ overall_phrases_keywords <- list(
 visualize_keywords(
   docs = overall_phrases_docs,
   keywords = overall_phrases_keywords
+)$figure + scale_color_discrete(
+  labels = names(overall_phrases_keywords) %>%
+    str_replace("\\d_", "") %>%
+    str_replace_all("_", " ") %>%
+    str_to_title()
 )
+ggsave("models/overall_phrases/keywords.pdf")
 
 # Calculate models
 keyATM_fit_models(
