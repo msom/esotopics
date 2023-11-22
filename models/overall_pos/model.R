@@ -123,8 +123,7 @@ visualize_keywords(
 ggsave("models/overall_pos/keywords.pdf")
 
 # Calculate models
-# todo: calculate models 200
-# todo: calculate models >99?
+# todo: calculate models 100-125
 keyATM_fit_models(
   docs = overall_pos_docs,
   dfm = overall_pos_dfm,
@@ -132,11 +131,11 @@ keyATM_fit_models(
   numbers = c(seq(1, 100), 125, 150, 200, 250, 300),
   path = "models/overall_pos/models/",
   seed = 123,
-  parallel = 3
+  parallel = 2
 )
 overall_pos_metrics <- keyATM_measure_models(
   overall_pos_dfm,
-  numbers = c(seq(1, 100), 125, 150, 250, 300),
+  numbers = c(seq(1, 100), 125, 150, 200, 250, 300),
   overall_pos_keywords,
   "models/overall_pos/models/"
 )
@@ -145,14 +144,12 @@ save(overall_pos_metrics, file="models/overall_pos/metrics.RData")
 # Find number of topics
 keyATM_plot_topic_measure_scatter(
   overall_pos_metrics,
-  c(1, 10, 25, 50, 75, 100, 125, 150, 250, 300)
-  # c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
+  c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/overall_pos/metrics_scatter_overview.pdf")
 keyATM_plot_topic_measure_trend(
   overall_pos_metrics,
-  c(1, 10, 10, 25, 50, 75, 100, 125, 150, 250, 300)
-  # c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
+  c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/overall_pos/metrics_trend.pdf")
 keyATM_plot_topic_measure_scatter(
