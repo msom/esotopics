@@ -537,14 +537,20 @@ keyATM_plot_topic_measure_trend <- function(metrics, topic_range) {
       c(word_count, coherence, exclusivity, ranksum),
       names_to = "measure"
     ) %>%
-    ggplot(aes(x=topics, y=value, color=measure)) +
-    geom_point(position = position_jitter()) +
+    ggplot(aes(x = topics, y = value, color = measure, shape = measure)) +
+    geom_point(position = position_jitter(), size = 3) +
     geom_smooth(se = FALSE, linewidth = 0.5, span = 10, linetype = "dashed") +
     scale_y_continuous(limits = c(0, 1.01)) +
-    scale_color_discrete(labels = c("Coherence", "Exclusivity", "Ranks (ISR)", "Words")) +
+    scale_color_discrete(
+      name = "Measure",
+      labels = c("Coherence", "Exclusivity", "Ranks (ISR)", "Words")
+    ) +
+    scale_shape_discrete(
+      name = "Measure",
+      labels = c("Coherence", "Exclusivity", "Ranks (ISR)", "Words")
+    ) +
     xlab("Topics") +
-    ylab("Normalized Value") +
-    labs(color = "Measure")
+    ylab("Normalized Value")
 }
 
 keyATM_plot_histogram <- function(model) {
