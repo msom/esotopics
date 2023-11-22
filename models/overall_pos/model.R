@@ -38,7 +38,7 @@ vocabulary_save(overall_pos_dfm_all, "models/overall_pos/features_all.txt", TRUE
 overall_pos_dfm <- overall_pos_dfm_all %>%
   dfm_trim(min_docfreq = 2) %>%
   dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
-ncol(overall_pos_dfm)  # phrases
+ncol(overall_pos_dfm)  # words
 nrow(overall_pos_dfm)  # paragraphs
 save(overall_pos_dfm, file="models/overall_pos/dfm.RData")
 vocabulary_save(overall_pos_dfm, "models/overall_pos/features.txt", TRUE)
@@ -156,21 +156,24 @@ keyATM_plot_topic_measure_scatter(
   overall_pos_metrics,
   seq(75, 100),
   # c(seq(50, 125), 300),
-  highlight = c(92)
+  highlight = c(84)
 )
 ggsave("models/overall_pos/metrics_scatter.pdf")
 
 # Load model
 overall_pos_model <- keyATM_load_model(
-  92,
+  84,
   "models/overall_pos/models/"
 )
 
 # Statistics
-keyATM_plot_histogram(overall_pos_model)
-ggsave("models/overall_pos/histogram.pdf")
+keyATM_plot_document_histogram(overall_pos_model)
+ggsave("models/overall_pos/document_histogram.pdf")
+keyATM_plot_feature_histogram(overall_pos_model)
+ggsave("models/overall_pos/feature_histogram.pdf")
+
 overall_pos_statistics = data.frame(
-  word_count=keyATM_topic_word_count(overall_pos_model),
+  feature_count=keyATM_topic_feature_count(overall_pos_model),
   coherence=keyATM_topic_coherence(overall_pos_model, overall_pos_dfm, n = 15),
   exclusivity=keyATM_topic_exclusivity(overall_pos_model, n = 15),
   ranksum=keyATM_topic_ranksum(overall_pos_model, overall_pos_keywords)

@@ -165,10 +165,13 @@ overall_phrases_model <- keyATM_load_model(
 )
 
 # Statistics
-keyATM_plot_histogram(overall_phrases_model)
-ggsave("models/overall_phrases/histogram.pdf")
+keyATM_plot_document_histogram(overall_phrases_model)
+ggsave("models/overall_phrases/document_histogram.pdf")
+keyATM_plot_feature_histogram(overall_phrases_model)
+ggsave("models/overall_phrases/feature_histogram.pdf")
+
 overall_phrases_statistics = data.frame(
-  word_count=keyATM_topic_word_count(overall_phrases_model),
+  feature_count=keyATM_topic_feature_count(overall_phrases_model),
   coherence=keyATM_topic_coherence(overall_phrases_model, overall_phrases_dfm, n = 15),
   exclusivity=keyATM_topic_exclusivity(overall_phrases_model, n = 15),
   ranksum=keyATM_topic_ranksum(overall_phrases_model, overall_phrases_keywords)
