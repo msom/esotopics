@@ -146,11 +146,13 @@ keyATM_plot_topic_measure_scatter(
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/overall_phrases/metrics_scatter_overview.pdf")
+
 keyATM_plot_topic_measure_trend(
   overall_phrases_metrics,
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/overall_phrases/metrics_trend.pdf")
+
 keyATM_plot_topic_measure_scatter(
   overall_phrases_metrics,
   c(seq(75, 125), 300),
@@ -167,6 +169,7 @@ overall_phrases_model <- keyATM_load_model(
 # Statistics
 keyATM_plot_document_histogram(overall_phrases_model)
 ggsave("models/overall_phrases/document_histogram.pdf")
+
 keyATM_plot_feature_histogram(overall_phrases_model)
 ggsave("models/overall_phrases/feature_histogram.pdf")
 
@@ -181,13 +184,20 @@ View(overall_phrases_statistics)
 
 # Validate
 plot_modelfit(overall_phrases_model)
+ggsave("models/overall_phrases/model_fit.pdf")
+
 plot_alpha(overall_phrases_model)
-# plot_topicprop(overall_phrases_model)
+
+plot_topicprop(overall_phrases_model)
+
 overall_phrases_words <- top_words(overall_phrases_model, 200)
-View(overall_phrases_words)
 top_words(overall_phrases_model, n = 200, show_keyword = FALSE) %>%
   write.csv("models/overall_phrases/topics.csv")
-overall_phrases_top_docs <- keyATM_top_docs_texts(overall_phrases_model, overall_phrases_corpus, overall_phrases_dfm, n = 200)
+View(overall_phrases_words)
+
+overall_phrases_top_docs <- keyATM_top_docs_texts(
+  overall_phrases_model, overall_phrases_corpus, overall_phrases_dfm, n = 200
+)
 save(overall_phrases_top_docs, file="models/overall_phrases/docs.RData")
 View(overall_phrases_top_docs)
 

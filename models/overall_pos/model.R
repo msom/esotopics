@@ -123,20 +123,20 @@ visualize_keywords(
 ggsave("models/overall_pos/keywords.pdf")
 
 # Calculate models
-# todo: calculate models 111-124
+# todo: calculate models 115-124
 keyATM_fit_models(
   docs = overall_pos_docs,
   dfm = overall_pos_dfm,
   keywords = overall_pos_keywords,
-  # numbers = c(107, 108, 109, 110),
-  numbers = c(seq(1, 110), 125, 150, 200, 250, 300),
+  # numbers = c(111, 112, 113, 114),
+  numbers = c(seq(1, 114), 125, 150, 200, 250, 300),
   path = "models/overall_pos/models/",
   seed = 123,
   parallel = 2
 )
 overall_pos_metrics <- keyATM_measure_models(
   overall_pos_dfm,
-  numbers = c(seq(1, 110), 125, 150, 200, 250, 300),
+  numbers = c(seq(1, 114), 125, 150, 200, 250, 300),
   overall_pos_keywords,
   "models/overall_pos/models/"
 )
@@ -148,14 +148,16 @@ keyATM_plot_topic_measure_scatter(
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/overall_pos/metrics_scatter_overview.pdf")
+
 keyATM_plot_topic_measure_trend(
   overall_pos_metrics,
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/overall_pos/metrics_trend.pdf")
+
 keyATM_plot_topic_measure_scatter(
   overall_pos_metrics,
-  c(seq(75, 110), 300),
+  c(seq(75, 114), 300),
   # c(seq(50, 125), 300),
   highlight = c(109)
 )
@@ -170,6 +172,7 @@ overall_pos_model <- keyATM_load_model(
 # Statistics
 keyATM_plot_document_histogram(overall_pos_model)
 ggsave("models/overall_pos/document_histogram.pdf")
+
 keyATM_plot_feature_histogram(overall_pos_model)
 ggsave("models/overall_pos/feature_histogram.pdf")
 
@@ -184,13 +187,20 @@ View(overall_pos_statistics)
 
 # Validate
 plot_modelfit(overall_pos_model)
+ggsave("models/overall_pos/model_fit.pdf")
+
 plot_alpha(overall_pos_model)
-# plot_topicprop(overall_pos_model)
+
+plot_topicprop(overall_pos_model)
+
 overall_pos_words <- top_words(overall_pos_model, 200)
-View(overall_pos_words)
 top_words(overall_pos_model, n = 200, show_keyword = FALSE) %>%
   write.csv("models/overall_pos/topics.csv")
-overall_pos_top_docs <- keyATM_top_docs_texts(overall_pos_model, overall_pos_corpus, overall_pos_dfm, n = 200)
+View(overall_pos_words)
+
+overall_pos_top_docs <- keyATM_top_docs_texts(
+  overall_pos_model, overall_pos_corpus, overall_pos_dfm, n = 200
+)
 save(overall_pos_top_docs, file="models/overall_pos/docs.RData")
 View(overall_pos_top_docs)
 
