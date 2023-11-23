@@ -180,7 +180,9 @@ overall_pos_statistics = data.frame(
   feature_count=keyATM_topic_feature_count(overall_pos_model),
   coherence=keyATM_topic_coherence(overall_pos_model, overall_pos_dfm, n = 15),
   exclusivity=keyATM_topic_exclusivity(overall_pos_model, n = 15),
-  ranksum=keyATM_topic_ranksum(overall_pos_model, overall_pos_keywords)
+  ranksum=keyATM_topic_ranksum(overall_pos_model, overall_pos_keywords),
+  probability=plot_pi(overall_pos_model)$values$Probability,
+  proportion=plot_topicprop(overall_pos_model, show_topic = seq(1, 6), order = "topicid")$values$Topicprop
 )
 save(overall_pos_statistics, file="models/overall_pos/statistics.RData")
 View(overall_pos_statistics)
@@ -191,7 +193,9 @@ ggsave("models/overall_pos/model_fit.pdf")
 
 plot_alpha(overall_pos_model)
 
-plot_topicprop(overall_pos_model)
+plot_pi(overall_pos_model)
+
+plot_topicprop(overall_pos_model, show_topic = seq(1, 6))
 
 overall_pos_words <- top_words(overall_pos_model, 200)
 top_words(overall_pos_model, n = 200, show_keyword = FALSE) %>%

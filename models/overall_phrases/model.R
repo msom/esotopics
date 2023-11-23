@@ -177,7 +177,9 @@ overall_phrases_statistics = data.frame(
   feature_count=keyATM_topic_feature_count(overall_phrases_model),
   coherence=keyATM_topic_coherence(overall_phrases_model, overall_phrases_dfm, n = 15),
   exclusivity=keyATM_topic_exclusivity(overall_phrases_model, n = 15),
-  ranksum=keyATM_topic_ranksum(overall_phrases_model, overall_phrases_keywords)
+  ranksum=keyATM_topic_ranksum(overall_phrases_model, overall_phrases_keywords),
+  probability=plot_pi(overall_phrases_model)$values$Probability,
+  proportion=plot_topicprop(overall_phrases_model, show_topic = seq(1, 6), order = "topicid")$values$Topicprop
 )
 save(overall_phrases_statistics, file="models/overall_phrases/statistics.RData")
 View(overall_phrases_statistics)
@@ -188,7 +190,9 @@ ggsave("models/overall_phrases/model_fit.pdf")
 
 plot_alpha(overall_phrases_model)
 
-plot_topicprop(overall_phrases_model)
+plot_pi(overall_phrases_model)
+
+plot_topicprop(overall_phrases_model, show_topic = seq(1, 6))
 
 overall_phrases_words <- top_words(overall_phrases_model, 200)
 top_words(overall_phrases_model, n = 200, show_keyword = FALSE) %>%
