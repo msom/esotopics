@@ -119,7 +119,7 @@ visualize_keywords(
     str_replace_all("_", " ") %>%
     str_to_title()
 )
-ggsave("models/overall_phrases/keywords.pdf")
+ggsave("models/overall_phrases/keywords.pdf", width = 9, height = 6)
 
 # Calculate models
 keyATM_fit_models(
@@ -145,20 +145,20 @@ keyATM_plot_topic_measure_scatter(
   overall_phrases_metrics,
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
-ggsave("models/overall_phrases/metrics_scatter_overview.pdf")
+ggsave("models/overall_phrases/metrics_scatter_overview.pdf", width = 9, height = 4)
 
 keyATM_plot_topic_measure_trend(
   overall_phrases_metrics,
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
-ggsave("models/overall_phrases/metrics_trend.pdf")
+ggsave("models/overall_phrases/metrics_trend.pdf", width = 9, height = 5)
 
 keyATM_plot_topic_measure_scatter(
   overall_phrases_metrics,
   c(seq(75, 125), 300),
   highlight = c(106)
 )
-ggsave("models/overall_phrases/metrics_scatter.pdf")
+ggsave("models/overall_phrases/metrics_scatter.pdf", width = 9, height = 5)
 
 # Load model
 overall_phrases_model <- keyATM_load_model(
@@ -168,10 +168,10 @@ overall_phrases_model <- keyATM_load_model(
 
 # Statistics
 keyATM_plot_document_histogram(overall_phrases_model)
-ggsave("models/overall_phrases/document_histogram.pdf")
+ggsave("models/overall_phrases/document_histogram.pdf", width = 9, height = 6)
 
 keyATM_plot_feature_histogram(overall_phrases_model)
-ggsave("models/overall_phrases/feature_histogram.pdf")
+ggsave("models/overall_phrases/feature_histogram.pdf", width = 9, height = 6)
 
 overall_phrases_statistics = data.frame(
   feature_count=keyATM_topic_feature_count(overall_phrases_model),
@@ -186,7 +186,7 @@ View(overall_phrases_statistics)
 
 # Validate
 plot_modelfit(overall_phrases_model)
-ggsave("models/overall_phrases/model_fit.pdf")
+ggsave("models/overall_phrases/model_fit.pdf", width = 9, height = 4)
 
 plot_alpha(overall_phrases_model)
 

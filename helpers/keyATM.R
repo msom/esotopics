@@ -9,6 +9,7 @@ library(parallel)
 library(pbapply)
 library(philentropy)
 library(plyr)
+library(quanteda)
 library(stringr)
 library(tidyr)
 library(topicdoc)
@@ -129,7 +130,7 @@ keyATM_topic_feature_count <- function(model, threshold = 1, include_others = FA
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @return the number of word
   #'
-  threshold <- threshold/ncol(overall_phrases_model$phi)
+  threshold <- threshold/ncol(model$phi)
   match <- ifelse(include_others, ".*", "\\d_.*")
   result <- model$phi %>%
     t() %>%
@@ -155,7 +156,7 @@ keyATM_topic_document_count <- function(model, threshold = 100, include_others =
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @return the number of topics
   #'
-  threshold <- threshold/nrow(overall_phrases_model$theta)
+  threshold <- threshold/nrow(model$theta)
   match <-ifelse(include_others, ".*", "\\d_.*")
   result <- model$theta %>%
     as.data.frame() %>%
@@ -593,7 +594,7 @@ keyATM_plot_document_histogram <- function(model, threshold = 100) {
   #'  of the uniform distribution value, default is 100
   #'
   totals <- keyATM_topic_document_count(model, threshold)
-  threshold <- threshold/nrow(overall_phrases_model$theta)
+  threshold <- threshold/nrow(model$theta)
   model$theta %>%
     as.data.frame() %>%
     pivot_longer(matches("\\d_.*")) %>%
@@ -622,7 +623,7 @@ keyATM_plot_feature_histogram <- function(model, threshold = 1) {
   #'  of the uniform distribution value, default is 1
   #'
   totals <- keyATM_topic_feature_count(model, threshold)
-  threshold <- threshold/ncol(overall_phrases_model$phi)
+  threshold <- threshold/ncol(model$phi)
   model$phi %>%
     t() %>%
     as.data.frame() %>%

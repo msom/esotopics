@@ -120,23 +120,21 @@ visualize_keywords(
     str_replace_all("_", " ") %>%
     str_to_title()
 )
-ggsave("models/overall_pos/keywords.pdf")
+ggsave("models/overall_pos/keywords.pdf", width = 9, height = 6)
 
 # Calculate models
-# todo: calculate models 115-124
 keyATM_fit_models(
   docs = overall_pos_docs,
   dfm = overall_pos_dfm,
   keywords = overall_pos_keywords,
-  # numbers = c(111, 112, 113, 114),
-  numbers = c(seq(1, 114), 125, 150, 200, 250, 300),
+  numbers = c(seq(1, 125), 150, 200, 250, 300),
   path = "models/overall_pos/models/",
   seed = 123,
   parallel = 2
 )
 overall_pos_metrics <- keyATM_measure_models(
   overall_pos_dfm,
-  numbers = c(seq(1, 114), 125, 150, 200, 250, 300),
+  numbers = c(seq(1, 125), 150, 200, 250, 300),
   overall_pos_keywords,
   "models/overall_pos/models/"
 )
@@ -147,21 +145,20 @@ keyATM_plot_topic_measure_scatter(
   overall_pos_metrics,
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
-ggsave("models/overall_pos/metrics_scatter_overview.pdf")
+ggsave("models/overall_pos/metrics_scatter_overview.pdf", width = 9, height = 4)
 
 keyATM_plot_topic_measure_trend(
   overall_pos_metrics,
   c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
-ggsave("models/overall_pos/metrics_trend.pdf")
+ggsave("models/overall_pos/metrics_trend.pdf", width = 9, height = 5)
 
 keyATM_plot_topic_measure_scatter(
   overall_pos_metrics,
-  c(seq(75, 114), 300),
-  # c(seq(50, 125), 300),
+  c(seq(75, 125), 300),
   highlight = c(109)
 )
-ggsave("models/overall_pos/metrics_scatter.pdf")
+ggsave("models/overall_pos/metrics_scatter.pdf", width = 9, height = 5)
 
 # Load model
 overall_pos_model <- keyATM_load_model(
@@ -171,10 +168,10 @@ overall_pos_model <- keyATM_load_model(
 
 # Statistics
 keyATM_plot_document_histogram(overall_pos_model)
-ggsave("models/overall_pos/document_histogram.pdf")
+ggsave("models/overall_pos/document_histogram.pdf", width = 9, height = 6)
 
 keyATM_plot_feature_histogram(overall_pos_model)
-ggsave("models/overall_pos/feature_histogram.pdf")
+ggsave("models/overall_pos/feature_histogram.pdf", width = 9, height = 6)
 
 overall_pos_statistics = data.frame(
   feature_count=keyATM_topic_feature_count(overall_pos_model),
@@ -189,7 +186,7 @@ View(overall_pos_statistics)
 
 # Validate
 plot_modelfit(overall_pos_model)
-ggsave("models/overall_pos/model_fit.pdf")
+ggsave("models/overall_pos/model_fit.pdf", width = 9, height = 4)
 
 plot_alpha(overall_pos_model)
 
