@@ -449,11 +449,6 @@ keyATM_plot_topic_occurrences <- function(
       facet_wrap(~ book, ncol = 1) +
       xlab("Paragraph") +
       ylab("Theta") +
-      labs(
-        title = paste0(
-          "Occurrences of '", keyATM_topic_names(topic), "'"
-        )
-      ) +
       theme(
         axis.text.x = element_blank(),
         axis.text.y = element_blank(),
