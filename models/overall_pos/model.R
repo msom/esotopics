@@ -178,7 +178,11 @@ overall_pos_statistics <- keyATM_calculate_model_statistics(
   overall_pos_model, overall_pos_dfm, overall_pos_keywords
 )
 save(overall_pos_statistics, file="models/overall_pos/statistics.RData")
-keyATM_print_model_statistics_table(overall_pos_statistics)
+keyATM_print_model_statistics_table(
+  overall_pos_statistics,
+  ncol(overall_pos_dfm),
+  nrow(overall_pos_dfm)
+)
 
 # Validate
 plot_modelfit(overall_pos_model)

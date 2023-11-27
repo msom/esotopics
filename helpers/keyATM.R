@@ -670,29 +670,57 @@ keyATM_calculate_model_statistics <- function(model, dfm, keywords) {
     document_count=keyATM_topic_document_count(model),
     coherence=keyATM_topic_coherence(model, dfm, n = 15),
     exclusivity=keyATM_topic_exclusivity(model, n = 15),
-    ranksum=keyATM_topic_ranksum(model, keywords),
-    probability=plot_pi(model)$values$Probability,
-    proportion=plot_topicprop(model, show_topic = seq(1, 6), order = "topicid")$values$Topicprop
+    ranksum=keyATM_topic_ranksum(model, keywords)
   )
   return(result)
 }
 
-keyATM_print_model_statistics_table <- function(statistics) {
+keyATM_print_model_statistics_table <- function(statistics, total_features, total_documents) {
   #'
   #' Print a nicely formatted markdown table with model statistics.
   #'
   #' @param statistics the keyATM model statistics
+  #' @param total_features the total number of features
+  #' @param total_documents the total number of documents
   #'
   statistics %>%
-    transmute(
-      Topic = keyATM_topic_names(row.names(overall_pos_statistics)),
+    mutate(
+      topic = keyATM_topic_names(row.names(statistics)),
+      feature_count = 100 * feature_count / total_features,
+      document_count = 100 * document_count / total_documents
+    ) %>%
+    add_row(
+      topic="Mean",
+      feature_count=mean(.$feature_count),
+      document_count=mean(.$document_count),
+      coherence=mean(.$coherence),
+      exclusivity=mean(.$exclusivity),
+      ranksum=mean(.$ranksum)
+    ) %>%
+    mutate(
+      feature_count = paste0(format(round(feature_count, 1), nsmall = 1), "%"),
+      document_count = paste0(format(round(document_count, 1), nsmall = 1), "%"),
+      coherence = format(round(coherence)),
+      exclusivity = format(round(exclusivity, 1), nsmall = 1),
+      ranksum = format(round(ranksum, 2), nsmall = 2)
+    ) %>%
+    add_row(
+      topic="---",
+      feature_count="---",
+      document_count="---",
+      coherence="---",
+      exclusivity="---",
+      ranksum="---",
+      .before = nrow(.)
+    ) %>%
+    dplyr::rename(
+      Topic = topic,
       Features = feature_count,
       Documents = document_count,
-      Coherence = round(coherence),
-      Exclusivity = round(exclusivity, 1),
-      ISR = round(ranksum, 2),
-      Probability = paste0(format(round(100 * probability, 1), nsmall=1), "%"),
-      Proportion = paste0(format(round(100 * proportion, 1), nsmall=1), "%"),
+      Coherence = coherence,
+      Exclusivity = exclusivity,
+      ISR = ranksum
     ) %>%
+    relocate(Topic) %>%
     md_table()
 }

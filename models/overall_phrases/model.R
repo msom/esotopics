@@ -178,7 +178,11 @@ overall_phrases_statistics <- keyATM_calculate_model_statistics(
   overall_phrases_model, overall_phrases_dfm, overall_phrases_keywords
 )
 save(overall_phrases_statistics, file="models/overall_phrases/statistics.RData")
-keyATM_print_model_statistics_table(overall_phrases_statistics)
+keyATM_print_model_statistics_table(
+  overall_phrases_statistics,
+  ncol(overall_phrases_dfm),
+  nrow(overall_phrases_dfm)
+)
 
 # Validate
 plot_modelfit(overall_phrases_model)
