@@ -15,6 +15,21 @@ library(tidyr)
 library(topicdoc)
 library(topicmodels)
 
+keyATM_topic_names <- function(names) {
+  #'
+  #' Returns nice topic names
+  #'
+  #' @param names the topic names
+  #' @return nicer topic names
+  #'
+  result <- names %>%
+    str_replace("\\d_", "") %>%
+    str_replace_all("_", " ") %>%
+    str_to_title()
+  return(result)
+}
+
+
 keyATM_top_docs_texts <- function(
     model, corpus, dfm, n = 10, include_others = FALSE
 ) {
@@ -603,9 +618,7 @@ keyATM_plot_document_histogram <- function(model, threshold = 1) {
     select(name, value) %>%
     mutate(
       name = name %>%
-        str_replace("\\d_", "") %>%
-        str_replace_all("_", " ") %>%
-        str_to_title() %>%
+        keyATM_topic_names() %>%
         paste0(" (", totals[name], ")")
     ) %>%
     filter(value > threshold_theta) %>%
@@ -633,9 +646,7 @@ keyATM_plot_feature_histogram <- function(model, threshold = 1) {
     select(name, value) %>%
     mutate(
       name = name %>%
-        str_replace("\\d_", "") %>%
-        str_replace_all("_", " ") %>%
-        str_to_title() %>%
+        keyATM_topic_names() %>%
         paste0(" (", totals[name], ")")
     ) %>%
     filter(value > threshold_phi) %>%
@@ -646,3 +657,42 @@ keyATM_plot_feature_histogram <- function(model, threshold = 1) {
     ylab("Count")
 }
 
+keyATM_calculate_model_statistics <- function(model, dfm, keywords) {
+  #'
+  #' Calculate various statistics of a model
+  #'
+  #' @param model the keyATM model
+  #' @param dfm the DFM
+  #' @param keywords the keywords
+  #'
+  result <- data.frame(
+    feature_count=keyATM_topic_feature_count(model),
+    document_count=keyATM_topic_document_count(model),
+    coherence=keyATM_topic_coherence(model, dfm, n = 15),
+    exclusivity=keyATM_topic_exclusivity(model, n = 15),
+    ranksum=keyATM_topic_ranksum(model, keywords),
+    probability=plot_pi(model)$values$Probability,
+    proportion=plot_topicprop(model, show_topic = seq(1, 6), order = "topicid")$values$Topicprop
+  )
+  return(result)
+}
+
+keyATM_print_model_statistics_table <- function(statistics) {
+  #'
+  #' Print a nicely formatted markdown table with model statistics.
+  #'
+  #' @param statistics the keyATM model statistics
+  #'
+  statistics %>%
+    transmute(
+      Topic = keyATM_topic_names(row.names(overall_pos_statistics)),
+      Features = feature_count,
+      Documents = document_count,
+      Coherence = round(coherence),
+      Exclusivity = round(exclusivity, 1),
+      ISR = round(ranksum, 2),
+      Probability = paste0(format(round(100 * probability, 1), nsmall=1), "%"),
+      Proportion = paste0(format(round(100 * proportion, 1), nsmall=1), "%"),
+    ) %>%
+    md_table()
+}

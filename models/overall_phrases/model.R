@@ -1,4 +1,5 @@
 library(esocorpus)
+library(simplermarkdown)
 
 # load data
 data(esocorpus)
@@ -166,8 +167,6 @@ overall_phrases_model <- keyATM_load_model(
   "models/overall_phrases/models/"
 )
 
-keyATM_topic_document_count(overall_phrases_model)
-
 # Statistics
 keyATM_plot_document_histogram(overall_phrases_model, threshold = 1)
 ggsave("models/overall_phrases/document_histogram.pdf", width = 9, height = 6)
@@ -175,16 +174,11 @@ ggsave("models/overall_phrases/document_histogram.pdf", width = 9, height = 6)
 keyATM_plot_feature_histogram(overall_phrases_model)
 ggsave("models/overall_phrases/feature_histogram.pdf", width = 9, height = 6)
 
-overall_phrases_statistics = data.frame(
-  feature_count=keyATM_topic_feature_count(overall_phrases_model),
-  coherence=keyATM_topic_coherence(overall_phrases_model, overall_phrases_dfm, n = 15),
-  exclusivity=keyATM_topic_exclusivity(overall_phrases_model, n = 15),
-  ranksum=keyATM_topic_ranksum(overall_phrases_model, overall_phrases_keywords),
-  probability=plot_pi(overall_phrases_model)$values$Probability,
-  proportion=plot_topicprop(overall_phrases_model, show_topic = seq(1, 6), order = "topicid")$values$Topicprop
+overall_phrases_statistics <- keyATM_calculate_model_statistics(
+  overall_phrases_model, overall_phrases_dfm, overall_phrases_keywords
 )
 save(overall_phrases_statistics, file="models/overall_phrases/statistics.RData")
-View(overall_phrases_statistics)
+keyATM_print_model_statistics_table(overall_phrases_statistics)
 
 # Validate
 plot_modelfit(overall_phrases_model)

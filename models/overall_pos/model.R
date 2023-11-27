@@ -1,4 +1,5 @@
 library(esocorpus)
+library(simplermarkdown)
 
 # load data
 data(esocorpus)
@@ -173,16 +174,11 @@ ggsave("models/overall_pos/document_histogram.pdf", width = 9, height = 6)
 keyATM_plot_feature_histogram(overall_pos_model)
 ggsave("models/overall_pos/feature_histogram.pdf", width = 9, height = 6)
 
-overall_pos_statistics = data.frame(
-  feature_count=keyATM_topic_feature_count(overall_pos_model),
-  coherence=keyATM_topic_coherence(overall_pos_model, overall_pos_dfm, n = 15),
-  exclusivity=keyATM_topic_exclusivity(overall_pos_model, n = 15),
-  ranksum=keyATM_topic_ranksum(overall_pos_model, overall_pos_keywords),
-  probability=plot_pi(overall_pos_model)$values$Probability,
-  proportion=plot_topicprop(overall_pos_model, show_topic = seq(1, 6), order = "topicid")$values$Topicprop
+overall_pos_statistics <- keyATM_calculate_model_statistics(
+  overall_pos_model, overall_pos_dfm, overall_pos_keywords
 )
 save(overall_pos_statistics, file="models/overall_pos/statistics.RData")
-View(overall_pos_statistics)
+keyATM_print_model_statistics_table(overall_pos_statistics)
 
 # Validate
 plot_modelfit(overall_pos_model)
