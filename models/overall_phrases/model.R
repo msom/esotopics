@@ -166,8 +166,10 @@ overall_phrases_model <- keyATM_load_model(
   "models/overall_phrases/models/"
 )
 
+keyATM_topic_document_count(overall_phrases_model)
+
 # Statistics
-keyATM_plot_document_histogram(overall_phrases_model)
+keyATM_plot_document_histogram(overall_phrases_model, threshold = 1)
 ggsave("models/overall_phrases/document_histogram.pdf", width = 9, height = 6)
 
 keyATM_plot_feature_histogram(overall_phrases_model)

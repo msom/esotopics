@@ -130,14 +130,14 @@ keyATM_topic_feature_count <- function(model, threshold = 1, include_others = FA
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @return the number of word
   #'
-  threshold <- threshold/ncol(model$phi)
+  threshold_phi <- threshold/ncol(model$phi)
   match <- ifelse(include_others, ".*", "\\d_.*")
   result <- model$phi %>%
     t() %>%
     as.data.frame() %>%
     pivot_longer(matches(match)) %>%
     select(name, value) %>%
-    filter(value > threshold) %>%
+    filter(value > threshold_phi) %>%
     group_by(name) %>%
     dplyr::summarize(count = n())
 
@@ -146,23 +146,24 @@ keyATM_topic_feature_count <- function(model, threshold = 1, include_others = FA
   return(counts)
 }
 
-keyATM_topic_document_count <- function(model, threshold = 100, include_others = FALSE) {
+keyATM_topic_document_count <- function(model, threshold = 1, include_others = FALSE) {
   #'
   #' Calculate the number of documents relevant for a topic
   #'
   #' @param model the keyATM model
   #' @param threshold the theta value used for inclusion/exclusion as a multiple
-  #'  of the uniform distribution value, default is 100
+  #'  of the uniform distribution value, default is 1
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @return the number of topics
   #'
-  threshold <- threshold/nrow(model$theta)
+  threshold_theta <- threshold/nrow(model$theta)
   match <-ifelse(include_others, ".*", "\\d_.*")
   result <- model$theta %>%
     as.data.frame() %>%
+    mutate_all(list(~./ sum(.))) %>%
     pivot_longer(matches(match)) %>%
     select(name, value) %>%
-    filter(value > threshold) %>%
+    filter(value > threshold_theta) %>%
     group_by(name) %>%
     dplyr::summarize(count = n())
 
@@ -255,7 +256,7 @@ keyATM_fit_models <- function(
 }
 
 keyATM_measure_models <- function(
-    dfm, numbers, keywords, path, n = 10, threshold_docs = 100, threshold_features = 1
+    dfm, numbers, keywords, path, n = 10, threshold_docs = 1, threshold_features = 1
 ) {
   #'
   #' Measure the coherence, exclusivity and ranksum of different models.
@@ -266,7 +267,7 @@ keyATM_measure_models <- function(
   #' @param path the path where the models are saved
   #' @param n the number of top words to consider, default is 10
   #' @param threshold_docs the theta value used for inclusion/exclusion as a multiple
-  #'  of the uniform distribution value, default is 100
+  #'  of the uniform distribution value, default is 1
   #' @param threshold_features the phi value used for inclusion/exclusion as a multiple
   #'  of the uniform distribution value, default is 1
   #' @return a data frame with the number of topics, number of words, coherence,
@@ -585,18 +586,19 @@ keyATM_plot_topic_measure_trend <- function(metrics, topic_range) {
     ylab("Normalized Value")
 }
 
-keyATM_plot_document_histogram <- function(model, threshold = 100) {
+keyATM_plot_document_histogram <- function(model, threshold = 1) {
   #'
   #' Plot the histogram of the documents of a model
   #'
   #' @param model the keyATM model
   #' @param threshold the theta value used for inclusion/exclusion as a multiple
-  #'  of the uniform distribution value, default is 100
+  #'  of the uniform distribution value, default is 1
   #'
   totals <- keyATM_topic_document_count(model, threshold)
-  threshold <- threshold/nrow(model$theta)
+  threshold_theta <- threshold/nrow(model$theta)
   model$theta %>%
     as.data.frame() %>%
+    mutate_all(list(~./ sum(.))) %>%
     pivot_longer(matches("\\d_.*")) %>%
     select(name, value) %>%
     mutate(
@@ -606,11 +608,11 @@ keyATM_plot_document_histogram <- function(model, threshold = 100) {
         str_to_title() %>%
         paste0(" (", totals[name], ")")
     ) %>%
-    filter(value > threshold) %>%
+    filter(value > threshold_theta) %>%
     ggplot(mapping=aes(x=value)) +
     geom_histogram() +
     facet_wrap(~name) +
-    xlab("Theta") +
+    xlab("Normalized Theta") +
     ylab("Count")
 }
 
@@ -623,7 +625,7 @@ keyATM_plot_feature_histogram <- function(model, threshold = 1) {
   #'  of the uniform distribution value, default is 1
   #'
   totals <- keyATM_topic_feature_count(model, threshold)
-  threshold <- threshold/ncol(model$phi)
+  threshold_phi <- threshold/ncol(model$phi)
   model$phi %>%
     t() %>%
     as.data.frame() %>%
@@ -636,7 +638,7 @@ keyATM_plot_feature_histogram <- function(model, threshold = 1) {
         str_to_title() %>%
         paste0(" (", totals[name], ")")
     ) %>%
-    filter(value > threshold) %>%
+    filter(value > threshold_phi) %>%
     ggplot(mapping=aes(x=value)) +
     geom_histogram() +
     facet_wrap(~name) +
