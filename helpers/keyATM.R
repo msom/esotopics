@@ -650,21 +650,27 @@ keyATM_print_model_statistics_table <- function(statistics, total_features, tota
   #'
   statistics %>%
     mutate(
-      topic = keyATM_topic_names(row.names(statistics)),
-      feature_count = 100 * feature_count / total_features,
-      document_count = 100 * document_count / total_documents
+      topic = keyATM_topic_names(row.names(statistics))
     ) %>%
     add_row(
       topic="Mean",
-      feature_count=mean(.$feature_count),
-      document_count=mean(.$document_count),
+      feature_count=round(mean(.$feature_count)),
+      document_count=round(mean(.$document_count)),
       coherence=mean(.$coherence),
       exclusivity=mean(.$exclusivity),
       ranksum=mean(.$ranksum)
     ) %>%
     mutate(
-      feature_count = paste0(format(round(feature_count, 1), nsmall = 1), "%"),
-      document_count = paste0(format(round(document_count, 1), nsmall = 1), "%"),
+      feature_count = paste0(
+        feature_count,
+        " (",
+        format(round(100 * feature_count / total_features, 1), nsmall = 1), "%)"
+      ),
+      document_count = paste0(
+        document_count,
+        " (",
+        format(round(100 * document_count / total_documents, 1), nsmall = 1), "%)"
+      ),
       coherence = format(round(coherence)),
       exclusivity = format(round(exclusivity, 1), nsmall = 1),
       ranksum = format(round(ranksum, 2), nsmall = 2)
