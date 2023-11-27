@@ -409,73 +409,63 @@ keyATM_keyword_search <- function(dfm, keywords) {
   return(result)
 }
 
-keyATM_plot_topic_occurrence <- function(model, dfm, topic)
+keyATM_plot_topic_occurrences <- function(
+    model, dfm, include_others = FALSE, path = NA
+)
 {
   #'
-  #' Plot the occurrence of a topic within the documents.
+  #' Plot the occurrence of the topics within the documents.
   #'
   #' @param model the keyATM model
   #' @param dfm the esocorpus based DFM used with the model
-  #' @param topic the topic name
+  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param path the path to safe the model
   #'
-  model$theta %>%
-    as.data.frame() %>%
-    mutate(name = rownames(dfm)) %>%
-    separate_wider_delim(
-      name,
-      delim = ".txt.",
-      names = c("book", "paragraph")
-    ) %>%
-    mutate(
-      paragraph = as.numeric(paragraph),
-      book = as.factor(book),
-    ) %>%
-    ggplot(aes(x = paragraph, y = .data[[topic]])) +
-    geom_line() +
-    # geom_smooth(span = 0.1, se = FALSE) +
-    facet_wrap(~ book, ncol = 1) +
-    xlab("") +
-    ylab("Theta") +
-    labs(title = topic)
-}
+  theta <- as.data.frame(model$theta)
+  match <-ifelse(include_others, ".*", "\\d_.*")
+  topics <-  theta %>%
+    select(matches(match)) %>%
+    names()
 
-keyATM_plot_topic_occurrences <- function(model, dfm, include_others = FALSE) {
-  #'
-  #' Plot the occurrences of the topic within the documents.
-  #'
-  #' @param model the keyATM model
-  #' @param dfm the esocorpus based DFM used with the model
-  #'
-  others = c(FALSE)
-  if (include_others) {
-    others = c(TRUE, FALSE)
+  result <- list()
+  for (topic in topics) {
+    figure <- theta %>%
+      mutate(name = rownames(dfm)) %>%
+      separate_wider_delim(
+        name,
+        delim = ".txt.",
+        names = c("book", "paragraph")
+      ) %>%
+      mutate(
+        paragraph = as.numeric(paragraph),
+        book = as.factor(
+          book %>%
+            str_replace(., "_(\\d{4})", " \\(\\1\\)") %>%
+            str_replace("_1", "")
+        )
+      ) %>%
+      ggplot(aes(x = paragraph, y = .data[[topic]])) +
+      geom_line() +
+      facet_wrap(~ book, ncol = 1) +
+      xlab("Paragraph") +
+      ylab("Theta") +
+      labs(
+        title = paste0(
+          "Occurrences of '", keyATM_topic_names(topic), "'"
+        )
+      ) +
+      theme(
+        axis.text.x = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks = element_blank(),
+        plot.title = element_text(hjust = 0.5)
+      )
+    if (!is.na(path)) {
+      ggsave(paste0(path, "occurrence_", topic, ".pdf"), width = 4, height = 8)
+    }
+    result[[topic]] <- figure
   }
-  model$theta %>%
-    as.data.frame() %>%
-    mutate(name = rownames(dfm)) %>%
-    separate_wider_delim(
-      name,
-      delim = ".txt.",
-      names = c("book", "paragraph")
-    ) %>%
-    gather(key = "topic", value = "value", c(-book, -paragraph)) %>%
-    mutate(
-      other = ifelse(startsWith(topic, "Other"), TRUE, FALSE),
-      paragraph = as.numeric(paragraph),
-      topic = as.factor(topic),
-      book = as.factor(book),
-    ) %>%
-    filter(
-      other %in% others
-    ) %>%
-    ggplot(
-      aes(x = paragraph, y = value, color = topic, linetype = other)
-    ) +
-    geom_smooth(span = 0.01, se = FALSE) +
-    scale_linetype(guide = "none") +
-    facet_wrap(~ book, ncol = 1) +
-    xlab("") +
-    ylab("Theta")
+  return(result)
 }
 
 keyATM_plot_keyword_occurrences <- function(dfm, keywords, topic) {
@@ -505,26 +495,6 @@ keyATM_plot_keyword_occurrences <- function(dfm, keywords, topic) {
     xlab("Paragraph") +
     ylab("Occurrence")
   # todo: scale x
-}
-
-keyATM_plot_topic_correlation <- function(model, dfm) {
-  #'
-  #' Plot the topic correlations within each current
-  #'
-  #' @param model the keyATM model
-  #' @param dfm the esocorpus based DFM used with the model
-  #'
-  theta <- model$theta %>%
-    as.data.frame() %>%
-    mutate(current = docvars(dfm)$current)
-
-  for (name in unique(theta$current)) {
-    theta %>%
-      filter(current == name) %>%
-      select(-current) %>%
-      cor() %>%
-      corrplot(title = name, method = "color", type = "lower")
-  }
 }
 
 keyATM_plot_topic_measure_scatter <- function(

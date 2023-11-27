@@ -136,6 +136,4 @@ magic_top_docs <- keyATM_top_docs_texts(magic_model, magic_corpus, magic_dfm)
 save(magic_top_docs, file="models/magic/docs.RData")
 View(magic_top_docs)
 
-# Show topic in texts
-keyATM_plot_topic_occurrence(magic_model, magic_dfm, "1_the_astral")
 keyATM_plot_topic_occurrences(magic_model, magic_dfm)

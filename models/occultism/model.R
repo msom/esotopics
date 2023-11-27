@@ -154,13 +154,6 @@ occultism_top_docs <- keyATM_top_docs_texts(occultism_model, occultism_corpus, o
 View(occultism_top_docs)
 save(occultism_top_docs, file="models/occultism/docs.RData")
 
-# Show topic in texts
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "1_the_astral")
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "2_astral_light")
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "3_kabbalistic_tarot")
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "4_magnetic_sleep")
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "5_seance")
-keyATM_plot_topic_occurrence(occultism_model, occultism_dfm, "6_progression")
 keyATM_plot_topic_occurrences(occultism_model, occultism_dfm)
 
 # Test with one of levis other texts

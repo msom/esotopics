@@ -144,11 +144,6 @@ spiritualism_top_docs <- keyATM_top_docs_texts(spiritualism_model, spiritualism_
 save(spiritualism_top_docs, file="models/spiritualism/docs.RData")
 View(spiritualism_top_docs)
 
-# Show topic in texts
-keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "1_astral_light")
-keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "2_magnetic_sleep")
-keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "3_seance")
-keyATM_plot_topic_occurrence(spiritualism_model, spiritualism_dfm, "4_progression")
 keyATM_plot_topic_occurrences(spiritualism_model, spiritualism_dfm)
 
 # Compare to one of Kardecs other texts

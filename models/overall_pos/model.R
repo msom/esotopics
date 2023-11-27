@@ -205,12 +205,6 @@ overall_pos_top_docs <- keyATM_top_docs_texts(
 save(overall_pos_top_docs, file="models/overall_pos/docs.RData")
 View(overall_pos_top_docs)
 
-# Show topic in texts
-keyATM_plot_topic_occurrence(overall_pos_model, overall_pos_dfm, "1_the_astral")
-keyATM_plot_topic_occurrence(overall_pos_model, overall_pos_dfm, "2_astral_light")
-keyATM_plot_topic_occurrence(overall_pos_model, overall_pos_dfm, "3_kabbalistic_tarot")
-keyATM_plot_topic_occurrence(overall_pos_model, overall_pos_dfm, "4_magnetic_sleep")
-keyATM_plot_topic_occurrence(overall_pos_model, overall_pos_dfm, "5_seance")
-keyATM_plot_topic_occurrence(overall_pos_model, overall_pos_dfm, "6_progression")
-keyATM_plot_topic_occurrences(overall_pos_model, overall_pos_dfm)
-keyATM_plot_topic_correlation(overall_pos_model, overall_pos_dfm)
+keyATM_plot_topic_occurrences(
+  overall_pos_model, overall_pos_dfm, path = "models/overall_pos/"
+)
