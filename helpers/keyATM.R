@@ -268,6 +268,7 @@ keyATM_fit_models <- function(
     }
   )
   stopCluster(cluster)
+  return(result)
 }
 
 keyATM_measure_models <- function(
@@ -420,6 +421,7 @@ keyATM_plot_topic_occurrences <- function(
   #' @param dfm the DFM used with the model
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @param path the path to safe the model
+  #' @return a list of plots
   #'
   theta <- as.data.frame(model$theta)
   match <-ifelse(include_others, ".*", "\\d_.*")
@@ -623,7 +625,7 @@ keyATM_plot_feature_histogram <- function(model, threshold = 1) {
 }
 
 keyATM_print_occurrences_table <- function(
-    model, dfm, threshold = 1, include_others = FALSE
+    model, dfm, threshold = 1, include_others = FALSE, number_of_rows = NA
 ) {
   #'
   #' Print a nicely formatted markdown table with occurrences
@@ -633,10 +635,12 @@ keyATM_print_occurrences_table <- function(
   #' @param threshold the phi value used for inclusion/exclusion as a multiple
   #'  of the uniform distribution value, default is 1
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param number_of_rows an optional integer for considering a maximum number
+  #'  of rows to count
   #'
   match <-ifelse(include_others, ".*", "\\d_.*")
   threshold_theta <- threshold/nrow(model$theta)
-  model$theta %>%
+  occurrences <- model$theta %>%
     as.data.frame() %>%
     mutate_all(list(~./ sum(.))) %>%
     select(matches(match)) %>%
@@ -663,7 +667,16 @@ keyATM_print_occurrences_table <- function(
       topic = keyATM_topic_names(topic)
     ) %>%
     arrange(topic, -theta) %>%
-    filter(theta > threshold_theta) %>%
+    filter(theta > threshold_theta)
+
+  if (!is.na(number_of_rows)) {
+    occurrences <- occurrences %>%
+      group_by(topic) %>%
+      slice_head(n = number_of_rows) %>%
+      ungroup()
+  }
+
+  occurrences %>%
     select(-paragraph, -theta) %>%
     group_by(book) %>%
     count() %>%
@@ -681,6 +694,7 @@ keyATM_calculate_model_statistics <- function(model, dfm, keywords) {
   #' @param model the keyATM model
   #' @param dfm the DFM
   #' @param keywords the keywords
+  #' @return a data frame with model statistics.
   #'
   result <- data.frame(
     feature_count=keyATM_topic_feature_count(model),
