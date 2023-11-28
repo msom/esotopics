@@ -205,6 +205,9 @@ overall_phrases_top_docs <- keyATM_top_docs_texts(
 save(overall_phrases_top_docs, file="models/overall_phrases/docs.RData")
 View(overall_phrases_top_docs)
 
+keyATM_print_occurrences_table(overall_phrases_model, overall_phrases_dfm)
+
 keyATM_plot_topic_occurrences(
   overall_phrases_model, overall_phrases_dfm, path = "models/overall_phrases/"
 )
+

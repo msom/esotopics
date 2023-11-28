@@ -205,6 +205,8 @@ overall_pos_top_docs <- keyATM_top_docs_texts(
 save(overall_pos_top_docs, file="models/overall_pos/docs.RData")
 View(overall_pos_top_docs)
 
+keyATM_print_occurrences_table(overall_pos_model, overall_pos_dfm)
+
 keyATM_plot_topic_occurrences(
   overall_pos_model, overall_pos_dfm, path = "models/overall_pos/"
 )

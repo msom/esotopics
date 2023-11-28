@@ -417,7 +417,7 @@ keyATM_plot_topic_occurrences <- function(
   #' Plot the occurrence of the topics within the documents.
   #'
   #' @param model the keyATM model
-  #' @param dfm the esocorpus based DFM used with the model
+  #' @param dfm the DFM used with the model
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @param path the path to safe the model
   #'
@@ -622,6 +622,58 @@ keyATM_plot_feature_histogram <- function(model, threshold = 1) {
     ylab("Count")
 }
 
+keyATM_print_occurrences_table <- function(
+    model, dfm, threshold = 1, include_others = FALSE
+) {
+  #'
+  #' Print a nicely formatted markdown table with occurrences
+  #'
+  #' @param model the keyATM model
+  #' @param dfm the DFM used with the model
+  #' @param threshold the phi value used for inclusion/exclusion as a multiple
+  #'  of the uniform distribution value, default is 1
+  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #'
+  match <-ifelse(include_others, ".*", "\\d_.*")
+  threshold_theta <- threshold/nrow(model$theta)
+  model$theta %>%
+    as.data.frame() %>%
+    mutate_all(list(~./ sum(.))) %>%
+    select(matches(match)) %>%
+    mutate(name = rownames(dfm)) %>%
+    separate_wider_delim(
+      name,
+      delim = ".txt.",
+      names = c("book", "paragraph")
+    ) %>%
+    mutate(
+      paragraph = as.numeric(paragraph),
+      book = as.factor(
+        book %>%
+          str_replace(., "_(\\d{4})", " \\(\\1\\)") %>%
+          str_replace("_1", "")
+      )
+    ) %>%
+    pivot_longer(
+      -c("book", "paragraph"),
+      names_to="topic",
+      values_to="theta"
+    ) %>%
+    mutate(
+      topic = keyATM_topic_names(topic)
+    ) %>%
+    arrange(topic, -theta) %>%
+    filter(theta > threshold_theta) %>%
+    select(-paragraph, -theta) %>%
+    group_by(book) %>%
+    count() %>%
+    ungroup() %>%
+    pivot_wider(names_from = topic, values_from = freq) %>%
+    replace(is.na(.), 0) %>%
+    dplyr::rename(Book = book) %>%
+    md_table()
+}
+
 keyATM_calculate_model_statistics <- function(model, dfm, keywords) {
   #'
   #' Calculate various statistics of a model
@@ -640,7 +692,9 @@ keyATM_calculate_model_statistics <- function(model, dfm, keywords) {
   return(result)
 }
 
-keyATM_print_model_statistics_table <- function(statistics, total_features, total_documents) {
+keyATM_print_model_statistics_table <- function(
+    statistics, total_features, total_documents
+) {
   #'
   #' Print a nicely formatted markdown table with model statistics.
   #'
