@@ -626,8 +626,8 @@ keyATM_calculate_model_statistics <- function(model, dfm, keywords) {
   result <- data.frame(
     feature_count=keyATM_topic_feature_count(model),
     document_count=keyATM_topic_document_count(model),
-    coherence=keyATM_topic_coherence(model, dfm, n = 15),
-    exclusivity=keyATM_topic_exclusivity(model, n = 15),
+    coherence=keyATM_topic_coherence(model, dfm),
+    exclusivity=keyATM_topic_exclusivity(model),
     ranksum=keyATM_topic_ranksum(model, keywords)
   )
   return(result)
