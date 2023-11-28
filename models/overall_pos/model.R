@@ -1,5 +1,4 @@
 library(esocorpus)
-library(simplermarkdown)
 
 # load data
 data(esocorpus)

@@ -10,6 +10,7 @@ library(pbapply)
 library(philentropy)
 library(plyr)
 library(quanteda)
+library(simplermarkdown)
 library(stringr)
 library(tidyr)
 library(topicdoc)
@@ -310,80 +311,6 @@ keyATM_measure_models <- function(
   return(rbind.fill(result))
 }
 
-keyATM_compare_models_by_words <- function(x, y, m = 100, include_others = FALSE) {
-  #'
-  #' Compare two models by comparing their top words.
-  #'
-  #' @param x the first keyATM model
-  #' @param y the second keyATM model
-  #' @param m the maximum number of terms to include, default is 100
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
-  #' @return An k vector with the proportion of common top words
-  #'
-  match <-ifelse(include_others, ".*", "\\d_.*")
-  words_x <- top_words(x, m, show_keyword = FALSE) %>%
-    select(matches(match))
-  words_y <- top_words(y, m, show_keyword = FALSE) %>%
-    select(matches(match))
-
-  result <- data.frame(matrix(NA, nrow = m-1, ncol = 1 + length(colnames(words_x))))
-  colnames(result) <- c("n", colnames(words_x))
-  result$n <- 2:m
-
-  for (name in colnames(words_x)) {
-    for (n in 2:m) {
-      result[n-1, name] <- length(
-        unlist(
-          intersect(
-            words_x[1:n, name],
-            words_y[1:n, name])
-        )
-      ) / n
-    }
-  }
-
-  return(result)
-}
-
-keyATM_compare_models_by_distribution <- function(x, y, include_others = FALSE) {
-  #'
-  #' Compare two models by comparing their distribution using the
-  #' Jensen-Shannon divergence.
-  #'
-  #' Idea taken from https://datascience.stackexchange.com/a/87269
-  #'
-  #' @param x the first keyATM model
-  #' @param y the second keyATM model
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
-  #' @return An k vector with the distance value in the range 0 (similar) to 1 (distant)
-  #'
-  match <-ifelse(include_others, ".*", "\\d_.*")
-
-  # get the distributions and outer join them
-  phi_x <- x$phi %>%
-    t() %>%
-    as.data.frame() %>%
-    select(matches(match))
-  colnames(phi_x) <- paste('x', colnames(phi_x), sep = '_')
-  phi_y <- y$phi %>%
-    t() %>%
-    as.data.frame() %>%
-    select(matches(match))
-  colnames(phi_y) <- paste('y', colnames(phi_y), sep = '_')
-  phi <- merge(phi_x, phi_y, by=0, all=TRUE)
-  phi[is.na(phi)] <- 0
-
-  result <- vector(length = ncol(phi_x))
-  for (index in 1:length(colnames(phi_x))) {
-    values <- rbind(
-      phi[,colnames(phi_x)[index]],
-      phi[,colnames(phi_y)[index]]
-    )
-    result[index] <- JSD(values, unit='log')
-  }
-  names(result) <- colnames(phi_x)
-  return(result)
-}
 
 keyATM_keyword_search <- function(dfm, keywords) {
   #'
