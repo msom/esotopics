@@ -75,6 +75,42 @@ keyATM_top_docs_texts <- function(
   return(docs)
 }
 
+keyATM_save_top_docs_texts <- function(texts, file) {
+  #'
+  #' Creates a nicely formatted markdown file with the given texts
+  #'
+  #' @param texts the result of keyATM_top_docs_texts
+  #' @param file the file name
+  #' @return a n x k table with the texts of the top n documents for each topic
+  #'
+  cat(file = file)
+  for (topic in 1:6) {
+    cat(
+      str_glue("\n\n# {keyATM_topic_names(names(texts))[topic]}\n\n"),
+      file = file, append = TRUE
+    )
+
+    for (document in 1:20) {
+
+      cat(
+        str_glue("\n\n## {document}: "),
+        file = file, append = TRUE
+      )
+      cat(
+        texts[document, topic] %>%
+          str_replace("\\.txt\\.", " ") %>%
+          str_replace("_(\\d{4})(_\\d)*", " (\\1) ") %>%
+          str_replace(": ", "\n\n>") %>%
+          str_replace_all("[ ]+", " ")
+        ,
+        file = file, append = TRUE
+      )
+      # cat("\n\n\n\n", file = "output.md", append = TRUE)
+    }
+  }
+}
+
+
 keyATM_topic_coherence <- function(
     model, dfm, n = 10, include_others = FALSE
 ) {

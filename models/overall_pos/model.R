@@ -207,10 +207,9 @@ top_words(overall_pos_model, n = 200, show_keyword = FALSE) %>%
 
 # ... top documents
 overall_pos_top_docs <- keyATM_top_docs_texts(
-  overall_pos_model, overall_pos_corpus, overall_pos_dfm, n = 200
+  overall_pos_model, overall_pos_corpus, overall_pos_dfm, n = 20
 )
-save(overall_pos_top_docs, file="models/overall_pos/docs.RData")
-View(overall_pos_top_docs)
+keyATM_save_top_docs_texts(overall_pos_top_docs, "models/overall_pos/docs.md")
 
 # ... occurrences
 keyATM_print_occurrences_table(overall_pos_model, overall_pos_dfm)
