@@ -30,6 +30,24 @@ keyATM_topic_names <- function(names) {
   return(result)
 }
 
+keyATM_print_top_words_table <- function(model, n = 10, include_others = FALSE) {
+  #'
+  #' Show the texts of the top documents of a keyATM model for each topics
+  #'
+  #' @param model the keyATM model
+  #' @param n the number of words to show, default is 10
+  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #'
+  match <-ifelse(include_others, ".*", "\\d_.*")
+  docs <- top_words(model, n) %>%
+    select(matches(match)) %>%
+    mutate_all(str_replace_all, "\\.", " ") %>%
+    mutate_all(str_replace_all, "(.*) \\[✓\\]", "*\\1*") %>%
+    mutate_all(str_replace_all, " \\[\\d\\]", "")
+  names(docs) <- keyATM_topic_names(names(docs))
+  docs %>%
+    md_table()
+}
 
 keyATM_top_docs_texts <- function(
     model, corpus, dfm, n = 10, include_others = FALSE

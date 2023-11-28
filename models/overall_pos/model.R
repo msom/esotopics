@@ -167,12 +167,16 @@ overall_pos_model <- keyATM_load_model(
 )
 
 # Statistics
+
+# ... document histogram
 keyATM_plot_document_histogram(overall_pos_model)
 ggsave("models/overall_pos/document_histogram.pdf", width = 9, height = 6)
 
+# ... feature histogram
 keyATM_plot_feature_histogram(overall_pos_model)
 ggsave("models/overall_pos/feature_histogram.pdf", width = 9, height = 6)
 
+# ... model statistics
 overall_pos_statistics <- keyATM_calculate_model_statistics(
   overall_pos_model, overall_pos_dfm, overall_pos_keywords
 )
@@ -184,26 +188,31 @@ keyATM_print_model_statistics_table(
 )
 
 # Validate
+
+# ... convergence
 plot_modelfit(overall_pos_model)
 ggsave("models/overall_pos/model_fit.pdf", width = 9, height = 4)
 
 plot_alpha(overall_pos_model)
 
+# ... topic proportion
 plot_pi(overall_pos_model)
 
 plot_topicprop(overall_pos_model, show_topic = seq(1, 6))
 
-overall_pos_words <- top_words(overall_pos_model, 200)
+# ... top features
+keyATM_print_top_words_table(overall_pos_model)
 top_words(overall_pos_model, n = 200, show_keyword = FALSE) %>%
   write.csv("models/overall_pos/topics.csv")
-View(overall_pos_words)
 
+# ... top documents
 overall_pos_top_docs <- keyATM_top_docs_texts(
   overall_pos_model, overall_pos_corpus, overall_pos_dfm, n = 200
 )
 save(overall_pos_top_docs, file="models/overall_pos/docs.RData")
 View(overall_pos_top_docs)
 
+# ... occurrences
 keyATM_print_occurrences_table(overall_pos_model, overall_pos_dfm)
 
 keyATM_plot_topic_occurrences(

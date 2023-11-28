@@ -167,12 +167,16 @@ overall_phrases_model <- keyATM_load_model(
 )
 
 # Statistics
+
+# ... document histogram
 keyATM_plot_document_histogram(overall_phrases_model, threshold = 1)
 ggsave("models/overall_phrases/document_histogram.pdf", width = 9, height = 6)
 
+# ... feature histogram
 keyATM_plot_feature_histogram(overall_phrases_model)
 ggsave("models/overall_phrases/feature_histogram.pdf", width = 9, height = 6)
 
+# ... model statistics
 overall_phrases_statistics <- keyATM_calculate_model_statistics(
   overall_phrases_model, overall_phrases_dfm, overall_phrases_keywords
 )
@@ -184,26 +188,31 @@ keyATM_print_model_statistics_table(
 )
 
 # Validate
+
+# ... convergence
 plot_modelfit(overall_phrases_model)
 ggsave("models/overall_phrases/model_fit.pdf", width = 9, height = 4)
 
 plot_alpha(overall_phrases_model)
 
+# ... topic proportion
 plot_pi(overall_phrases_model)
 
 plot_topicprop(overall_phrases_model, show_topic = seq(1, 6))
 
-overall_phrases_words <- top_words(overall_phrases_model, 200)
+# ... top features
+keyATM_print_top_words_table(overall_phrases_model)
 top_words(overall_phrases_model, n = 200, show_keyword = FALSE) %>%
   write.csv("models/overall_phrases/topics.csv")
-View(overall_phrases_words)
 
+# ... top documents
 overall_phrases_top_docs <- keyATM_top_docs_texts(
   overall_phrases_model, overall_phrases_corpus, overall_phrases_dfm, n = 200
 )
 save(overall_phrases_top_docs, file="models/overall_phrases/docs.RData")
 View(overall_phrases_top_docs)
 
+# ... occurrences
 keyATM_print_occurrences_table(overall_phrases_model, overall_phrases_dfm)
 
 keyATM_plot_topic_occurrences(
