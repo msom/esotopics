@@ -205,9 +205,7 @@ top_words(pos_model, n = 200, show_keyword = FALSE) %>%
   write.csv("models/pos/topics.csv")
 
 # ... top documents
-pos_top_docs <- keyATM_top_docs_texts(
-  pos_model, pos_corpus, pos_dfm, n = 100
-)
+pos_top_docs <- keyATM_top_docs_texts(pos_model, pos_corpus, pos_dfm, n = 20)
 keyATM_save_top_docs_texts(pos_top_docs, "models/pos/docs.md")
 
 # ... occurrences

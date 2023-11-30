@@ -3,6 +3,7 @@ library(corrplot)
 library(datawizard)
 library(dplyr)
 library(ggplot2)
+library(ggpointdensity)
 library(ggrepel)
 library(keyATM)
 library(parallel)
@@ -63,13 +64,24 @@ keyATM_top_docs_texts <- function(
   #' @return a n x k table with the texts of the top n documents for each topic
   #'
   match <-ifelse(include_others, ".*", "\\d_.*")
-  docs <- top_docs(model, n) %>%
+
+  # we cannot use top_docs with our model-like lists
+  measuref <- function(xcol) {order(xcol, decreasing = TRUE)[1:n]}
+  docs <- as.data.frame(
+    apply(model$theta, 2, measuref), stringsAsFactors = FALSE
+  ) %>%
     select(matches(match))
+
   for (name in colnames(docs)) {
-    docs[,name] <- paste(
-      rownames(dfm)[docs[,name]],
-      corpus[rownames(dfm)[docs[,name]]],
-      sep = ": "
+    indices <- docs[,name]
+    docs[,name] <- paste0(
+      rownames(dfm)[indices] %>%
+            str_replace("\\.txt\\.", " ") %>%
+            str_replace("_(\\d{4})(_\\d)*", " (\\1)"),
+      str_glue(
+        " [{round(model$theta[indices], 4)}]: ",
+        "{corpus[rownames(dfm)[indices]]}"
+      )
     )
   }
   return(docs)
@@ -97,14 +109,11 @@ keyATM_save_top_docs_texts <- function(texts, file) {
       )
       cat(
         texts[document, topic] %>%
-          str_replace("\\.txt\\.", " ") %>%
-          str_replace("_(\\d{4})(_\\d)*", " (\\1) ") %>%
           str_replace(": ", "\n\n>") %>%
           str_replace_all("[ ]+", " ")
         ,
         file = file, append = TRUE
       )
-      # cat("\n\n\n\n", file = "output.md", append = TRUE)
     }
   }
 }
@@ -364,12 +373,22 @@ keyATM_measure_models <- function(
 }
 
 
-keyATM_keyword_search <- function(dfm, keywords) {
+keyATM_keyword_search <- function(
+  dfm, keywords, drop_empty_rows = TRUE, drop_empty_columns = TRUE,
+  summarized = FALSE, categorical = FALSE
+) {
   #'
   #' Find the given keywords in the dfm
   #'
   #' @param dfm the DFM
   #' @param keywords the keyATM like keywords list
+  #' @param drop_empty_rows if TRUE, drops rows with no hit, default is TRUE
+  #' @param drop_empty_columns if TRUE, drops columns with no hit, default is
+  #'  TRUE
+  #' @param summarized if TRUE, only returns the sum of keyword occurrences
+  #'  instead occurrences by keywords, default is FALSE
+  #' @param categorical if TRUE, only returns summarized occurrences as
+  #'  hit (1) / no hit (0), default is FALSE
   #' @return A list with keyword occurrences for each topic
   #'
   df <- convert(dfm, to = "data.frame")
@@ -383,8 +402,23 @@ keyATM_keyword_search <- function(dfm, keywords) {
     name <- names(keywords)[index]
     df_terms <- df %>%
       select(any_of(terms))
-    result[[name]] <- df_terms %>%
-      filter(if_any(colnames(df_terms), ~.x > 0))
+    if (drop_empty_rows) {
+      df_terms <- df_terms %>%
+        filter(if_any(colnames(df_terms), ~.x > 0))
+    }
+    if (drop_empty_columns) {
+      df_terms <- df_terms %>%
+        select(which(colSums(., na.rm = TRUE) > 0))
+    }
+    if (summarized) {
+      df_terms <- df_terms %>%
+        transmute(occurrences = rowSums(.))
+      if (categorical) {
+        df_terms <- df_terms %>%
+          mutate(occurrences = ifelse(occurrences > 0, 1, 0))
+      }
+    }
+    result[[name]] <- df_terms
   }
   return(result)
 }
@@ -466,11 +500,11 @@ keyATM_plot_keyword_occurrences <- function(dfm, keywords, topic) {
       Keyword = as.factor(Keyword)
     ) %>%
     filter(value > 0) %>%
-    ggplot(aes(x = paragraph, y = value, color = Keyword)) +
+    ggplot(aes(x = paragraph, y = value, color = Keyword, fill = Keyword)) +
     geom_col() +
+    xlim(0, nrow(dfm)) +
     xlab("Paragraph") +
     ylab("Occurrence")
-  # todo: scale x
 }
 
 keyATM_plot_topic_measure_scatter <- function(
@@ -739,4 +773,88 @@ keyATM_print_model_statistics_table <- function(
     ) %>%
     relocate(Topic) %>%
     md_table()
+}
+
+
+keyATM_compare_search_to_model <- function(model, dfm, keywords, topic, author) {
+  #'
+  #' Prints a confusion matrix and returns a scatter plot with theta vs.
+  #' search occurrences.
+  #'
+  #' @param model the keyATM model
+  #' @param dfm the DFM§
+  #' @param keywords the keyATM like keywords list
+  #' @param topic the topic name (starting with number prefix)
+  #' @param author the author name
+  #' @return A scatter plot
+  #'
+  threshold_theta <- 1/(model$no_keyword_topics + model$keyword_k)
+  theta <- model$theta %>%
+    as.data.frame() %>%
+    slice(which(docvars(dfm)$name == author)) %>%
+    select(all_of(topic)) %>%
+    pull()
+
+  occurrences <- keyATM_keyword_search(
+    dfm %>%
+      dfm_subset(name == author),
+    keywords,
+    drop_empty_rows = FALSE
+  ) %>%
+    `[[`(str_replace(topic, "\\d_", "")) %>%
+    transmute(occurrences = rowSums(.)) %>%
+    mutate(hit = ifelse(occurrences > 0, 1, 0))
+
+  df <- data.frame(
+    theta = theta,
+    hit = occurrences$hit,
+    occurrences = occurrences$occurrences
+  )
+
+  table(cut(df$theta, c(0, threshold_theta, 1)), factor(df$hit, labels=c("Negative", "Positive"))) %>%
+    as.data.frame.matrix() %>%
+    mutate(Theta = rownames(.)) %>%
+    relocate(Theta) %>%
+    md_table()
+
+  df %>%
+    ggplot(aes(occurrences, theta)) +
+    geom_pointdensity(shape = 17) +
+    geom_hline(yintercept = threshold_theta, linewidth = 0.5, linetype = "dashed") +
+    scale_colour_gradient(
+      high = "#132B43",
+      low = "#56B1F7"
+    ) +
+    labs(color = "Neighbors") +
+    xlab("Occurrences") +
+    ylab("Theta")
+}
+
+keyATM_search_to_model <- function(model, dfm, keywords) {
+  #'
+  #' Creates a keyATM model like list from a keyword search
+  #'
+  #' @param model a keyATM model containing information on topics
+  #' @param dfm the DFM
+  #' @param keywords the keyATM like keywords list
+  #' @return A list containing occurrences as thetas and some topic information
+  #'
+  theta <- keyATM_keyword_search(
+    dfm, keywords,
+    drop_empty_rows = FALSE,
+    drop_empty_columns = FALSE,
+    summarized = TRUE,
+    categorical = FALSE
+  )
+  theta <- do.call(cbind, theta)
+  colnames(theta) <- names(model$keywords_raw)
+  rownames(theta) <- NULL
+  # rownames(theta) <- rownames(as.data.frame(model$theta))
+
+  result <- list(
+    theta=as.matrix(theta),
+    no_keyword_topics=model$no_keyword_topics,
+    keyword_k=model$keyword_k
+  )
+  return(result)
 }

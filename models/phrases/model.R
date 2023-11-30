@@ -206,7 +206,7 @@ top_words(phrases_model, n = 200, show_keyword = FALSE) %>%
 
 # ... top documents
 phrases_top_docs <- keyATM_top_docs_texts(
-  phrases_model, phrases_corpus, phrases_dfm, n = 100
+  phrases_model, phrases_corpus, phrases_dfm, n = 20
 )
 keyATM_save_top_docs_texts(phrases_top_docs, "models/phrases/docs.md")
 
