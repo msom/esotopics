@@ -225,11 +225,10 @@ keyATM_topic_document_count <- function(model, threshold = 1, include_others = F
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @return the number of topics
   #'
-  threshold_theta <- threshold/nrow(model$theta)
+  threshold_theta <- 1/(model$no_keyword_topics + model$keyword_k)
   match <-ifelse(include_others, ".*", "\\d_.*")
   result <- model$theta %>%
     as.data.frame() %>%
-    mutate_all(list(~./ sum(.))) %>%
     pivot_longer(matches(match)) %>%
     select(name, value) %>%
     filter(value > threshold_theta) %>%
@@ -533,7 +532,7 @@ keyATM_plot_topic_measure_trend <- function(metrics, topic_range) {
       names_to = "measure"
     ) %>%
     ggplot(aes(x = topics, y = value, color = measure, shape = measure)) +
-    geom_point(position = position_jitter(), size = 3) +
+    geom_point(position = position_jitter(height = 0, width = 10), size = 3) +
     geom_smooth(se = FALSE, linewidth = 0.5, span = 10, linetype = "dashed") +
     scale_y_continuous(limits = c(0, 1.01)) +
     scale_color_discrete(
@@ -557,10 +556,9 @@ keyATM_plot_document_histogram <- function(model, threshold = 1) {
   #'  of the uniform distribution value, default is 1
   #'
   totals <- keyATM_topic_document_count(model, threshold)
-  threshold_theta <- threshold/nrow(model$theta)
+  threshold_theta <- 1/(model$no_keyword_topics + model$keyword_k)
   model$theta %>%
     as.data.frame() %>%
-    mutate_all(list(~./ sum(.))) %>%
     pivot_longer(matches("\\d_.*")) %>%
     select(name, value) %>%
     mutate(
@@ -619,10 +617,9 @@ keyATM_print_occurrences_table <- function(
   #'  of rows to count
   #'
   match <-ifelse(include_others, ".*", "\\d_.*")
-  threshold_theta <- threshold/nrow(model$theta)
+  threshold_theta <- 1/(model$no_keyword_topics + model$keyword_k)
   occurrences <- model$theta %>%
     as.data.frame() %>%
-    mutate_all(list(~./ sum(.))) %>%
     select(matches(match)) %>%
     mutate(name = rownames(dfm)) %>%
     separate_wider_delim(
@@ -643,9 +640,6 @@ keyATM_print_occurrences_table <- function(
       names_to="topic",
       values_to="theta"
     ) %>%
-    mutate(
-      topic = keyATM_topic_names(topic)
-    ) %>%
     arrange(topic, -theta) %>%
     filter(theta > threshold_theta)
 
@@ -661,6 +655,9 @@ keyATM_print_occurrences_table <- function(
     group_by(book) %>%
     count() %>%
     ungroup() %>%
+    mutate(
+      topic = keyATM_topic_names(topic)
+    ) %>%
     pivot_wider(names_from = topic, values_from = freq) %>%
     replace(is.na(.), 0) %>%
     dplyr::rename(Book = book) %>%

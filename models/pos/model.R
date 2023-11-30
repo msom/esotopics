@@ -143,13 +143,13 @@ save(pos_metrics, file="models/pos/metrics.RData")
 # Find number of topics
 keyATM_plot_topic_measure_scatter(
   pos_metrics,
-  c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
+  c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/pos/metrics_scatter_overview.pdf", width = 9, height = 4)
 
 keyATM_plot_topic_measure_trend(
   pos_metrics,
-  c(1, 10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
+  c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/pos/metrics_trend.pdf", width = 9, height = 5)
 
