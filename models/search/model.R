@@ -12,8 +12,7 @@ search_keywords <- list(
     "akashic.envelope",
     "sphere.of.sensation",
     "image.on.the.sphere",
-    "picture.on.the.sphere",
-    "physical.plane"  # ambiguous
+    "picture.on.the.sphere"
   ),
   astral_light = c(
     "astral.light",
@@ -81,7 +80,7 @@ phrases_model <- keyATM_load_model(
   "models/phrases/models/"
 )
 load("models/phrases/dfm.RData")
-# todo: load corpus
+load("models/phrases/corpus.RData")
 
 # Create model
 search_model <- keyATM_search_to_model(
