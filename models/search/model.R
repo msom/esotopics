@@ -98,6 +98,8 @@ keyATM_save_top_docs_texts(search_top_docs, "models/search/docs.md")
 # ... occurrences
 keyATM_print_occurrences_table(search_model_categorical, phrases_dfm)
 
+# TODO: clean up below
+
 # ... The Astral <-> King
 keyATM_compare_search_to_model(
   phrases_model, phrases_dfm, search_keywords, "1_the_astral", "King"
@@ -105,13 +107,9 @@ keyATM_compare_search_to_model(
 ggsave("models/search/confusion_the_astral_king.pdf", width = 5, height = 5)
 
 
-#
-# keyATM_plot_keyword_occurrences(
-#   phrases_dfm %>%
-#     dfm_subset(name == "King"),
-#   search_keywords,
-#   "the_astral"
-# )
-#
-x <- phrases_model$theta %>% as.data.frame()
-y <- search_model$theta
+keyATM_plot_keyword_occurrences(
+  phrases_dfm %>%
+    dfm_subset(name == "King"),
+  search_keywords,
+  "the_astral"
+)
