@@ -136,8 +136,7 @@ phrases_metrics <- keyATM_measure_models(
   phrases_dfm,
   numbers = c(seq(1, 124), 125, 150, 200, 250, 300),
   phrases_keywords,
-  "models/phrases/models/",
-  n = 15
+  "models/phrases/models/"
 )
 save(phrases_metrics, file="models/phrases/metrics.RData")
 
@@ -179,7 +178,9 @@ ggsave("models/phrases/feature_histogram.pdf", width = 9, height = 6)
 
 # ... model statistics
 phrases_statistics <- keyATM_calculate_model_statistics(
-  phrases_model, phrases_dfm, phrases_keywords
+  phrases_model, phrases_dfm, phrases_keywords,
+  intruder_features = c(NA, NA, NA, NA, NA, NA),
+  intruder_documents = c(NA, NA, NA, NA, NA, NA)
 )
 keyATM_print_model_statistics_table(
   phrases_statistics,

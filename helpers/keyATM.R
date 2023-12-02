@@ -27,7 +27,8 @@ keyATM_topic_names <- function(names) {
   result <- names %>%
     str_replace("\\d_", "") %>%
     str_replace_all("_", " ") %>%
-    str_to_title()
+    str_to_title() %>%
+    str_replace("Seance", "Séance")
   return(result)
 }
 
@@ -698,13 +699,17 @@ keyATM_print_occurrences_table <- function(
     md_table()
 }
 
-keyATM_calculate_model_statistics <- function(model, dfm, keywords) {
+keyATM_calculate_model_statistics <- function(
+    model, dfm, keywords, intruder_features, intruder_documents
+) {
   #'
   #' Calculate various statistics of a model
   #'
   #' @param model the keyATM model
   #' @param dfm the DFM
   #' @param keywords the keywords
+  #' @param intruder_features the intruder features score
+  #' @param intruder_documents the intruder documents score
   #' @return a data frame with model statistics.
   #'
   result <- data.frame(
@@ -712,7 +717,9 @@ keyATM_calculate_model_statistics <- function(model, dfm, keywords) {
     document_count=keyATM_topic_document_count(model),
     coherence=keyATM_topic_coherence(model, dfm),
     exclusivity=keyATM_topic_exclusivity(model),
-    ranksum=keyATM_topic_ranksum(model, keywords)
+    ranksum=keyATM_topic_ranksum(model, keywords),
+    intruder_features=intruder_features,
+    intruder_documents=intruder_documents
   )
   return(result)
 }
@@ -737,22 +744,34 @@ keyATM_print_model_statistics_table <- function(
       document_count=round(mean(.$document_count)),
       coherence=mean(.$coherence),
       exclusivity=mean(.$exclusivity),
-      ranksum=mean(.$ranksum)
+      ranksum=mean(.$ranksum),
+      intruder_features=mean(.$intruder_features),
+      intruder_documents=mean(.$intruder_documents)
     ) %>%
     mutate(
       feature_count = paste0(
         feature_count,
         " (",
-        format(round(100 * feature_count / total_features, 1), nsmall = 1), "%)"
+        format(round(100 * feature_count / total_features, 1), nsmall = 1),
+        " %)"
       ),
       document_count = paste0(
         document_count,
         " (",
-        format(round(100 * document_count / total_documents, 1), nsmall = 1), "%)"
+        format(round(100 * document_count / total_documents, 1), nsmall = 1),
+        " %)"
       ),
       coherence = format(round(coherence)),
       exclusivity = format(round(exclusivity, 1), nsmall = 1),
-      ranksum = format(round(ranksum, 2), nsmall = 2)
+      ranksum = format(round(ranksum, 2), nsmall = 2),
+      intruder_features=ifelse(
+        is.na(intruder_features), "NA",
+        format(round(intruder_features, 1), nsmall = 1)
+      ),
+      intruder_documents=ifelse(
+        is.na(intruder_documents), "NA",
+        format(round(intruder_documents, 1), nsmall = 1)
+      )
     ) %>%
     add_row(
       topic="---",
@@ -761,6 +780,8 @@ keyATM_print_model_statistics_table <- function(
       coherence="---",
       exclusivity="---",
       ranksum="---",
+      intruder_features="---",
+      intruder_documents="---",
       .before = nrow(.)
     ) %>%
     dplyr::rename(
@@ -769,7 +790,9 @@ keyATM_print_model_statistics_table <- function(
       Documents = document_count,
       Coherence = coherence,
       Exclusivity = exclusivity,
-      ISR = ranksum
+      ISR = ranksum,
+      IFS = intruder_features,
+      IDS = intruder_documents,
     ) %>%
     relocate(Topic) %>%
     md_table()

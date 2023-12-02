@@ -178,7 +178,9 @@ ggsave("models/pos/feature_histogram.pdf", width = 9, height = 6)
 
 # ... model statistics
 pos_statistics <- keyATM_calculate_model_statistics(
-  pos_model, pos_dfm, pos_keywords
+  pos_model, pos_dfm, pos_keywords,
+  intruder_features = c(NA, NA, NA, NA, NA, NA),
+  intruder_documents = c(2/20, NA, NA, NA, NA, NA)
 )
 keyATM_print_model_statistics_table(
   pos_statistics,
