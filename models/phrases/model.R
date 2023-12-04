@@ -180,7 +180,7 @@ ggsave("models/phrases/feature_histogram.pdf", width = 9, height = 6)
 phrases_statistics <- keyATM_calculate_model_statistics(
   phrases_model, phrases_dfm, phrases_keywords,
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(NA, NA, NA, NA, NA, NA)
+  intruder_documents = c(13/20, NA, NA, NA, NA, NA)
 )
 keyATM_print_model_statistics_table(
   phrases_statistics,
