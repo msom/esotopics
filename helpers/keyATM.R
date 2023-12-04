@@ -796,6 +796,12 @@ keyATM_print_model_statistics_table <- function(
     ) %>%
     relocate(Topic) %>%
     md_table()
+
+  lower <- t.test(
+    statistics$coherence, mu = mean(statistics$coherence)
+  )$conf.int[1]
+  names <- row.names(statistics[which(statistics$coherence < lower),])
+  print(str_glue("\n\nCoherence 95%: {lower} ({paste(names)})"))
 }
 
 
