@@ -33,8 +33,8 @@ vocabulary_compare <- function(x, y) {
   #' @param x the vocabulary to compare, a vector or a dfm
   #' @param y the vocabulary to compare to, a vector or a dfm
   #' @return a the proportion of known terms and all the unknown terms
-  voc_x = vocabulary_extract(x)
-  voc_y = vocabulary_extract(y)
+  voc_x <- vocabulary_extract(x)
+  voc_y <- vocabulary_extract(y)
   return(
     list(
       "known" = length(intersect(voc_x, voc_y)) / length(voc_x),

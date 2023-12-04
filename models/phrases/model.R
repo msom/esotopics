@@ -32,7 +32,7 @@ phrases_corpus <- esocorpus %>%
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
-save(phrases_corpus, file="models/phrases/corpus.RData")
+save(phrases_corpus, file = "models/phrases/corpus.RData")
 phrases_dfm_all <- preprocess_phrases(phrases_corpus)
 vocabulary_save(phrases_dfm_all, "models/phrases/features_all.txt", TRUE)
 phrases_dfm <- phrases_dfm_all %>%
@@ -40,11 +40,11 @@ phrases_dfm <- phrases_dfm_all %>%
   dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
 ncol(phrases_dfm)  # phrases
 nrow(phrases_dfm)  # paragraphs
-save(phrases_dfm, file="models/phrases/dfm.RData")
+save(phrases_dfm, file = "models/phrases/dfm.RData")
 vocabulary_save(phrases_dfm, "models/phrases/features.txt", TRUE)
 
 # Read texts
-phrases_docs <- keyATM_read(texts = phrases_dfm)
+phrases_docs <- keyatm_read(texts = phrases_dfm)
 
 # Create keywords
 phrases_keywords <- list(
@@ -123,7 +123,7 @@ visualize_keywords(
 ggsave("models/phrases/keywords.pdf", width = 9, height = 6)
 
 # Calculate models
-keyATM_fit_models(
+keyatm_fit_models(
   docs = phrases_docs,
   dfm = phrases_dfm,
   keywords = phrases_keywords,
@@ -132,28 +132,28 @@ keyATM_fit_models(
   seed = 123,
   parallel = 5
 )
-phrases_metrics <- keyATM_measure_models(
+phrases_metrics <- keyatm_measure_models(
   phrases_dfm,
   numbers = c(seq(1, 124), 125, 150, 200, 250, 300),
   phrases_keywords,
   "models/phrases/models/"
 )
-save(phrases_metrics, file="models/phrases/metrics.RData")
+save(phrases_metrics, file = "models/phrases/metrics.RData")
 
 # Find number of topics
-keyATM_plot_topic_measure_scatter(
+keyatm_plot_topic_measure_scatter(
   phrases_metrics,
   c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/phrases/metrics_scatter_overview.pdf", width = 9, height = 4)
 
-keyATM_plot_topic_measure_trend(
+keyatm_plot_topic_measure_trend(
   phrases_metrics,
   c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/phrases/metrics_trend.pdf", width = 9, height = 5)
 
-keyATM_plot_topic_measure_scatter(
+keyatm_plot_topic_measure_scatter(
   phrases_metrics,
   c(seq(75, 125), 300),
   highlight = c(106)
@@ -161,7 +161,7 @@ keyATM_plot_topic_measure_scatter(
 ggsave("models/phrases/metrics_scatter.pdf", width = 9, height = 5)
 
 # Load model
-phrases_model <- keyATM_load_model(
+phrases_model <- keyatm_load_model(
   106,
   "models/phrases/models/"
 )
@@ -169,20 +169,20 @@ phrases_model <- keyATM_load_model(
 # Statistics
 
 # ... document histogram
-keyATM_plot_document_histogram(phrases_model, threshold = 1)
+keyatm_plot_document_histogram(phrases_model, threshold = 1)
 ggsave("models/phrases/document_histogram.pdf", width = 9, height = 6)
 
 # ... feature histogram
-keyATM_plot_feature_histogram(phrases_model)
+keyatm_plot_feature_histogram(phrases_model)
 ggsave("models/phrases/feature_histogram.pdf", width = 9, height = 6)
 
 # ... model statistics
-phrases_statistics <- keyATM_calculate_model_statistics(
+phrases_statistics <- keyatm_calculate_model_statistics(
   phrases_model, phrases_dfm, phrases_keywords,
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(13/20, NA, NA, NA, NA, NA)
+  intruder_documents = c(13 / 20, NA, NA, NA, NA, NA)
 )
-keyATM_print_model_statistics_table(
+keyatm_print_model_statistics_table(
   phrases_statistics,
   ncol(phrases_dfm),
   nrow(phrases_dfm)
@@ -202,20 +202,19 @@ plot_pi(phrases_model)
 plot_topicprop(phrases_model, show_topic = seq(1, 6))
 
 # ... top features
-keyATM_print_top_words_table(phrases_model)
+keyatm_print_top_words_table(phrases_model)
 top_words(phrases_model, n = 200, show_keyword = FALSE) %>%
   write.csv("models/phrases/topics.csv")
 
 # ... top documents
-phrases_top_docs <- keyATM_top_docs_texts(
+phrases_top_docs <- keyatm_top_docs_texts(
   phrases_model, phrases_corpus, phrases_dfm, n = 20
 )
-keyATM_save_top_docs_texts(phrases_top_docs, "models/phrases/docs.md")
+keyatm_save_top_docs_texts(phrases_top_docs, "models/phrases/docs.md")
 
 # ... occurrences
-keyATM_print_occurrences_table(phrases_model, phrases_dfm)
+keyatm_print_occurrences_table(phrases_model, phrases_dfm)
 
-keyATM_plot_topic_occurrences(
+keyatm_plot_topic_occurrences(
   phrases_model, phrases_dfm, path = "models/phrases/"
 )
-

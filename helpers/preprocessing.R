@@ -10,7 +10,9 @@ preprocess_phrases <- function(x) {
   #' @return a DFM
 
   cleaned <- gsub("[kq]u?abb?all?ah?", "kabbalah", x, ignore.case = TRUE)
-  cleaned <- gsub("[kq]u?abb?all?i([a-z]*)", "kabbali\\1", cleaned, ignore.case = TRUE)
+  cleaned <- gsub(
+    "[kq]u?abb?all?i([a-z]*)", "kabbali\\1", cleaned, ignore.case = TRUE
+  )
   cleaned <- gsub("thoth?", "thoth", cleaned, ignore.case = TRUE)
   cleaned <- gsub("séance?", "seance", cleaned, ignore.case = TRUE)
 
@@ -23,9 +25,11 @@ preprocess_phrases <- function(x) {
         # astral light
         "ether", "fohat",
         # seance
-        "seance", "sitting", "sitter", "manifestation", "rapping", "materialization",
+        "seance", "sitting", "sitter", "manifestation", "rapping",
+        "materialization",
         # progress(ion)
-        "progression", "progress", "incarnation", "reincarnation", "karma", "monad"
+        "progression", "progress", "incarnation", "reincarnation", "karma",
+        "monad"
       ),
       noun_tuples = list(
         # kabbalistic tarot
@@ -47,7 +51,9 @@ preprocess_closed_words <- function(x) {
   #' @return a DFM
 
   cleaned <- gsub("[kq]u?abb?all?ah?", "kabbalah", x, ignore.case = TRUE)
-  cleaned <- gsub("[kq]u?abb?all?i([a-z]*)", "kabbali\\1", cleaned, ignore.case = TRUE)
+  cleaned <- gsub(
+    "[kq]u?abb?all?i([a-z]*)", "kabbali\\1", cleaned, ignore.case = TRUE
+  )
   cleaned <- gsub("thoth?", "thoth", cleaned, ignore.case = TRUE)
   cleaned <- gsub("séance?", "seance", cleaned, ignore.case = TRUE)
 
@@ -60,4 +66,3 @@ preprocess_closed_words <- function(x) {
 
   return(result)
 }
-

@@ -25,8 +25,8 @@ udpipe_load_cached_model <- function() {
 }
 
 udpipe_extract_phrases <- function(
-    text, pattern, as_columns = FALSE, model = NULL, proper_nouns_only = TRUE,
-    adverbs_only = FALSE, nouns = NULL, noun_tuples = NULL, verbs = NULL
+  text, pattern, as_columns = FALSE, model = NULL, proper_nouns_only = TRUE,
+  adverbs_only = FALSE, nouns = NULL, noun_tuples = NULL, verbs = NULL
 ) {
   #'
   #' Extracts phrases with the given pattern from the given text.
@@ -85,11 +85,11 @@ udpipe_extract_phrases <- function(
   ) %>%
     select(-ngram)
 
-  if (!is.null(nouns) | !is.null(noun_tuples)) {
+  if (!is.null(nouns) || !is.null(noun_tuples)) {
     noun_phrases <- phrases(
       annotations$phrase_tag,
       term = annotations$lemma,
-      pattern = 'N',
+      pattern = "N",
       is_regex = TRUE,
       detailed = FALSE
     )
@@ -103,11 +103,11 @@ udpipe_extract_phrases <- function(
     }
     if (!is.null(noun_tuples)) {
       for (noun_tuple in noun_tuples) {
-        intersection = intersect(noun_tuple, noun_phrases$keyword)
+        intersection <- intersect(noun_tuple, noun_phrases$keyword)
         if (length(intersection) == length(noun_tuple)) {
-          name = paste(noun_tuple, collapse = "-")
+          name <- paste(noun_tuple, collapse = "-")
           # FIXME: this might create duplicate entries when pattern is "NN+"
-          result[nrow(result) + 1,] = list(name, 1)
+          result[nrow(result) + 1, ] <- list(name, 1)
         }
       }
     }
@@ -120,7 +120,7 @@ udpipe_extract_phrases <- function(
         phrases(
           annotations$phrase_tag,
           term = annotations$lemma,
-          pattern = 'V',
+          pattern = "V",
           is_regex = TRUE,
           detailed = FALSE
         ) %>%
@@ -141,8 +141,8 @@ udpipe_extract_phrases <- function(
 }
 
 udpipe_phrases <- function(
-    corpus, pattern, nouns = NULL, noun_tuples = NULL, verbs = NULL,
-    adverbs_only = FALSE
+  corpus, pattern, nouns = NULL, noun_tuples = NULL, verbs = NULL,
+  adverbs_only = FALSE
 ) {
   #'
   #' Create a DFM with phrases.
@@ -228,7 +228,7 @@ udpipe_phrases <- function(
       phrase_count <- df["result.freq", phrase_index]
       phrase_index <- phrase_names[[phrase_name]]
       if (is.null(phrase_index)) {
-        phrase_index = length(phrase_names) + 1
+        phrase_index <- length(phrase_names) + 1
         phrase_names[[phrase_name]] <- phrase_index
       }
 
@@ -248,7 +248,8 @@ udpipe_phrases <- function(
       names(corpus),
       values(phrase_names) %>% sort() %>% names()
     )
-  ) %>% as.dfm()
+  ) %>%
+    as.dfm()
   docvars(result) <- docvars(corpus)
 
   return(result)

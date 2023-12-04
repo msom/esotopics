@@ -40,11 +40,11 @@ pos_dfm <- pos_dfm_all %>%
   dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
 ncol(pos_dfm)  # words
 nrow(pos_dfm)  # paragraphs
-save(pos_dfm, file="models/pos/dfm.RData")
+save(pos_dfm, file = "models/pos/dfm.RData")
 vocabulary_save(pos_dfm, "models/pos/features.txt", TRUE)
 
 # Read texts
-pos_docs <- keyATM_read(texts = pos_dfm)
+pos_docs <- keyatm_read(texts = pos_dfm)
 
 # Create keywords
 pos_keywords <- list(
@@ -123,7 +123,7 @@ visualize_keywords(
 ggsave("models/pos/keywords.pdf", width = 9, height = 6)
 
 # Calculate models
-keyATM_fit_models(
+keyatm_fit_models(
   docs = pos_docs,
   dfm = pos_dfm,
   keywords = pos_keywords,
@@ -132,28 +132,28 @@ keyATM_fit_models(
   seed = 123,
   parallel = 2
 )
-pos_metrics <- keyATM_measure_models(
+pos_metrics <- keyatm_measure_models(
   pos_dfm,
   numbers = c(seq(1, 125), 150, 200, 250, 300),
   pos_keywords,
   "models/pos/models/"
 )
-save(pos_metrics, file="models/pos/metrics.RData")
+save(pos_metrics, file = "models/pos/metrics.RData")
 
 # Find number of topics
-keyATM_plot_topic_measure_scatter(
+keyatm_plot_topic_measure_scatter(
   pos_metrics,
   c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/pos/metrics_scatter_overview.pdf", width = 9, height = 4)
 
-keyATM_plot_topic_measure_trend(
+keyatm_plot_topic_measure_trend(
   pos_metrics,
   c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
 )
 ggsave("models/pos/metrics_trend.pdf", width = 9, height = 5)
 
-keyATM_plot_topic_measure_scatter(
+keyatm_plot_topic_measure_scatter(
   pos_metrics,
   c(seq(75, 125), 300),
   highlight = c(109)
@@ -161,7 +161,7 @@ keyATM_plot_topic_measure_scatter(
 ggsave("models/pos/metrics_scatter.pdf", width = 9, height = 5)
 
 # Load model
-pos_model <- keyATM_load_model(
+pos_model <- keyatm_load_model(
   109,
   "models/pos/models/"
 )
@@ -169,20 +169,20 @@ pos_model <- keyATM_load_model(
 # Statistics
 
 # ... document histogram
-keyATM_plot_document_histogram(pos_model)
+keyatm_plot_document_histogram(pos_model)
 ggsave("models/pos/document_histogram.pdf", width = 9, height = 6)
 
 # ... feature histogram
-keyATM_plot_feature_histogram(pos_model)
+keyatm_plot_feature_histogram(pos_model)
 ggsave("models/pos/feature_histogram.pdf", width = 9, height = 6)
 
 # ... model statistics
-pos_statistics <- keyATM_calculate_model_statistics(
+pos_statistics <- keyatm_calculate_model_statistics(
   pos_model, pos_dfm, pos_keywords,
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(2/20, NA, NA, NA, NA, NA)
+  intruder_documents = c(2 / 20, NA, NA, NA, NA, NA)
 )
-keyATM_print_model_statistics_table(
+keyatm_print_model_statistics_table(
   pos_statistics,
   ncol(pos_dfm),
   nrow(pos_dfm)
@@ -202,17 +202,17 @@ plot_pi(pos_model)
 plot_topicprop(pos_model, show_topic = seq(1, 6))
 
 # ... top features
-keyATM_print_top_words_table(pos_model)
+keyatm_print_top_words_table(pos_model)
 top_words(pos_model, n = 200, show_keyword = FALSE) %>%
   write.csv("models/pos/topics.csv")
 
 # ... top documents
-pos_top_docs <- keyATM_top_docs_texts(pos_model, pos_corpus, pos_dfm, n = 20)
-keyATM_save_top_docs_texts(pos_top_docs, "models/pos/docs.md")
+pos_top_docs <- keyatm_top_docs_texts(pos_model, pos_corpus, pos_dfm, n = 100)
+keyatm_save_top_docs_texts(pos_top_docs, "models/pos/docs.md")
 
 # ... occurrences
-keyATM_print_occurrences_table(pos_model, pos_dfm)
+keyatm_print_occurrences_table(pos_model, pos_dfm)
 
-keyATM_plot_topic_occurrences(
+keyatm_plot_topic_occurrences(
   pos_model, pos_dfm, path = "models/pos/"
 )

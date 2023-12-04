@@ -17,7 +17,7 @@ library(tidyr)
 library(topicdoc)
 library(topicmodels)
 
-keyATM_topic_names <- function(names) {
+keyatm_topic_names <- function(names) {
   #'
   #' Returns nice topic names
   #'
@@ -32,27 +32,30 @@ keyATM_topic_names <- function(names) {
   return(result)
 }
 
-keyATM_print_top_words_table <- function(model, n = 10, include_others = FALSE) {
+keyatm_print_top_words_table <- function(
+  model, n = 10, include_others = FALSE
+) {
   #'
   #' Show the texts of the top documents of a keyATM model for each topics
   #'
   #' @param model the keyATM model
   #' @param n the number of words to show, default is 10
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param include_others if FALSE, only pre-defined topics are used, default
+  #'  is FALSE
   #'
-  match <-ifelse(include_others, ".*", "\\d_.*")
+  match <- ifelse(include_others, ".*", "\\d_.*")
   docs <- top_words(model, n) %>%
     select(matches(match)) %>%
     mutate_all(str_replace_all, "\\.", " ") %>%
     mutate_all(str_replace_all, "(.*) \\[✓\\]", "*\\1*") %>%
     mutate_all(str_replace_all, " \\[\\d\\]", "")
-  names(docs) <- keyATM_topic_names(names(docs))
+  names(docs) <- keyatm_topic_names(names(docs))
   docs %>%
     md_table()
 }
 
-keyATM_top_docs_texts <- function(
-    model, corpus, dfm, n = 10, include_others = FALSE
+keyatm_top_docs_texts <- function(
+  model, corpus, dfm, n = 10, include_others = FALSE
 ) {
   #'
   #' Show the texts of the top documents of a keyATM model for each topics
@@ -61,24 +64,27 @@ keyATM_top_docs_texts <- function(
   #' @param corpus the quanteda corpus used to train the model
   #' @param dfm the dfm used to train the model
   #' @param n the number of texts to show, default is 10
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param include_others if FALSE, only pre-defined topics are used, default
+  #'  is FALSE
   #' @return a n x k table with the texts of the top n documents for each topic
   #'
-  match <-ifelse(include_others, ".*", "\\d_.*")
+  match <- ifelse(include_others, ".*", "\\d_.*")
 
   # we cannot use top_docs with our model-like lists
-  measuref <- function(xcol) {order(xcol, decreasing = TRUE)[1:n]}
+  measuref <- function(xcol) {
+    order(xcol, decreasing = TRUE)[1:n]
+  }
   docs <- as.data.frame(
     apply(model$theta, 2, measuref), stringsAsFactors = FALSE
   ) %>%
     select(matches(match))
 
   for (name in colnames(docs)) {
-    indices <- docs[,name]
-    docs[,name] <- paste0(
+    indices <- docs[, name]
+    docs[, name] <- paste0(
       rownames(dfm)[indices] %>%
-            str_replace("\\.txt\\.", " ") %>%
-            str_replace("_(\\d{4})(_\\d)*", " (\\1)"),
+        str_replace("\\.txt\\.", " ") %>%
+        str_replace("_(\\d{4})(_\\d)*", " (\\1)"),
       str_glue(
         " [{round(model$theta[indices], 4)}]: ",
         "{corpus[rownames(dfm)[indices]]}"
@@ -88,17 +94,17 @@ keyATM_top_docs_texts <- function(
   return(docs)
 }
 
-keyATM_save_top_docs_texts <- function(texts, file) {
+keyatm_save_top_docs_texts <- function(texts, file) {
   #'
   #' Creates a nicely formatted markdown file with the given texts
   #'
-  #' @param texts the result of keyATM_top_docs_texts
+  #' @param texts the result of keyatm_top_docs_texts
   #' @param file the file name
   #'
   cat(file = file)
   for (topic in 1:ncol(texts)) {
     cat(
-      str_glue("\n\n# {keyATM_topic_names(names(texts))[topic]}\n\n"),
+      str_glue("\n\n# {keyatm_topic_names(names(texts))[topic]}\n\n"),
       file = file, append = TRUE
     )
 
@@ -120,8 +126,8 @@ keyATM_save_top_docs_texts <- function(texts, file) {
 }
 
 
-keyATM_topic_coherence <- function(
-    model, dfm, n = 10, include_others = FALSE
+keyatm_topic_coherence <- function(
+  model, dfm, n = 10, include_others = FALSE
 ) {
   #'
   #' Calculate the topic coherences of a keyATM model
@@ -131,23 +137,24 @@ keyATM_topic_coherence <- function(
   #' @param model the keyATM model
   #' @param dfm the document feature matrix
   #' @param n the number of top words to consider, default is 10
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param include_others if FALSE, only pre-defined topics are used, default
+  #'  is FALSE
   #' @return a named vector with the coherence of each topic
   #'
-  match <-ifelse(include_others, ".*", "\\d_.*")
+  match <- ifelse(include_others, ".*", "\\d_.*")
   words <- top_words(model, n = n, show_keyword = FALSE) %>%
     select(matches(match))
   dtm <- convert(dfm, to = "topicmodels")
   result <- vector(length = ncol(words))
   for (i in 1:ncol(words)) {
-    result[i] <- topicdoc:::coherence(dtm, words[,i], 1)
+    result[i] <- topicdoc:::coherence(dtm, words[, i], 1)
   }
   result <- setNames(result, colnames(words))
   return(result)
 }
 
-keyATM_topic_exclusivity <- function(
-    model, n = 10, include_others = FALSE, weight = 0.7
+keyatm_topic_exclusivity <- function(
+  model, n = 10, include_others = FALSE, weight = 0.7
 ) {
   #'
   #' Calculate the topic exclusivity of a keyATM model
@@ -156,7 +163,8 @@ keyATM_topic_exclusivity <- function(
   #'
   #' @param model the keyATM model
   #' @param n the number of top words to consider, default is 10
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param include_others if FALSE, only pre-defined topics are used, default
+  #'  is FALSE
   #' @param weight weight to apply for FREX calculation, default is 0.7
   #' @return a named vector with the exclusivity of each topic
   #'
@@ -164,26 +172,26 @@ keyATM_topic_exclusivity <- function(
   mat <- phi / rowSums(phi)
   exclusivity <- apply(mat, 2, rank) / nrow(mat)
   frequency <- apply(phi, 2, rank) / nrow(mat)
-  frex <- 1/(weight/exclusivity + (1 - weight)/frequency)
+  frex <- 1 / (weight / exclusivity + (1 - weight) / frequency)
   index <- apply(phi, 2, order, decreasing = TRUE)[1:n, ]
   result <- vector(length = ncol(phi))
   for (i in 1:ncol(frex)) {
     result[i] <- sum(frex[index[, i], i])
   }
   result <- setNames(result, colnames(phi))
-  match <-ifelse(include_others, ".*", "\\d_.*")
+  match <- ifelse(include_others, ".*", "\\d_.*")
   result <- subset(result, subset = grepl(match, names(result)))
   return(result)
 }
 
-keyATM_topic_ranksum <- function(model, keywords) {
+keyatm_topic_ranksum <- function(model, keywords) {
   #'
   #' Calculate the sum of the ranks of the predefined keywords
   #'
   #' @param model the keyATM model
   #' @param keywords the predefined keywords
   #' @return a named vector with the ranksum of each topic normalized to 0...1,
-  #'         the higher the value, the higher the ranks of the predefined keywords
+  #'  the higher the value, the higher the ranks of the predefined keywords
   #'
   n <- nrow(model$theta)
   words <- top_words(model, n, show_keyword = FALSE) %>%
@@ -192,24 +200,27 @@ keyATM_topic_ranksum <- function(model, keywords) {
   for (index in 1:length(keywords)) {
     name <- names(keywords[index])
     col <- sub(" ", "_", paste(index, name))
-    indexes <- which(words[,index] %in% unlist(keywords[index]))
+    indexes <- which(words[, index] %in% unlist(keywords[index]))
     result[index] <- sum(1:length(indexes)) / sum(indexes)
   }
   result <- setNames(result, colnames(words))
   return(result)
 }
 
-keyATM_topic_feature_count <- function(model, threshold = 1, include_others = FALSE) {
+keyatm_topic_feature_count <- function(
+  model, threshold = 1, include_others = FALSE
+) {
   #'
   #' Calculate the number of words in a topic
   #'
   #' @param model the keyATM model
   #' @param threshold the phi value used for inclusion/exclusion as a multiple
   #'  of the uniform distribution value, default is 1
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param include_others if FALSE, only pre-defined topics are used, default
+  #'  is FALSE
   #' @return the number of word
   #'
-  threshold_phi <- threshold/ncol(model$phi)
+  threshold_phi <- threshold / ncol(model$phi)
   match <- ifelse(include_others, ".*", "\\d_.*")
   result <- model$phi %>%
     t() %>%
@@ -225,18 +236,21 @@ keyATM_topic_feature_count <- function(model, threshold = 1, include_others = FA
   return(counts)
 }
 
-keyATM_topic_document_count <- function(model, threshold = 1, include_others = FALSE) {
+keyatm_topic_document_count <- function(
+  model, threshold = 1, include_others = FALSE
+) {
   #'
   #' Calculate the number of documents relevant for a topic
   #'
   #' @param model the keyATM model
   #' @param threshold the theta value used for inclusion/exclusion as a multiple
   #'  of the uniform distribution value, default is 1
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param include_others if FALSE, only pre-defined topics are used, default
+  #'  is FALSE
   #' @return the number of topics
   #'
-  threshold_theta <- 1/(model$no_keyword_topics + model$keyword_k)
-  match <-ifelse(include_others, ".*", "\\d_.*")
+  threshold_theta <- 1 / (model$no_keyword_topics + model$keyword_k)
+  match <- ifelse(include_others, ".*", "\\d_.*")
   result <- model$theta %>%
     as.data.frame() %>%
     pivot_longer(matches(match)) %>%
@@ -250,29 +264,29 @@ keyATM_topic_document_count <- function(model, threshold = 1, include_others = F
   return(counts)
 }
 
-keyATM_save_model <- function(model, k, path) {
+keyatm_save_model <- function(model, k, path) {
   #'
   #' Save a model to the file system
   #'
   #' @param model the model to save
   #' @param k the numbers of no-keyword topics
   #' @param path the path to safe the model
-  saveRDS(model, file=paste0(path, "model_", k, ".Rds"))
+  saveRDS(model, file = paste0(path, "model_", k, ".Rds"))
 }
 
-keyATM_load_model <- function(k, path) {
+keyatm_load_model <- function(k, path) {
   #'
   #' Load a model from file system
   #'
   #' @param k the numbers of no-keyword topics
   #' @param path the path to safe the model
   #' @return the modle
-  return(readRDS(file=paste0(path, "model_", k, ".Rds")))
+  return(readRDS(file = paste0(path, "model_", k, ".Rds")))
 }
 
-keyATM_fit_models <- function(
-    docs, dfm, keywords, numbers, path, iterations = 1500, seed = NULL,
-    parallel = TRUE
+keyatm_fit_models <- function(
+  docs, dfm, keywords, numbers, path, iterations = 1500, seed = NULL,
+  parallel = TRUE
 ) {
   #'
   #' Try a range of no_keyword_topics and safe the models to the filesystem.
@@ -288,16 +302,16 @@ keyATM_fit_models <- function(
   #' @param seed the random seed, default is chosing a seed randomly
   #' @return a data frame with the number of topics, coherence and exclusivity
   #'
-  nCores <- ifelse(parallel == TRUE, detectCores(), parallel)
-  cluster <- makeCluster(nCores)
+  n_cores <- ifelse(parallel == TRUE, detectCores(), parallel)
+  cluster <- makeCluster(n_cores)
   clusterExport(
     cluster,
-    c("docs", "dfm", "keywords", "path", "iterations","seed"),
+    c("docs", "dfm", "keywords", "path", "iterations", "seed"),
     envir = environment()
   )
   clusterExport(
     cluster,
-    c("keyATM_save_model")
+    c("keyatm_save_model")
   )
   clusterEvalQ(cluster, library(dplyr))
   clusterEvalQ(cluster, library(keyATM))
@@ -306,7 +320,7 @@ keyATM_fit_models <- function(
   # Models with a lot of topics taking longer, we calculate them first so
   # that the progress bar estimation is pessimistic rather than optimistic
   # in the beginning. Note that shuffling the numbers won't work well, since
-  # it seems that only batches of nCores are spawned at a time and then
+  # it seems that only batches of n_cores are spawned at a time and then
   # waited for all cores to be finished before spanwning a new batch...
   result <- pblapply(
     cl = cluster,
@@ -324,7 +338,7 @@ keyATM_fit_models <- function(
               iterations = iterations
             )
           )
-          keyATM_save_model(model, no_keyword_topics, path)
+          keyatm_save_model(model, no_keyword_topics, path)
         },
         error = function(e) {}
       )
@@ -334,8 +348,9 @@ keyATM_fit_models <- function(
   return(result)
 }
 
-keyATM_measure_models <- function(
-    dfm, numbers, keywords, path, n = 10, threshold_docs = 1, threshold_features = 1
+keyatm_measure_models <- function(
+  dfm, numbers, keywords, path, n = 10, threshold_docs = 1,
+  threshold_features = 1
 ) {
   #'
   #' Measure the coherence, exclusivity and ranksum of different models.
@@ -345,26 +360,30 @@ keyATM_measure_models <- function(
   #' @param keywords the keyATM keywords
   #' @param path the path where the models are saved
   #' @param n the number of top words to consider, default is 10
-  #' @param threshold_docs the theta value used for inclusion/exclusion as a multiple
-  #'  of the uniform distribution value, default is 1
-  #' @param threshold_features the phi value used for inclusion/exclusion as a multiple
-  #'  of the uniform distribution value, default is 1
+  #' @param threshold_docs the theta value used for inclusion/exclusion as a
+  #'  multiple of the uniform distribution value, default is 1
+  #' @param threshold_features the phi value used for inclusion/exclusion as a
+  #'  multiple of the uniform distribution value, default is 1
   #' @return a data frame with the number of topics, number of words, coherence,
   #'  exclusivity and ranksum
   #'
 
   result <- pblapply(
     numbers, function(topics) {
-      model <- keyATM_load_model(topics, path)
+      model <- keyatm_load_model(topics, path)
       stopifnot(topics == model$no_keyword_topics)
       return(
         data.frame(
-          topics=topics,
-          document_count=mean(keyATM_topic_document_count(model, threshold = threshold_docs)),
-          feature_count=mean(keyATM_topic_feature_count(model, threshold = threshold_features)),
-          coherence=mean(keyATM_topic_coherence(model, dfm, n = n)),
-          exclusivity=mean(keyATM_topic_exclusivity(model, n = n)),
-          ranksum=mean(keyATM_topic_ranksum(model, keywords))
+          topics = topics,
+          document_count = mean(
+            keyatm_topic_document_count(model, threshold = threshold_docs)
+          ),
+          feature_count = mean(
+            keyatm_topic_feature_count(model, threshold = threshold_features)
+          ),
+          coherence = mean(keyatm_topic_coherence(model, dfm, n = n)),
+          exclusivity = mean(keyatm_topic_exclusivity(model, n = n)),
+          ranksum = mean(keyatm_topic_ranksum(model, keywords))
         )
       )
     }
@@ -374,7 +393,7 @@ keyATM_measure_models <- function(
 }
 
 
-keyATM_keyword_search <- function(
+keyatm_keyword_search <- function(
   dfm, keywords, drop_empty_rows = TRUE, drop_empty_columns = TRUE,
   summarized = FALSE, categorical = FALSE
 ) {
@@ -424,21 +443,21 @@ keyATM_keyword_search <- function(
   return(result)
 }
 
-keyATM_plot_topic_occurrences <- function(
-    model, dfm, include_others = FALSE, path = NA
-)
-{
+keyatm_plot_topic_occurrences <- function(
+  model, dfm, include_others = FALSE, path = NA
+) {
   #'
   #' Plot the occurrence of the topics within the documents.
   #'
   #' @param model the keyATM model
   #' @param dfm the DFM used with the model
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param include_others if FALSE, only pre-defined topics are used, default
+  #'  is FALSE
   #' @param path the path to safe the model
   #' @return a list of plots
   #'
   theta <- as.data.frame(model$theta)
-  match <-ifelse(include_others, ".*", "\\d_.*")
+  match <- ifelse(include_others, ".*", "\\d_.*")
   topics <-  theta %>%
     select(matches(match)) %>%
     names()
@@ -479,7 +498,7 @@ keyATM_plot_topic_occurrences <- function(
   return(result)
 }
 
-keyATM_plot_keyword_occurrences <- function(dfm, keywords, topic) {
+keyatm_plot_keyword_occurrences <- function(dfm, keywords, topic) {
   #'
   #' Plot the occurrences of keywords within a DFM
   #'
@@ -487,7 +506,7 @@ keyATM_plot_keyword_occurrences <- function(dfm, keywords, topic) {
   #' @param keywords the keywords to search for
   #' @param topic the topic within the keywords to use
   #'
-  occurrences <- keyATM_keyword_search(dfm, keywords)
+  occurrences <- keyatm_keyword_search(dfm, keywords)
   occurrences[[topic]] %>%
     mutate(name = rownames(.)) %>%
     separate_wider_delim(
@@ -508,8 +527,8 @@ keyATM_plot_keyword_occurrences <- function(dfm, keywords, topic) {
     ylab("Occurrence")
 }
 
-keyATM_plot_topic_measure_scatter <- function(
-    metrics, topic_range, highlight = NULL
+keyatm_plot_topic_measure_scatter <- function(
+  metrics, topic_range, highlight = NULL
 ) {
   #'
   #' Plot the measures of a model as a scatter plot.
@@ -521,21 +540,21 @@ keyATM_plot_topic_measure_scatter <- function(
   data <- metrics %>%
     mutate(shape = 17)
   if (!is.null(highlight)) {
-    data[highlight,]$shape = 19
+    data[highlight, ]$shape <- 19
   }
   data %>%
     filter(topics %in% topic_range) %>%
     ggplot(
       aes(
-        x=coherence,
-        y=exclusivity,
-        color=ranksum,
-        size=feature_count,
-        shape=as.factor(shape)
+        x = coherence,
+        y = exclusivity,
+        color = ranksum,
+        size = feature_count,
+        shape = as.factor(shape)
       )
     ) +
     geom_point() +
-    geom_text_repel(mapping=aes(label=topics), size = 4) +
+    geom_text_repel(mapping = aes(label = topics), size = 4) +
     scale_colour_gradient(
       high = "#132B43",
       low = "#56B1F7"
@@ -546,7 +565,7 @@ keyATM_plot_topic_measure_scatter <- function(
     labs(color = "Ranks (ISR)", size = "Features")
 }
 
-keyATM_plot_topic_measure_trend <- function(metrics, topic_range) {
+keyatm_plot_topic_measure_trend <- function(metrics, topic_range) {
   #'
   #' Plot the measures of a model as trend lines.
   #'
@@ -556,11 +575,11 @@ keyATM_plot_topic_measure_trend <- function(metrics, topic_range) {
   metrics %>%
     filter(topics %in% topic_range) %>%
     mutate(
-      document_count=as.double(normalize(document_count)),
-      feature_count=as.double(normalize(feature_count)),
-      coherence=as.double(normalize(coherence)),
-      exclusivity=as.double(normalize(exclusivity)),
-      ranksum=as.double(normalize(ranksum))
+      document_count = as.double(normalize(document_count)),
+      feature_count = as.double(normalize(feature_count)),
+      coherence = as.double(normalize(coherence)),
+      exclusivity = as.double(normalize(exclusivity)),
+      ranksum = as.double(normalize(ranksum))
     ) %>%
     pivot_longer(
       c(document_count, feature_count, coherence, exclusivity, ranksum),
@@ -572,17 +591,21 @@ keyATM_plot_topic_measure_trend <- function(metrics, topic_range) {
     scale_y_continuous(limits = c(0, 1.01)) +
     scale_color_discrete(
       name = "Measure",
-      labels = c("Coherence", "Documents", "Exclusivity", "Features", "Ranks (ISR)")
+      labels = c(
+        "Coherence", "Documents", "Exclusivity", "Features", "Ranks (ISR)"
+      )
     ) +
     scale_shape_discrete(
       name = "Measure",
-      labels = c("Coherence", "Documents", "Exclusivity", "Features", "Ranks (ISR)")
+      labels = c(
+        "Coherence", "Documents", "Exclusivity", "Features", "Ranks (ISR)"
+      )
     ) +
     xlab("Topics") +
     ylab("Normalized Value")
 }
 
-keyATM_plot_document_histogram <- function(model, threshold = 1) {
+keyatm_plot_document_histogram <- function(model, threshold = 1) {
   #'
   #' Plot the histogram of the documents of a model
   #'
@@ -590,26 +613,26 @@ keyATM_plot_document_histogram <- function(model, threshold = 1) {
   #' @param threshold the theta value used for inclusion/exclusion as a multiple
   #'  of the uniform distribution value, default is 1
   #'
-  totals <- keyATM_topic_document_count(model, threshold)
-  threshold_theta <- 1/(model$no_keyword_topics + model$keyword_k)
+  totals <- keyatm_topic_document_count(model, threshold)
+  threshold_theta <- 1 / (model$no_keyword_topics + model$keyword_k)
   model$theta %>%
     as.data.frame() %>%
     pivot_longer(matches("\\d_.*")) %>%
     select(name, value) %>%
     mutate(
       name = name %>%
-        keyATM_topic_names() %>%
+        keyatm_topic_names() %>%
         paste0(" (", totals[name], ")")
     ) %>%
     filter(value > threshold_theta) %>%
-    ggplot(mapping=aes(x=value)) +
+    ggplot(mapping = aes(x = value)) +
     geom_histogram() +
     facet_wrap(~name) +
     xlab("Normalized Theta") +
     ylab("Count")
 }
 
-keyATM_plot_feature_histogram <- function(model, threshold = 1) {
+keyatm_plot_feature_histogram <- function(model, threshold = 1) {
   #'
   #' Plot the histogram of the words of a model
   #'
@@ -617,8 +640,8 @@ keyATM_plot_feature_histogram <- function(model, threshold = 1) {
   #' @param threshold the phi value used for inclusion/exclusion as a multiple
   #'  of the uniform distribution value, default is 1
   #'
-  totals <- keyATM_topic_feature_count(model, threshold)
-  threshold_phi <- threshold/ncol(model$phi)
+  totals <- keyatm_topic_feature_count(model, threshold)
+  threshold_phi <- threshold / ncol(model$phi)
   model$phi %>%
     t() %>%
     as.data.frame() %>%
@@ -626,19 +649,19 @@ keyATM_plot_feature_histogram <- function(model, threshold = 1) {
     select(name, value) %>%
     mutate(
       name = name %>%
-        keyATM_topic_names() %>%
+        keyatm_topic_names() %>%
         paste0(" (", totals[name], ")")
     ) %>%
     filter(value > threshold_phi) %>%
-    ggplot(mapping=aes(x=value)) +
+    ggplot(mapping = aes(x = value)) +
     geom_histogram() +
     facet_wrap(~name) +
     xlab("Phi") +
     ylab("Count")
 }
 
-keyATM_print_occurrences_table <- function(
-    model, dfm, threshold = 1, include_others = FALSE, number_of_rows = NA
+keyatm_print_occurrences_table <- function(
+  model, dfm, threshold = 1, include_others = FALSE, number_of_rows = NA
 ) {
   #'
   #' Print a nicely formatted markdown table with occurrences
@@ -647,12 +670,13 @@ keyATM_print_occurrences_table <- function(
   #' @param dfm the DFM used with the model
   #' @param threshold the phi value used for inclusion/exclusion as a multiple
   #'  of the uniform distribution value, default is 1
-  #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
+  #' @param include_others if FALSE, only pre-defined topics are used, default
+  #'  is FALSE
   #' @param number_of_rows an optional integer for considering a maximum number
   #'  of rows to count
   #'
-  match <-ifelse(include_others, ".*", "\\d_.*")
-  threshold_theta <- 1/(model$no_keyword_topics + model$keyword_k)
+  match <- ifelse(include_others, ".*", "\\d_.*")
+  threshold_theta <- 1 / (model$no_keyword_topics + model$keyword_k)
   occurrences <- model$theta %>%
     as.data.frame() %>%
     select(matches(match)) %>%
@@ -672,8 +696,8 @@ keyATM_print_occurrences_table <- function(
     ) %>%
     pivot_longer(
       -c("book", "paragraph"),
-      names_to="topic",
-      values_to="theta"
+      names_to = "topic",
+      values_to = "theta"
     ) %>%
     arrange(topic, -theta) %>%
     filter(theta > threshold_theta)
@@ -691,7 +715,7 @@ keyATM_print_occurrences_table <- function(
     count() %>%
     ungroup() %>%
     mutate(
-      topic = keyATM_topic_names(topic)
+      topic = keyatm_topic_names(topic)
     ) %>%
     pivot_wider(names_from = topic, values_from = freq) %>%
     replace(is.na(.), 0) %>%
@@ -699,8 +723,8 @@ keyATM_print_occurrences_table <- function(
     md_table()
 }
 
-keyATM_calculate_model_statistics <- function(
-    model, dfm, keywords, intruder_features, intruder_documents
+keyatm_calculate_model_statistics <- function(
+  model, dfm, keywords, intruder_features, intruder_documents
 ) {
   #'
   #' Calculate various statistics of a model
@@ -713,20 +737,20 @@ keyATM_calculate_model_statistics <- function(
   #' @return a data frame with model statistics.
   #'
   result <- data.frame(
-    feature_count=keyATM_topic_feature_count(model),
-    document_count=keyATM_topic_document_count(model),
-    coherence=keyATM_topic_coherence(model, dfm),
-    exclusivity=keyATM_topic_exclusivity(model),
-    ranksum=keyATM_topic_ranksum(model, keywords),
-    intruder_features=intruder_features,
-    intruder_documents=intruder_documents
+    feature_count = keyatm_topic_feature_count(model),
+    document_count = keyatm_topic_document_count(model),
+    coherence = keyatm_topic_coherence(model, dfm),
+    exclusivity = keyatm_topic_exclusivity(model),
+    ranksum = keyatm_topic_ranksum(model, keywords),
+    intruder_features = intruder_features,
+    intruder_documents = intruder_documents
   )
   return(result)
 }
 
-keyATM_print_model_statistics_table <- function(
-    statistics, total_features, total_documents, test_coherence = TRUE,
-    hide = NA
+keyatm_print_model_statistics_table <- function(
+  statistics, total_features, total_documents, test_coherence = TRUE,
+  hide = NA
 ) {
   #'
   #' Print a nicely formatted markdown table with model statistics.
@@ -740,17 +764,17 @@ keyATM_print_model_statistics_table <- function(
   #'
   df <- statistics %>%
     mutate(
-      topic = keyATM_topic_names(row.names(statistics))
+      topic = keyatm_topic_names(row.names(statistics))
     ) %>%
     add_row(
-      topic="Mean",
-      feature_count=round(mean(.$feature_count)),
-      document_count=round(mean(.$document_count)),
-      coherence=mean(.$coherence),
-      exclusivity=mean(.$exclusivity),
-      ranksum=mean(.$ranksum),
-      intruder_features=mean(.$intruder_features),
-      intruder_documents=mean(.$intruder_documents)
+      topic = "Mean",
+      feature_count = round(mean(.$feature_count)),
+      document_count = round(mean(.$document_count)),
+      coherence = mean(.$coherence),
+      exclusivity = mean(.$exclusivity),
+      ranksum = mean(.$ranksum),
+      intruder_features = mean(.$intruder_features),
+      intruder_documents = mean(.$intruder_documents)
     ) %>%
     mutate(
       feature_count = paste0(
@@ -768,24 +792,24 @@ keyATM_print_model_statistics_table <- function(
       coherence = format(round(coherence)),
       exclusivity = format(round(exclusivity, 1), nsmall = 1),
       ranksum = format(round(ranksum, 2), nsmall = 2),
-      intruder_features=ifelse(
+      intruder_features = ifelse(
         is.na(intruder_features), "NA",
         format(round(intruder_features, 1), nsmall = 1)
       ),
-      intruder_documents=ifelse(
+      intruder_documents = ifelse(
         is.na(intruder_documents), "NA",
         format(round(intruder_documents, 1), nsmall = 1)
       )
     ) %>%
     add_row(
-      topic="---",
-      feature_count="---",
-      document_count="---",
-      coherence="---",
-      exclusivity="---",
-      ranksum="---",
-      intruder_features="---",
-      intruder_documents="---",
+      topic = "---",
+      feature_count = "---",
+      document_count = "---",
+      coherence = "---",
+      exclusivity = "---",
+      ranksum = "---",
+      intruder_features = "---",
+      intruder_documents = "---",
       .before = nrow(.)
     ) %>%
     dplyr::rename(
@@ -812,13 +836,15 @@ keyATM_print_model_statistics_table <- function(
     lower <- t.test(
       statistics$coherence, mu = mean(statistics$coherence)
     )$conf.int[1]
-    names <- row.names(statistics[which(statistics$coherence < lower),])
+    names <- row.names(statistics[which(statistics$coherence < lower), ])
     print(str_glue("\n\nCoherence 95%: {lower} ({paste(names)})"))
   }
 }
 
 
-keyATM_compare_search_to_model <- function(model, dfm, keywords, topic, author) {
+keyatm_compare_search_to_model <- function(
+  smodel, dfm, keywords, topic, author
+) {
   #'
   #' Prints a confusion matrix and returns a scatter plot with theta vs.
   #' search occurrences.
@@ -830,14 +856,14 @@ keyATM_compare_search_to_model <- function(model, dfm, keywords, topic, author) 
   #' @param author the author name
   #' @return A scatter plot
   #'
-  threshold_theta <- 1/(model$no_keyword_topics + model$keyword_k)
+  threshold_theta <- 1 / (model$no_keyword_topics + model$keyword_k)
   theta <- model$theta %>%
     as.data.frame() %>%
     slice(which(docvars(dfm)$name == author)) %>%
     select(all_of(topic)) %>%
     pull()
 
-  occurrences <- keyATM_keyword_search(
+  occurrences <- keyatm_keyword_search(
     dfm %>%
       dfm_subset(name == author),
     keywords,
@@ -853,7 +879,10 @@ keyATM_compare_search_to_model <- function(model, dfm, keywords, topic, author) 
     occurrences = occurrences$occurrences
   )
 
-  table(cut(df$theta, c(0, threshold_theta, 1)), factor(df$hit, labels=c("Negative", "Positive"))) %>%
+  table(
+    cut(df$theta, c(0, threshold_theta, 1)),
+    factor(df$hit, labels = c("Negative", "Positive"))
+  ) %>%
     as.data.frame.matrix() %>%
     mutate(Theta = rownames(.)) %>%
     relocate(Theta) %>%
@@ -862,7 +891,9 @@ keyATM_compare_search_to_model <- function(model, dfm, keywords, topic, author) 
   df %>%
     ggplot(aes(occurrences, theta)) +
     geom_pointdensity(shape = 17) +
-    geom_hline(yintercept = threshold_theta, linewidth = 0.5, linetype = "dashed") +
+    geom_hline(
+      yintercept = threshold_theta, linewidth = 0.5, linetype = "dashed"
+    ) +
     scale_colour_gradient(
       high = "#132B43",
       low = "#56B1F7"
@@ -872,7 +903,7 @@ keyATM_compare_search_to_model <- function(model, dfm, keywords, topic, author) 
     ylab("Theta")
 }
 
-keyATM_search_to_model <- function(model, dfm, keywords) {
+keyatm_search_to_model <- function(model, dfm, keywords) {
   #'
   #' Creates a keyATM model like list from a keyword search
   #'
@@ -881,7 +912,7 @@ keyATM_search_to_model <- function(model, dfm, keywords) {
   #' @param keywords the keyATM like keywords list
   #' @return A list containing occurrences as thetas and some topic information
   #'
-  theta <- keyATM_keyword_search(
+  theta <- keyatm_keyword_search(
     dfm, keywords,
     drop_empty_rows = FALSE,
     drop_empty_columns = FALSE,
@@ -891,12 +922,11 @@ keyATM_search_to_model <- function(model, dfm, keywords) {
   theta <- do.call(cbind, theta)
   colnames(theta) <- names(model$keywords_raw)
   rownames(theta) <- NULL
-  # rownames(theta) <- rownames(as.data.frame(model$theta))
 
   result <- list(
-    theta=as.matrix(theta),
-    no_keyword_topics=model$no_keyword_topics,
-    keyword_k=model$keyword_k
+    theta = as.matrix(theta),
+    no_keyword_topics = model$no_keyword_topics,
+    keyword_k = model$keyword_k
   )
   return(result)
 }

@@ -77,7 +77,7 @@ search_keywords <- list(
 )
 
 # Load reference model and DFM
-phrases_model <- keyATM_load_model(
+phrases_model <- keyatm_load_model(
   106,
   "models/phrases/models/"
 )
@@ -85,28 +85,28 @@ load("models/phrases/dfm.RData")
 load("models/phrases/corpus.RData")
 
 # Create model
-search_model <- keyATM_search_to_model(
+search_model <- keyatm_search_to_model(
   phrases_model, phrases_dfm, search_keywords
 )
 
 # Statistics
 
 # ... document histogram
-keyATM_plot_document_histogram(search_model, threshold = 1)
+keyatm_plot_document_histogram(search_model, threshold = 1)
 ggsave("models/search/document_histogram.pdf", width = 9, height = 6)
 
 # ... model statistics
 
 search_statistics <- data.frame(
   feature_count = lengths(search_keywords),
-  document_count = keyATM_topic_document_count(search_model),
+  document_count = keyatm_topic_document_count(search_model),
   coherence = c(NA, NA, NA, NA, NA, NA),
   exclusivity = c(NA, NA, NA, NA, NA, NA),
   ranksum = c(NA, NA, NA, NA, NA, NA),
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(1.5/20, NA, NA, NA, NA, NA)
+  intruder_documents = c(18.5 / 20, NA, NA, NA, NA, NA)
 )
-keyATM_print_model_statistics_table(
+keyatm_print_model_statistics_table(
   search_statistics,
   ncol(phrases_dfm),
   nrow(phrases_dfm),
@@ -117,24 +117,24 @@ keyATM_print_model_statistics_table(
 # Validate
 
 # ... top documents
-search_top_docs <- keyATM_top_docs_texts(
+search_top_docs <- keyatm_top_docs_texts(
   search_model, phrases_corpus, phrases_dfm, n = 20
 )
-keyATM_save_top_docs_texts(search_top_docs, "models/search/docs.md")
+keyatm_save_top_docs_texts(search_top_docs, "models/search/docs.md")
 
 # ... occurrences
-keyATM_print_occurrences_table(search_model_categorical, phrases_dfm)
+keyatm_print_occurrences_table(search_model_categorical, phrases_dfm)
 
 # TODO: clean up below
 
 # ... The Astral <-> King
-keyATM_compare_search_to_model(
+keyatm_compare_search_to_model(
   phrases_model, phrases_dfm, search_keywords, "1_the_astral", "King"
 )
 ggsave("models/search/confusion_the_astral_king.pdf", width = 5, height = 5)
 
 
-keyATM_plot_keyword_occurrences(
+keyatm_plot_keyword_occurrences(
   phrases_dfm %>%
     dfm_subset(name == "King"),
   search_keywords,
