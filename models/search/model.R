@@ -9,10 +9,12 @@ search_keywords <- list(
     "astral.projection",
     "astral.realm",
     # additional
+    "astral.sphere",
     "akashic.envelope",
     "sphere.of.sensation",
     "image.on.the.sphere",
-    "picture.on.the.sphere"
+    "picture.on.the.sphere",
+    "spirit.vision"
   ),
   astral_light = c(
     "astral.light",
@@ -85,6 +87,31 @@ load("models/phrases/corpus.RData")
 # Create model
 search_model <- keyATM_search_to_model(
   phrases_model, phrases_dfm, search_keywords
+)
+
+# Statistics
+
+# ... document histogram
+keyATM_plot_document_histogram(search_model, threshold = 1)
+ggsave("models/search/document_histogram.pdf", width = 9, height = 6)
+
+# ... model statistics
+
+search_statistics <- data.frame(
+  feature_count = lengths(search_keywords),
+  document_count = keyATM_topic_document_count(search_model),
+  coherence = c(NA, NA, NA, NA, NA, NA),
+  exclusivity = c(NA, NA, NA, NA, NA, NA),
+  ranksum = c(NA, NA, NA, NA, NA, NA),
+  intruder_features = c(NA, NA, NA, NA, NA, NA),
+  intruder_documents = c(1.5/20, NA, NA, NA, NA, NA)
+)
+keyATM_print_model_statistics_table(
+  search_statistics,
+  ncol(phrases_dfm),
+  nrow(phrases_dfm),
+  test_coherence = FALSE,
+  hide = c("Coherence", "Exclusivity", "IFS", "ISR")
 )
 
 # Validate

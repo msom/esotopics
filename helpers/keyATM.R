@@ -725,7 +725,8 @@ keyATM_calculate_model_statistics <- function(
 }
 
 keyATM_print_model_statistics_table <- function(
-    statistics, total_features, total_documents
+    statistics, total_features, total_documents, test_coherence = TRUE,
+    hide = NA
 ) {
   #'
   #' Print a nicely formatted markdown table with model statistics.
@@ -733,8 +734,11 @@ keyATM_print_model_statistics_table <- function(
   #' @param statistics the keyATM model statistics
   #' @param total_features the total number of features
   #' @param total_documents the total number of documents
+  #' @param test_coherence test and output low coherences (using a two-sided
+  #'   95% interval)
+  #' @param hide a list of rows to hide
   #'
-  statistics %>%
+  df <- statistics %>%
     mutate(
       topic = keyATM_topic_names(row.names(statistics))
     ) %>%
@@ -794,14 +798,23 @@ keyATM_print_model_statistics_table <- function(
       IFS = intruder_features,
       IDS = intruder_documents,
     ) %>%
-    relocate(Topic) %>%
+    relocate(Topic)
+
+  if (any(!is.na(hide))) {
+    df <- df %>%
+      select(-hide)
+  }
+
+  df %>%
     md_table()
 
-  lower <- t.test(
-    statistics$coherence, mu = mean(statistics$coherence)
-  )$conf.int[1]
-  names <- row.names(statistics[which(statistics$coherence < lower),])
-  print(str_glue("\n\nCoherence 95%: {lower} ({paste(names)})"))
+  if (test_coherence) {
+    lower <- t.test(
+      statistics$coherence, mu = mean(statistics$coherence)
+    )$conf.int[1]
+    names <- row.names(statistics[which(statistics$coherence < lower),])
+    print(str_glue("\n\nCoherence 95%: {lower} ({paste(names)})"))
+  }
 }
 
 
