@@ -81,14 +81,13 @@ keyatm_top_docs_texts <- function(
 
   for (name in colnames(docs)) {
     indices <- docs[, name]
+    thetas <- format(round(model$theta[indices, name], 4), scientific=F)
+    texts <- corpus[rownames(dfm)[indices]]
     docs[, name] <- paste0(
       rownames(dfm)[indices] %>%
         str_replace("\\.txt\\.", " ") %>%
         str_replace("_(\\d{4})(_\\d)*", " (\\1)"),
-      str_glue(
-        " [{format(round(model$theta[indices], 4), scientific=F)}]: ",
-        "{corpus[rownames(dfm)[indices]]}"
-      )
+      str_glue(" [{thetas}]: {texts}")
     )
   }
   return(docs)
