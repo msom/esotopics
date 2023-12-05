@@ -1,4 +1,43 @@
+library(esocorpus)
+
+# load data
+data(esocorpus)
+
+# load helper functions
 source("helpers/keyATM.R")
+source("helpers/preprocessing.R")
+source("helpers/vocabulary.R")
+
+# Create corpus. Use text from esoteric animal magnetism, spiritualism,
+# spiritsm, occultism, Theosophic Society and Order of the Golden Dawn.
+# Only include paragraphs with at least 30 words. Reshape to paragraphs, since
+# we assume to topic may change by paragraphs. Drop all features occurring
+# only once.
+search_corpus <- esocorpus %>%
+  corpus() %>%
+  corpus_subset(
+    title %in% c(
+      "An Introduction to the Study of Animal Magnetism",
+      "The Celestial Telegraph",
+      "The seeress of Prevorst",
+      "The Spirits Book",
+      "The Principles of Nature",
+      "Transcendental magic, its doctrine and ritual",
+      "The History of Magic",
+      "The Tarot of the Bohemians",
+      "The Secret Doctrine Vol 1",
+      "The Key to Theosophy",
+      "Astral Projection Ritual Magic and Alchemy"
+    )
+  ) %>%
+  corpus_trim("paragraphs", min_ntoken = 30) %>%
+  corpus_reshape(to = "paragraphs")
+save(search_corpus, file = "models/search/corpus.RData")
+
+# Create DFM
+search_dfm <- preprocess_phrases(search_corpus)
+save(search_dfm, file = "models/search/dfm.RData")
+vocabulary_save(search_dfm, "models/search/features.txt", TRUE)
 
 # Define extended keyword dictionary
 search_keywords <- list(
@@ -30,10 +69,7 @@ search_keywords <- list(
     # additional
   ),
   kabbalistic_tarot = c(
-    "book.of.thoth",
-    "kabbalistic.tarot",
-    "tarot.kabbalah"
-    # additional
+    "kabbalistic.tarot"
   ),
   magnetic_sleep = c(
     "magnetic.sleep",
@@ -76,17 +112,11 @@ search_keywords <- list(
   )
 )
 
-# Load reference model and DFM
-phrases_model <- keyatm_load_model(
-  106,
-  "models/phrases/models/"
-)
-load("models/phrases/dfm.RData")
-load("models/phrases/corpus.RData")
-
 # Create model
 search_model <- keyatm_search_to_model(
-  phrases_model, phrases_dfm, search_keywords
+  keyatm_load_model(106, "models/phrases/models/"),
+  search_dfm,
+  search_keywords
 )
 
 # Statistics
@@ -104,12 +134,12 @@ search_statistics <- data.frame(
   exclusivity = c(NA, NA, NA, NA, NA, NA),
   ranksum = c(NA, NA, NA, NA, NA, NA),
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(18.5 / 20, NA, NA, NA, NA, NA)
+  intruder_documents = c(18.5 / 20, NA, 1 / 1, NA, NA, NA)
 )
 keyatm_print_model_statistics_table(
   search_statistics,
-  ncol(phrases_dfm),
-  nrow(phrases_dfm),
+  ncol(search_dfm),
+  nrow(search_dfm),
   test_coherence = FALSE,
   hide = c("Coherence", "Exclusivity", "IFS", "ISR")
 )
@@ -118,24 +148,24 @@ keyatm_print_model_statistics_table(
 
 # ... top documents
 search_top_docs <- keyatm_top_docs_texts(
-  search_model, phrases_corpus, phrases_dfm, n = 20
+  search_model, search_corpus, search_dfm, n = 20
 )
 keyatm_save_top_docs_texts(search_top_docs, "models/search/docs.md")
 
 # ... occurrences
-keyatm_print_occurrences_table(search_model_categorical, phrases_dfm)
+keyatm_print_occurrences_table(search_model_categorical, search_dfm)
 
 # TODO: clean up below
 
 # ... The Astral <-> King
 keyatm_compare_search_to_model(
-  phrases_model, phrases_dfm, search_keywords, "1_the_astral", "King"
+  phrases_model, search_dfm, search_keywords, "1_the_astral", "King"
 )
 ggsave("models/search/confusion_the_astral_king.pdf", width = 5, height = 5)
 
 
 keyatm_plot_keyword_occurrences(
-  phrases_dfm %>%
+  search_dfm %>%
     dfm_subset(name == "King"),
   search_keywords,
   "the_astral"

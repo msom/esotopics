@@ -33,6 +33,8 @@ phrases_corpus <- esocorpus %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
 save(phrases_corpus, file = "models/phrases/corpus.RData")
+
+# Create DFM
 phrases_dfm_all <- preprocess_phrases(phrases_corpus)
 vocabulary_save(phrases_dfm_all, "models/phrases/features_all.txt", TRUE)
 phrases_dfm <- phrases_dfm_all %>%

@@ -32,7 +32,9 @@ pos_corpus <- esocorpus %>%
   ) %>%
   corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraphs")
+save(pos_corpus, file = "models/pos/corpus.RData")
 
+# Create DFM
 pos_dfm_all <- preprocess_closed_words(pos_corpus)
 vocabulary_save(pos_dfm_all, "models/pos/features_all.txt", TRUE)
 pos_dfm <- pos_dfm_all %>%
