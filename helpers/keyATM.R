@@ -86,7 +86,7 @@ keyatm_top_docs_texts <- function(
         str_replace("\\.txt\\.", " ") %>%
         str_replace("_(\\d{4})(_\\d)*", " (\\1)"),
       str_glue(
-        " [{round(model$theta[indices], 4)}]: ",
+        " [{format(round(model$theta[indices], 4), scientific=F)}]: ",
         "{corpus[rownames(dfm)[indices]]}"
       )
     )
