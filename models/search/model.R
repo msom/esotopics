@@ -74,12 +74,10 @@ search_keywords <- list(
   magnetic_sleep = c(
     "magnetic.sleep",
     "magnetic.crisis",
-    "magnetic.state",
-    "state.of.somnambulism",
     "magnetic.somnambulism",
-    "sixth.sense",
-    "clairvoyant.healing"
     # additional
+    "magnetic.somnambule",
+    "magnetic.somnambulist"
   ),
   seance = c(
     "seance",
@@ -113,11 +111,7 @@ search_keywords <- list(
 )
 
 # Create model
-search_model <- keyatm_search_to_model(
-  keyatm_load_model(106, "models/phrases/models/"),
-  search_dfm,
-  search_keywords
-)
+search_model <- keyatm_search_to_model(search_dfm, search_keywords)
 
 # Statistics
 
@@ -134,7 +128,7 @@ search_statistics <- data.frame(
   exclusivity = c(NA, NA, NA, NA, NA, NA),
   ranksum = c(NA, NA, NA, NA, NA, NA),
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(18.5 / 20, NA, 1 / 1, NA, NA, NA)
+  intruder_documents = c(18.5 / 20, NA, 1 / 1, 20 / 20, NA, NA)
 )
 keyatm_print_model_statistics_table(
   search_statistics,
@@ -153,7 +147,7 @@ search_top_docs <- keyatm_top_docs_texts(
 keyatm_save_top_docs_texts(search_top_docs, "models/search/docs.md")
 
 # ... occurrences
-keyatm_print_occurrences_table(search_model_categorical, search_dfm)
+keyatm_print_occurrences_table(search_model, search_dfm)
 
 # TODO: clean up below
 

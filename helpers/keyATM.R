@@ -719,6 +719,14 @@ keyatm_print_occurrences_table <- function(
     pivot_wider(names_from = topic, values_from = freq) %>%
     replace(is.na(.), 0) %>%
     dplyr::rename(Book = book) %>%
+    relocate(
+      Book,
+      model$theta %>%
+        as.data.frame() %>%
+        select(matches(match)) %>%
+        colnames() %>%
+        keyatm_topic_names()
+    ) %>%
     md_table()
 }
 
@@ -902,11 +910,10 @@ keyatm_compare_search_to_model <- function(
     ylab("Theta")
 }
 
-keyatm_search_to_model <- function(model, dfm, keywords) {
+keyatm_search_to_model <- function(dfm, keywords) {
   #'
   #' Creates a keyATM model like list from a keyword search
   #'
-  #' @param model a keyATM model containing information on topics
   #' @param dfm the DFM
   #' @param keywords the keyATM like keywords list
   #' @return A list containing occurrences as thetas and some topic information
@@ -919,13 +926,13 @@ keyatm_search_to_model <- function(model, dfm, keywords) {
     categorical = FALSE
   )
   theta <- do.call(cbind, theta)
-  colnames(theta) <- names(model$keywords_raw)
+  colnames(theta) <- paste(1:length(keywords), names(keywords), sep = "_")
   rownames(theta) <- NULL
 
   result <- list(
     theta = as.matrix(theta),
-    no_keyword_topics = model$no_keyword_topics,
-    keyword_k = model$keyword_k
+    no_keyword_topics = 0,
+    keyword_k = length(keywords)
   )
   return(result)
 }
