@@ -152,10 +152,6 @@ keyatm_print_occurrences_table(search_model, search_dfm)
 # TODO: clean up below
 
 # ... The Astral <-> King
-keyatm_compare_search_to_model(
-  phrases_model, search_dfm, search_keywords, "1_the_astral", "King"
-)
-ggsave("models/search/confusion_the_astral_king.pdf", width = 5, height = 5)
 
 
 keyatm_plot_keyword_occurrences(

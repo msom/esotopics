@@ -248,7 +248,7 @@ keyatm_topic_document_count <- function(
   #'  is FALSE
   #' @return the number of topics
   #'
-  threshold_theta <- 1 / (model$no_keyword_topics + model$keyword_k)
+  threshold_theta <- threshold / (model$no_keyword_topics + model$keyword_k)
   match <- ifelse(include_others, ".*", "\\d_.*")
   result <- model$theta %>%
     as.data.frame() %>%
@@ -613,7 +613,7 @@ keyatm_plot_document_histogram <- function(model, threshold = 1) {
   #'  of the uniform distribution value, default is 1
   #'
   totals <- keyatm_topic_document_count(model, threshold)
-  threshold_theta <- 1 / (model$no_keyword_topics + model$keyword_k)
+  threshold_theta <- threshold / (model$no_keyword_topics + model$keyword_k)
   model$theta %>%
     as.data.frame() %>%
     pivot_longer(matches("\\d_.*")) %>%
@@ -675,7 +675,7 @@ keyatm_print_occurrences_table <- function(
   #'  of rows to count
   #'
   match <- ifelse(include_others, ".*", "\\d_.*")
-  threshold_theta <- 1 / (model$no_keyword_topics + model$keyword_k)
+  threshold_theta <- threshold / (model$no_keyword_topics + model$keyword_k)
   occurrences <- model$theta %>%
     as.data.frame() %>%
     select(matches(match)) %>%
@@ -848,67 +848,6 @@ keyatm_print_model_statistics_table <- function(
   }
 }
 
-
-keyatm_compare_search_to_model <- function(
-  smodel, dfm, keywords, topic, author
-) {
-  #'
-  #' Prints a confusion matrix and returns a scatter plot with theta vs.
-  #' search occurrences.
-  #'
-  #' @param model the keyATM model
-  #' @param dfm the DFM§
-  #' @param keywords the keyATM like keywords list
-  #' @param topic the topic name (starting with number prefix)
-  #' @param author the author name
-  #' @return A scatter plot
-  #'
-  threshold_theta <- 1 / (model$no_keyword_topics + model$keyword_k)
-  theta <- model$theta %>%
-    as.data.frame() %>%
-    slice(which(docvars(dfm)$name == author)) %>%
-    select(all_of(topic)) %>%
-    pull()
-
-  occurrences <- keyatm_keyword_search(
-    dfm %>%
-      dfm_subset(name == author),
-    keywords,
-    drop_empty_rows = FALSE
-  ) %>%
-    `[[`(str_replace(topic, "\\d_", "")) %>%
-    transmute(occurrences = rowSums(.)) %>%
-    mutate(hit = ifelse(occurrences > 0, 1, 0))
-
-  df <- data.frame(
-    theta = theta,
-    hit = occurrences$hit,
-    occurrences = occurrences$occurrences
-  )
-
-  table(
-    cut(df$theta, c(0, threshold_theta, 1)),
-    factor(df$hit, labels = c("Negative", "Positive"))
-  ) %>%
-    as.data.frame.matrix() %>%
-    mutate(Theta = rownames(.)) %>%
-    relocate(Theta) %>%
-    md_table()
-
-  df %>%
-    ggplot(aes(occurrences, theta)) +
-    geom_pointdensity(shape = 17) +
-    geom_hline(
-      yintercept = threshold_theta, linewidth = 0.5, linetype = "dashed"
-    ) +
-    scale_colour_gradient(
-      high = "#132B43",
-      low = "#56B1F7"
-    ) +
-    labs(color = "Neighbors") +
-    xlab("Occurrences") +
-    ylab("Theta")
-}
 
 keyatm_search_to_model <- function(dfm, keywords) {
   #'
