@@ -119,7 +119,7 @@ keyatm_plot_topic_measure_scatter(
   c(seq(75, 125), 300),
   highlight = c(109)
 )
-ggsave("models/pos/metrics_scatter.pdf", width = 9, height = 5)
+ggsave("models/pos/metrics_scatter.pdf", width = 9, height = 8)
 
 # Load model
 pos_model <- keyatm_load_model(109, "models/pos/models/")
@@ -150,7 +150,7 @@ keyatm_print_model_statistics_table(
 
 # ... convergence
 plot_modelfit(pos_model)
-ggsave("models/pos/model_fit.pdf", width = 9, height = 4)
+ggsave("models/pos/model_fit.pdf", width = 9, height = 5)
 
 plot_alpha(pos_model)
 
