@@ -801,11 +801,11 @@ keyatm_print_model_statistics_table <- function(
       ranksum = format(round(ranksum, 2), nsmall = 2),
       intruder_features = ifelse(
         is.na(intruder_features), "NA",
-        format(round(intruder_features, 1), nsmall = 1)
+        format(round(intruder_features, 2), nsmall = 2)
       ),
       intruder_documents = ifelse(
         is.na(intruder_documents), "NA",
-        format(round(intruder_documents, 1), nsmall = 1)
+        format(round(intruder_documents, 2), nsmall = 2)
       )
     ) %>%
     add_row(

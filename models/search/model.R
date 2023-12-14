@@ -83,30 +83,32 @@ search_keywords <- list(
     "seance",
     "sitting",
     "sitter",
-    "manifestation",
     "rapping",
     "table.tipping",
     "movement.of.furniture",
     "possessed.medium",
-    "seized.medium",
-    "materialization",
-    "good.spirit",
-    "evil.spirit",
-    "haunted.by.spectre"
+    "seized.medium"
     # additional
   ),
   progression = c(
-    "progression",
-    "progress",
-    "incarnation",
-    "reincarnation",
+    # "progression",
+    # "progress",
+    # "incarnation",
+    # "reincarnation",
     "law.of.progress",
-    "karma",
-    "monad",
-    "law.of.cause.and.effect",
-    "law.of.retribution",
-    "spiritual.growth"
+    # "karma",
+    # "monad",
+    # "law.of.cause.and.effect",
+    # "law.of.retribution",
+    "spiritual.growth",
     # additional
+    # "karmic.law",
+    "national.karma",
+    "cycle.of.incarnation",
+    "chain.of.progression",
+    "human.progress",
+    "progress.of.humanity",
+    "eternal.progression"
   )
 )
 
@@ -120,7 +122,6 @@ keyatm_plot_document_histogram(search_model, threshold = 1)
 ggsave("models/search/document_histogram.pdf", width = 9, height = 6)
 
 # ... model statistics
-
 search_statistics <- data.frame(
   feature_count = lengths(search_keywords),
   document_count = keyatm_topic_document_count(search_model),
@@ -128,7 +129,7 @@ search_statistics <- data.frame(
   exclusivity = c(NA, NA, NA, NA, NA, NA),
   ranksum = c(NA, NA, NA, NA, NA, NA),
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(18.5 / 20, NA, 1 / 1, 20 / 20, NA, NA)
+  intruder_documents = c(18.5 / 20, NA, 1 / 1, 20 / 20, 14 / 20, NA)
 )
 keyatm_print_model_statistics_table(
   search_statistics,

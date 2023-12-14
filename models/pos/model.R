@@ -50,66 +50,25 @@ pos_docs <- keyatm_read(texts = pos_dfm)
 
 # Create keywords
 pos_keywords <- list(
-  the_astral = c(
-    "astral",
-    "realm",
-    "plane",
-    # "body",
-    "projection"
-  ),
+  the_astral = c("astral", "realm", "plane", "projection"),
   astral_light = c(
-    "magnetic", "fluid",
-    "ether",
-    "astral", "light",
-    "universal", "agent",
-    "primordial",
-    "terrestrial",
-    "sidereal", "force",
-    "electric", "vital",
+    "magnetic", "fluid", "ether", "astral", "light", "universal", "agent",
+    "primordial", "terrestrial", "sidereal", "force", "electric", "vital",
     "fohat"
   ),
-  kabbalistic_tarot = c(
-    "kabbalistic",
-    "book", "thoth",
-    "tarot", "kabbalah"
-  ),
+  kabbalistic_tarot = c("kabbalistic", "book", "thoth", "tarot", "kabbalah"),
   magnetic_sleep = c(
-    "magnetic", "sleep",
-    "crisis",
-    "peaceful",
-    "state",
-    "somnambulism",
-    "sixth", "sense",
-    "clairvoyant", "healing"
+    "magnetic", "sleep", "crisis", "peaceful", "state", "somnambulism",
+    "sixth", "sense", "clairvoyant", "healing"
   ),
   seance = c(
-    "seance",
-    "sitting",
-    # "sitter",
-    "manifestation",
-    "rapping",
-    "table", # "tipping",
-    "movement", "furniture",
-    "possessed", "medium",
-    # "seized",
-    "materialization",
-    "good",
-    "spirit",
-    "evil",
-    # "haunted",
-    "spectre"
+    "seance", "sitting", "manifestation", "rapping", "table",  "movement",
+    "furniture", "possessed", "medium", "materialization", "good", "spirit",
+    "evil", "spectre"
   ),
   progression = c(
-    "progression",
-    "progress",
-    "incarnation",
-    "reincarnation",
-    "law",
-    "karma",
-    "monad",
-    "cause", "effect",
-    "retribution",
-    "spiritual", "growth"
+    "progression", "progress", "incarnation", "reincarnation", "law", "karma",
+    "monad", "cause", "effect", "retribution", "spiritual", "growth"
   )
 )
 
@@ -163,10 +122,7 @@ keyatm_plot_topic_measure_scatter(
 ggsave("models/pos/metrics_scatter.pdf", width = 9, height = 5)
 
 # Load model
-pos_model <- keyatm_load_model(
-  109,
-  "models/pos/models/"
-)
+pos_model <- keyatm_load_model(109, "models/pos/models/")
 
 # Statistics
 
@@ -182,7 +138,7 @@ ggsave("models/pos/feature_histogram.pdf", width = 9, height = 6)
 pos_statistics <- keyatm_calculate_model_statistics(
   pos_model, pos_dfm, pos_keywords,
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(2 / 20, NA, 4 / 20, 0 / 20, NA, NA)
+  intruder_documents = c(2 / 20, NA, 4 / 20, 0 / 20, 0 / 20, 1 / 20)
 )
 keyatm_print_model_statistics_table(
   pos_statistics,

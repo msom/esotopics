@@ -48,67 +48,25 @@ vocabulary_save(phrases_dfm, "models/phrases/features.txt", TRUE)
 # Read texts
 phrases_docs <- keyatm_read(texts = phrases_dfm)
 
-# Create keywords
+# Create keywords (pruned keywords have been removed)
 phrases_keywords <- list(
-  the_astral = c(
-    "astral",
-    # "astral.realm", pruned
-    "astral.plane",
-    "astral.body",
-    "astral.projection"
-  ),
+  the_astral = c("astral", "astral.plane", "astral.body", "astral.projection"),
   astral_light = c(
-    "magnetic.fluid",
-    "ether",
-    "astral.light",
-    "universal.agent",
-    "primordial.light",
-    # "terrestrial.fluid", pruned
-    "great.magnetic.agent"
-    # "sidereal.force", pruned
-    # "electric.vital.fluid", pruned
-    # "fohat" pruned
+    "magnetic.fluid", "ether", "astral.light", "universal.agent",
+    "primordial.light", "great.magnetic.agent"
   ),
-  kabbalistic_tarot = c(
-    # "kabbalistic.tarot", pruned
-    "book.of.thoth",
-    "tarot.kabbalah"
-  ),
+  kabbalistic_tarot = c("book.of.thoth", "tarot.kabbalah"),
   magnetic_sleep = c(
-    "magnetic.sleep",
-    "magnetic.crisis",
-    # "peaceful.sleep", pruned
-    "magnetic.state",
-    "state.of.somnambulism",
-    "magnetic.somnambulism",
-    "sixth.sense"
-    # "clairvoyant.healing" pruned
+    "magnetic.sleep", "magnetic.crisis", "magnetic.state",
+    "state.of.somnambulism", "magnetic.somnambulism", "sixth.sense"
   ),
   seance = c(
-    "seance",
-    "sitting",
-    # "sitter", pruned
-    "manifestation",
-    "rapping",
-    # "table.tipping", pruned
-    # "movement.of.furniture", pruned
-    # "possessed.medium",
-    # "seized.medium",
-    "materialization",
-    "good.spirit",
-    "evil.spirit"
-    # "haunted.by.spectre"
+    "seance", "sitting", "manifestation", "rapping", "materialization",
+    "good.spirit", "evil.spirit"
   ),
   progression = c(
-    "progression",
-    "progress",
-    "incarnation",
-    "reincarnation",
-    "law.of.progress",
-    "karma",
-    "monad",
-    # "law.of.cause.and.effect", pruned
-    "law.of.retribution",
+    "progression", "progress", "incarnation", "reincarnation",
+    "law.of.progress", "karma", "monad", "law.of.retribution",
     "spiritual.growth"
   )
 )
@@ -182,7 +140,7 @@ ggsave("models/phrases/feature_histogram.pdf", width = 9, height = 6)
 phrases_statistics <- keyatm_calculate_model_statistics(
   phrases_model, phrases_dfm, phrases_keywords,
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(13 / 20, NA, 7 / 20, 16 / 20, NA, NA)
+  intruder_documents = c(13 / 20, NA, 7 / 20, 16 / 20, 14 / 20, 9 / 20)
 )
 keyatm_print_model_statistics_table(
   phrases_statistics,
