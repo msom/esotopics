@@ -172,6 +172,9 @@ phrases_top_docs <- keyatm_top_docs_texts(
 )
 keyatm_save_top_docs_texts(phrases_top_docs, "models/phrases/docs.md")
 
+keyatm_plot_top_docs_length(phrases_top_docs, 3000)
+ggsave("models/phrases/doc_length.pdf", width = 9, height = 6)
+
 # ... occurrences
 keyatm_print_occurrences_table(phrases_model, phrases_dfm)
 

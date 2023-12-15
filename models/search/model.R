@@ -147,6 +147,9 @@ search_top_docs <- keyatm_top_docs_texts(
 )
 keyatm_save_top_docs_texts(search_top_docs, "models/search/docs.md")
 
+keyatm_plot_top_docs_length(search_top_docs)
+ggsave("models/search/doc_length.pdf", width = 9, height = 6)
+
 # ... occurrences
 keyatm_print_occurrences_table(search_model, search_dfm)
 

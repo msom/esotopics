@@ -81,7 +81,7 @@ keyatm_top_docs_texts <- function(
 
   for (name in colnames(docs)) {
     indices <- docs[, name]
-    thetas <- format(round(model$theta[indices, name], 4), scientific=F)
+    thetas <- format(round(model$theta[indices, name], 4), scientific = FALSE)
     texts <- corpus[rownames(dfm)[indices]]
     docs[, name] <- paste0(
       rownames(dfm)[indices] %>%
@@ -658,6 +658,39 @@ keyatm_plot_feature_histogram <- function(model, threshold = 1) {
     xlab("Phi") +
     ylab("Count")
 }
+
+
+keyatm_plot_top_docs_length <- function(texts, ymax = NA) {
+  #'
+  #' Plot the length of the top documents of a model include SE
+  #'
+  #' @param texts the result of keyatm_top_docs_texts
+  #' @param ymax optional ymax
+  #'
+  plot <- texts %>%
+    pivot_longer(everything()) %>%
+    mutate(
+      name = keyatm_topic_names(name),
+      value = nchar(value)
+    ) %>%
+    group_by(name) %>%
+    dplyr::summarize(
+      n = n(),
+      mean = mean(value),
+      sd = sd(value),
+      se = sd / sqrt(n)
+    ) %>%
+    ggplot(aes(x = name, y = mean)) +
+    geom_bar(stat = "identity", fill = "#256a9e") +
+    geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.3) +
+    xlab("Topic") +
+    ylab("Length")
+  if (!is.na(ymax)) {
+    plot <- plot + ylim(c(0, ymax))
+  }
+  return(plot)
+}
+
 
 keyatm_print_occurrences_table <- function(
   model, dfm, threshold = 1, include_others = FALSE, number_of_rows = NA

@@ -150,7 +150,7 @@ keyatm_print_model_statistics_table(
 
 # ... convergence
 plot_modelfit(pos_model)
-ggsave("models/pos/model_fit.pdf", width = 9, height = 5)
+ggsave("models/pos/model_fit.pdf", width = 9, height = 6)
 
 plot_alpha(pos_model)
 
@@ -167,6 +167,9 @@ top_words(pos_model, n = 200, show_keyword = FALSE) %>%
 # ... top documents
 pos_top_docs <- keyatm_top_docs_texts(pos_model, pos_corpus, pos_dfm, n = 20)
 keyatm_save_top_docs_texts(pos_top_docs, "models/pos/docs.md")
+
+keyatm_plot_top_docs_length(pos_top_docs, 3000)
+ggsave("models/pos/doc_length.pdf", width = 9, height = 6)
 
 # ... occurrences
 keyatm_print_occurrences_table(pos_model, pos_dfm)
