@@ -9,13 +9,14 @@ library(keyATM)
 library(parallel)
 library(pbapply)
 library(philentropy)
-library(plyr)
 library(quanteda)
 library(simplermarkdown)
 library(stringr)
 library(tidyr)
 library(topicdoc)
 library(topicmodels)
+
+source("helpers/predict.R")
 
 keyatm_topic_names <- function(names) {
   #'
@@ -228,7 +229,7 @@ keyatm_topic_feature_count <- function(
     select(name, value) %>%
     filter(value > threshold_phi) %>%
     group_by(name) %>%
-    dplyr::summarize(count = n())
+    summarize(count = n())
 
   counts <- unlist(result["count"])
   counts <- setNames(counts, unlist(result["name"]))
@@ -256,7 +257,7 @@ keyatm_topic_document_count <- function(
     select(name, value) %>%
     filter(value > threshold_theta) %>%
     group_by(name) %>%
-    dplyr::summarize(count = n())
+    summarize(count = n())
 
   counts <- unlist(result["count"])
   counts <- setNames(counts, unlist(result["name"]))
@@ -388,7 +389,7 @@ keyatm_measure_models <- function(
     }
   )
 
-  return(rbind.fill(result))
+  return(plyr::rbind.fill(result))
 }
 
 
@@ -674,7 +675,7 @@ keyatm_plot_top_docs_length <- function(texts, ymax = NA) {
       value = nchar(value)
     ) %>%
     group_by(name) %>%
-    dplyr::summarize(
+    summarize(
       n = n(),
       mean = mean(value),
       sd = sd(value),
@@ -744,14 +745,14 @@ keyatm_print_occurrences_table <- function(
   occurrences %>%
     select(-paragraph, -theta) %>%
     group_by(book) %>%
-    count() %>%
+    plyr::count() %>%
     ungroup() %>%
     mutate(
       topic = keyatm_topic_names(topic)
     ) %>%
     pivot_wider(names_from = topic, values_from = freq) %>%
     replace(is.na(.), 0) %>%
-    dplyr::rename(Book = book) %>%
+    rename(Book = book) %>%
     relocate(
       Book,
       model$theta %>%
@@ -852,7 +853,7 @@ keyatm_print_model_statistics_table <- function(
       intruder_documents = "---",
       .before = nrow(.)
     ) %>%
-    dplyr::rename(
+    rename(
       Topic = topic,
       Features = feature_count,
       Documents = document_count,
@@ -906,5 +907,47 @@ keyatm_search_to_model <- function(dfm, keywords) {
     no_keyword_topics = 0,
     keyword_k = length(keywords)
   )
+  return(result)
+}
+
+keyatm_predict <- function(docs, model, n = 300) {
+  #'
+  #' Predicts topic proportions
+  #'
+  #' Taken from https://github.com/keyATM/keyATM/issues/187, but using mean
+  #' instead of median.
+  #'
+  #' @param docs a keyATM documents object
+  #' @param model a keyATM model
+  #' @param n number of iterations
+  #' @return A data frame containing the estimated theta values
+  #'
+  result <- pred_topicprop(model, docs, iter_num = n)
+  result <- sapply(result, function(x) {apply(x, 2, mean)}) %>%
+    t() %>%
+    as.data.frame()
+  return(result)
+}
+
+keyatm_predict_top_doc <- function(theta, include_others = FALSE) {
+  #'
+  #' Returns the top document per topic for predicted topics
+  #'
+  #' @param theta a data frame with thetas from keyatm_predict
+  #' @param include_others if FALSE, only pre-defined topics are used, default
+  #'  is FALSE
+  #' @return A data theta and document id
+  #'
+  match <- ifelse(include_others, ".*", "\\d_.*")
+  result <- theta %>%
+    select(matches(match)) %>%
+    pivot_longer(everything()) %>%
+    group_by(name) %>%
+    summarise(
+      theta=max(value),
+      docid=which.max(value),
+    ) %>%
+    ungroup()
+
   return(result)
 }

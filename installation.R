@@ -16,6 +16,7 @@ install.packages("simplermarkdown")
 install.packages("topicdoc")
 install.packages("topicmodels")
 install.packages("udpipe")
+install.packages("matrixStats")
 
 library(devtools)
 install_github("msom/esocorpus", upgrade = "always", force = TRUE)

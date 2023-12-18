@@ -1,7 +1,6 @@
 library(cli)
 library(dplyr)
 library(hash)
-library(Matrix)
 library(parallel)
 library(pbapply)
 library(progress)
@@ -240,7 +239,7 @@ udpipe_phrases <- function(
   }
 
   # Create the sparse matrix, convert to a DFM and add the docvars
-  result <- sparseMatrix(
+  result <- Matrix::sparseMatrix(
     i = unlist(document_indexes),
     j = unlist(phrase_indexes),
     x = unlist(phrase_counts),

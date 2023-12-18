@@ -66,7 +66,7 @@ search_keywords <- list(
     "sidereal.force",
     "terrestrial.fluid",
     "universal.agent"
-    # additional
+    # no additional
   ),
   kabbalistic_tarot = c(
     "kabbalistic.tarot"
@@ -88,21 +88,12 @@ search_keywords <- list(
     "movement.of.furniture",
     "possessed.medium",
     "seized.medium"
-    # additional
+    # no additional
   ),
   progression = c(
-    # "progression",
-    # "progress",
-    # "incarnation",
-    # "reincarnation",
     "law.of.progress",
-    # "karma",
-    # "monad",
-    # "law.of.cause.and.effect",
-    # "law.of.retribution",
     "spiritual.growth",
     # additional
-    # "karmic.law",
     "national.karma",
     "cycle.of.incarnation",
     "chain.of.progression",
@@ -129,7 +120,7 @@ search_statistics <- data.frame(
   exclusivity = c(NA, NA, NA, NA, NA, NA),
   ranksum = c(NA, NA, NA, NA, NA, NA),
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(18.5 / 20, NA, 1 / 1, 20 / 20, 14 / 20, NA)
+  intruder_documents = c(18.5 / 20, NA, 1 / 1, 20 / 20, 14 / 20, 16 / 20)
 )
 keyatm_print_model_statistics_table(
   search_statistics,
@@ -143,7 +134,7 @@ keyatm_print_model_statistics_table(
 
 # ... top documents
 search_top_docs <- keyatm_top_docs_texts(
-  search_model, search_corpus, search_dfm, n = 20
+  search_model, search_corpus, search_dfm, n = 47
 )
 keyatm_save_top_docs_texts(search_top_docs, "models/search/docs.md")
 
@@ -153,14 +144,23 @@ ggsave("models/search/doc_length.pdf", width = 9, height = 6)
 # ... occurrences
 keyatm_print_occurrences_table(search_model, search_dfm)
 
-# TODO: clean up below
+# ... external
+search_classify <- function(titles) {
+  corp <- esocorpus %>%
+    corpus() %>%
+    corpus_subset(title %in% titles) %>%
+    corpus_trim("paragraphs", min_ntoken = 30) %>%
+    corpus_reshape(to = "paragraphs")
+  dfm <- corp %>%
+    preprocess_phrases()
+  result <- keyatm_keyword_search(dfm, search_keywords)
+  known <- vocabulary_compare(dfm, search_dfm)$known
+  return(list(corp=corp, dfm=dfm, known=known, result=result))
+}
 
-# ... The Astral <-> King
-
-
-keyatm_plot_keyword_occurrences(
-  search_dfm %>%
-    dfm_subset(name == "King"),
-  search_keywords,
-  "the_astral"
+search_classification <- list(
+  search_classify(c("The Complete Golden Dawn System Of Magic")),
+  search_classify(c("On the Origin of Species By Means of Natural Selection")),
+  search_classify(c("Sane Occultism"))
 )
+save(search_classification, file = "models/search/classification.RData")

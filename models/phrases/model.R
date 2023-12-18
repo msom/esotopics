@@ -46,7 +46,7 @@ save(phrases_dfm, file = "models/phrases/dfm.RData")
 vocabulary_save(phrases_dfm, "models/phrases/features.txt", TRUE)
 
 # Read texts
-phrases_docs <- keyatm_read(texts = phrases_dfm)
+phrases_docs <- keyATM_read(texts = phrases_dfm)
 
 # Create keywords (pruned keywords have been removed)
 phrases_keywords <- list(
@@ -181,3 +181,26 @@ keyatm_print_occurrences_table(phrases_model, phrases_dfm)
 keyatm_plot_topic_occurrences(
   phrases_model, phrases_dfm, path = "models/phrases/"
 )
+
+# ... external
+phrases_classify <- function(titles) {
+  corp <- esocorpus %>%
+    corpus() %>%
+    corpus_subset(title %in% titles) %>%
+    corpus_trim("paragraphs", min_ntoken = 30) %>%
+    corpus_reshape(to = "paragraphs")
+  dfm <- corp %>%
+    preprocess_phrases()
+  docs <- keyATM_read(texts = dfm)
+  theta <- keyatm_predict(docs, phrases_model)
+  result <- keyatm_predict_top_doc(theta)
+  known <- vocabulary_compare(dfm, phrases_dfm)$known
+  return(list(corp=corp, dfm=dfm, known=known, theta=theta, result=result))
+}
+
+phrases_classification <- list(
+  phrases_classify(c("The Complete Golden Dawn System Of Magic")),
+  phrases_classify(c("On the Origin of Species By Means of Natural Selection")),
+  phrases_classify(c("Sane Occultism"))
+)
+save(phrases_classification, file = "models/phrases/classification.RData")

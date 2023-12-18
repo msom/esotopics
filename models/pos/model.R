@@ -46,7 +46,7 @@ save(pos_dfm, file = "models/pos/dfm.RData")
 vocabulary_save(pos_dfm, "models/pos/features.txt", TRUE)
 
 # Read texts
-pos_docs <- keyatm_read(texts = pos_dfm)
+pos_docs <- keyATM_read(texts = pos_dfm)
 
 # Create keywords
 pos_keywords <- list(
@@ -138,7 +138,7 @@ ggsave("models/pos/feature_histogram.pdf", width = 9, height = 6)
 pos_statistics <- keyatm_calculate_model_statistics(
   pos_model, pos_dfm, pos_keywords,
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(2 / 20, NA, 4 / 20, 0 / 20, 0 / 20, 1 / 20)
+  intruder_documents = c(2 / 20, 9 / 20, 4 / 20, 0 / 20, 0 / 20, 1 / 20)
 )
 keyatm_print_model_statistics_table(
   pos_statistics,
@@ -177,3 +177,28 @@ keyatm_print_occurrences_table(pos_model, pos_dfm)
 keyatm_plot_topic_occurrences(
   pos_model, pos_dfm, path = "models/pos/"
 )
+
+# ... external
+pos_classify <- function(titles) {
+  corp <- esocorpus %>%
+    corpus() %>%
+    corpus_subset(title %in% titles) %>%
+    corpus_trim("paragraphs", min_ntoken = 30) %>%
+    corpus_reshape(to = "paragraphs")
+  dfm <- corp %>%
+    preprocess_closed_words()
+  docs <- keyATM_read(texts = dfm)
+  theta <- keyatm_predict(docs, pos_model)
+  result <- keyatm_predict_top_doc(theta)
+  known <- vocabulary_compare(dfm, pos_dfm)$known
+  return(list(dfm=dfm, corp=corp, known=known, theta=theta, result=result))
+}
+
+pos_classification <- list(
+  pos_classify(c("The Complete Golden Dawn System Of Magic")),
+  pos_classify(c("On the Origin of Species By Means of Natural Selection")),
+  pos_classify(c("Sane Occultism"))
+)
+save(pos_classification, file = "models/pos/classification.RData")
+
+
