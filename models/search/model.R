@@ -58,15 +58,16 @@ search_keywords <- list(
   astral_light = c(
     "astral.light",
     "electric.vital.fluid",
-    "ether",
     "fohat",
     "great.magnetic.agent",
-    "magnetic.fluid",
     "primordial.light",
     "sidereal.force",
     "terrestrial.fluid",
-    "universal.agent"
-    # no additional
+    "universal.agent",
+    # additional
+    "sun..force",
+    "occult.force",
+    "astral.fluid"
   ),
   kabbalistic_tarot = c(
     "kabbalistic.tarot"
@@ -120,7 +121,7 @@ search_statistics <- data.frame(
   exclusivity = c(NA, NA, NA, NA, NA, NA),
   ranksum = c(NA, NA, NA, NA, NA, NA),
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(18.5 / 20, NA, 1 / 1, 20 / 20, 14 / 20, 16 / 20)
+  intruder_documents = c(18.5 / 20, 19 / 20, 1 / 1, 20 / 20, 14 / 20, 16 / 20)
 )
 keyatm_print_model_statistics_table(
   search_statistics,
