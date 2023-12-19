@@ -197,8 +197,7 @@ pos_classify <- function(titles) {
 pos_classification <- list(
   pos_classify(c("The Complete Golden Dawn System Of Magic")),
   pos_classify(c("On the Origin of Species By Means of Natural Selection")),
-  pos_classify(c("Sane Occultism"))
+  pos_classify(c("Sane Occultism")),
+  pos_classify(c("The Mediums Book"))
 )
 save(pos_classification, file = "models/pos/classification.RData")
-
-

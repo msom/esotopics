@@ -162,6 +162,7 @@ search_classify <- function(titles) {
 search_classification <- list(
   search_classify(c("The Complete Golden Dawn System Of Magic")),
   search_classify(c("On the Origin of Species By Means of Natural Selection")),
-  search_classify(c("Sane Occultism"))
+  search_classify(c("Sane Occultism")),
+  search_classify(c("The Mediums Book"))
 )
 save(search_classification, file = "models/search/classification.RData")

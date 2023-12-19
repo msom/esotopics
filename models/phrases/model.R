@@ -201,6 +201,7 @@ phrases_classify <- function(titles) {
 phrases_classification <- list(
   phrases_classify(c("The Complete Golden Dawn System Of Magic")),
   phrases_classify(c("On the Origin of Species By Means of Natural Selection")),
-  phrases_classify(c("Sane Occultism"))
+  phrases_classify(c("Sane Occultism")),
+  phrases_classify(c("The Mediums Book"))
 )
 save(phrases_classification, file = "models/phrases/classification.RData")
