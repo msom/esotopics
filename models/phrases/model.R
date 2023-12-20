@@ -195,7 +195,9 @@ phrases_classify <- function(titles) {
   theta <- keyatm_predict(docs, phrases_model)
   result <- keyatm_predict_top_doc(theta)
   known <- vocabulary_compare(dfm, phrases_dfm)$known
-  return(list(corp=corp, dfm=dfm, known=known, theta=theta, result=result))
+  return(
+    list(corp = corp, dfm = dfm, known = known, theta = theta, result = result)
+  )
 }
 
 phrases_classification <- list(

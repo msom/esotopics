@@ -156,7 +156,7 @@ search_classify <- function(titles) {
     preprocess_phrases()
   result <- keyatm_keyword_search(dfm, search_keywords)
   known <- vocabulary_compare(dfm, search_dfm)$known
-  return(list(corp=corp, dfm=dfm, known=known, result=result))
+  return(list(corp = corp, dfm = dfm, known = known, result = result))
 }
 
 search_classification <- list(
@@ -166,3 +166,35 @@ search_classification <- list(
   search_classify(c("The Mediums Book"))
 )
 save(search_classification, file = "models/search/classification.RData")
+
+file <- "models/search/classification.md"
+cat(file = file)
+for (i in seq_len(length(search_classification))) {
+  corp <- search_classification[[i]]$corp
+  cat(str_glue("\n\n# {docvars(corp)$title[1]}"), file = file, append = TRUE)
+  for (topic in names(search_classification[[i]]$result)) {
+    df <- as.data.frame(search_classification[[i]]$result[topic])
+    cat(
+      str_glue(
+        "\n\n\n## {keyatm_topic_names(topic)}\n\n",
+        "{ncol(df)} feature(s) found in {nrow(df)} documents\n\n\n"
+      ),
+      file = file, append = TRUE
+    )
+    if (ncol(df) > 0) {
+      df_h <- df %>%
+        mutate(docid = row.names(.), sum = rowSums(.)) %>%
+        separate_wider_delim(
+          docid,
+          delim = ".txt.",
+          names = c("book", "paragraph")
+        ) %>%
+        relocate(c(book, paragraph, sum)) %>%
+        arrange(-sum) %>%
+        head(1)
+      cat(md_table(df_h, as_character = TRUE), file = file, append = TRUE)
+      text <- corp[[as.integer(df_h[1, "paragraph"])]]
+      cat(str_glue("\n\n\n\n> {text}"), file = file, append = TRUE)
+    }
+  }
+}

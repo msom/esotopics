@@ -191,7 +191,9 @@ pos_classify <- function(titles) {
   theta <- keyatm_predict(docs, pos_model)
   result <- keyatm_predict_top_doc(theta)
   known <- vocabulary_compare(dfm, pos_dfm)$known
-  return(list(dfm=dfm, corp=corp, known=known, theta=theta, result=result))
+  return(
+    list(dfm = dfm, corp = corp, known = known, theta = theta, result = result)
+  )
 }
 
 pos_classification <- list(
