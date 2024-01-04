@@ -93,10 +93,11 @@ keyatm_fit_models(
   parallel = 5
 )
 phrases_metrics <- keyatm_measure_models(
-  phrases_dfm,
+  dfm = phrases_dfm,
   numbers = c(seq(1, 124), 125, 150, 200, 250, 300),
-  phrases_keywords,
-  "models/phrases/models/"
+  keywords = phrases_keywords,
+  seed = 123,
+  path = "models/phrases/models/"
 )
 save(phrases_metrics, file = "models/phrases/metrics.RData")
 
@@ -121,10 +122,7 @@ keyatm_plot_topic_measure_scatter(
 ggsave("models/phrases/metrics_scatter.pdf", width = 9, height = 8)
 
 # Load model
-phrases_model <- keyatm_load_model(
-  106,
-  "models/phrases/models/"
-)
+phrases_model <- keyatm_load_model(106, 123, "models/phrases/models/")
 
 # Statistics
 

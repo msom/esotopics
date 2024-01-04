@@ -94,10 +94,11 @@ keyatm_fit_models(
   parallel = 2
 )
 pos_metrics <- keyatm_measure_models(
-  pos_dfm,
+  dfm = pos_dfm,
   numbers = c(seq(1, 125), 150, 200, 250, 300),
-  pos_keywords,
-  "models/pos/models/"
+  keywords = pos_keywords,
+  seed = 123,
+  path = "models/pos/models/"
 )
 save(pos_metrics, file = "models/pos/metrics.RData")
 
@@ -122,7 +123,7 @@ keyatm_plot_topic_measure_scatter(
 ggsave("models/pos/metrics_scatter.pdf", width = 9, height = 8)
 
 # Load model
-pos_model <- keyatm_load_model(109, "models/pos/models/")
+pos_model <- keyatm_load_model(109, 123, "models/pos/models/")
 
 # Statistics
 

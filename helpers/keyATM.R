@@ -264,24 +264,26 @@ keyatm_topic_document_count <- function(
   return(counts)
 }
 
-keyatm_save_model <- function(model, k, path) {
+keyatm_save_model <- function(model, k, seed, path) {
   #'
   #' Save a model to the file system
   #'
   #' @param model the model to save
   #' @param k the numbers of no-keyword topics
+  #' @param seed the random seed
   #' @param path the path to safe the model
-  saveRDS(model, file = paste0(path, "model_", k, ".Rds"))
+  saveRDS(model, file = paste0(path, "model_", k, "_", seed, ".Rds"))
 }
 
-keyatm_load_model <- function(k, path) {
+keyatm_load_model <- function(k, seed, path) {
   #'
   #' Load a model from file system
   #'
   #' @param k the numbers of no-keyword topics
+  #' @param seed the random seed
   #' @param path the path to safe the model
   #' @return the modle
-  return(readRDS(file = paste0(path, "model_", k, ".Rds")))
+  return(readRDS(file = paste0(path, "model_", k, "_", seed, ".Rds")))
 }
 
 keyatm_fit_models <- function(
@@ -338,7 +340,7 @@ keyatm_fit_models <- function(
               iterations = iterations
             )
           )
-          keyatm_save_model(model, no_keyword_topics, path)
+          keyatm_save_model(model, no_keyword_topics, seed, path)
         },
         error = function(e) {}
       )
@@ -349,7 +351,7 @@ keyatm_fit_models <- function(
 }
 
 keyatm_measure_models <- function(
-  dfm, numbers, keywords, path, n = 10, threshold_docs = 1,
+  dfm, numbers, keywords, seed, path, n = 10, threshold_docs = 1,
   threshold_features = 1
 ) {
   #'
@@ -358,6 +360,7 @@ keyatm_measure_models <- function(
   #' @param dfm the document feature matrix
   #' @param numbers the numbers of no-keyword topics
   #' @param keywords the keyATM keywords
+  #' @param seed the random seed
   #' @param path the path where the models are saved
   #' @param n the number of top words to consider, default is 10
   #' @param threshold_docs the theta value used for inclusion/exclusion as a
@@ -370,7 +373,7 @@ keyatm_measure_models <- function(
 
   result <- pblapply(
     numbers, function(topics) {
-      model <- keyatm_load_model(topics, path)
+      model <- keyatm_load_model(topics, seed, path)
       stopifnot(topics == model$no_keyword_topics)
       return(
         data.frame(
