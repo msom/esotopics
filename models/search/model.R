@@ -198,3 +198,45 @@ for (i in seq_len(length(search_classification))) {
     }
   }
 }
+
+# Evaluate keywords
+original_keywords <- list(
+  the_astral = c(
+    "astral", "astral.realm", "astral.plane", "astral.body", "astral.projection"
+  ),
+  astral_light = c(
+    "magnetic.fluid", "ether", "astral.light", "universal.agent",
+    "primordial.light", "terrestrial.fluid", "great.magnetic.agent",
+    "sidereal.force", "electric.vital.fluid", "fohat"
+  ),
+  kabbalistic_tarot = c(
+    "kabbalistic.tarot", "book.of.thoth", "tarot.kabbalah"
+  ),
+  magnetic_sleep = c(
+    "magnetic.sleep", "magnetic.crisis", "peaceful.sleep", "magnetic.state",
+    "state.of.somnambulism", "magnetic.somnambulism", "sixth.sense",
+    "clairvoyant.healing"
+  ),
+  seance = c(
+    "seance", "sitting", "sitter", "manifestation", "rapping", "table.tipping",
+    "movement.of.furniture", "possessed.medium", "seized.medium",
+    "materialization", "good.spirit", "evil.spirit", "haunted.by.spectre"
+  ),
+  progression = c(
+    "progression", "progress", "incarnation", "reincarnation",
+    "law.of.progress", "karma", "monad", "law.of.cause.and.effect",
+    "law.of.retribution", "spiritual.growth"
+  )
+)
+search_occurrences <- keyatm_keyword_search(search_dfm, search_keywords)
+for (topic in names(search_occurrences)) {
+  print(str_glue("\n\n{topic}"))
+  common <- intersect(search_keywords[[topic]], original_keywords[[topic]])
+  removed <- setdiff(original_keywords[[topic]], search_keywords[[topic]])
+  added <- setdiff(search_keywords[[topic]], original_keywords[[topic]])
+  not_found <- setdiff(common, names(search_occurrences[[topic]]))
+  print(str_glue("  Removed: {paste(removed, collapse = ', ')}"))
+  print(str_glue("  Added: {paste(added, collapse = ', ')}"))
+  print(str_glue("  Common: {paste(common, collapse = ', ')}"))
+  print(str_glue("  Not found: {paste(not_found, collapse = ', ')}"))
+}
