@@ -205,3 +205,50 @@ phrases_classification <- list(
   phrases_classify(c("The Mediums Book"))
 )
 save(phrases_classification, file = "models/phrases/classification.RData")
+
+# Evaluate influence of random seed
+phrases_seed_metrics = list()
+for (seed in seq(1, 20)) {
+  model <- keyATM(
+    docs = phrases_docs,
+    model = "base",
+    no_keyword_topics = 10,
+    keywords = phrases_keywords,
+    options = list(seed = seed, iterations = 1500)
+  )
+  keyatm_save_model(model, 10, seed, "models/phrases/models/")
+  phrases_seed_metrics[[seed]] <- data.frame(
+    seed = seed,
+    document_count = mean(keyatm_topic_document_count(model)),
+    feature_count = mean(keyatm_topic_feature_count(model)),
+    coherence = mean(keyatm_topic_coherence(model, phrases_dfm)),
+    exclusivity = mean(keyatm_topic_exclusivity(model)),
+    ranksum = mean(keyatm_topic_ranksum(model, phrases_keywords))
+  )
+}
+phrases_seed_metrics <- bind_rows(phrases_seed_metrics)
+save(phrases_seed_metrics, file = "models/phrases/metrics_seed.RData")
+rsd <- function(x) {
+  paste0(format(round(100 * sd(x) / abs(mean(x)), 1), nsmall=1), "%")
+}
+rbind(
+  phrases_metrics %>%
+    filter(topics %in% c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300)) %>%
+    summarise_all(rsd) %>%
+    select(-topics),
+  phrases_seed_metrics %>%
+    summarise_all(rsd) %>%
+    select(-seed)
+) %>%
+  rename(
+    Documents = document_count,
+    Features = feature_count,
+    Coherence = coherence,
+    Exclusivity = exclusivity,
+    ISR = ranksum
+  ) %>%
+  add_column(
+    " " = c("Topic Number", "Random Seed"),
+    .before = 1
+  ) %>%
+  md_table()
