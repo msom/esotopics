@@ -42,65 +42,33 @@ vocabulary_save(search_dfm, "models/search/features.txt", TRUE)
 # Define extended keyword dictionary
 search_keywords <- list(
   the_astral = c(
-    "astral",
-    "astral.body",
-    "astral.plane",
-    "astral.projection",
-    "astral.realm",
+    "astral", "astral.body", "astral.plane", "astral.projection", "astral.realm",
     # additional
-    "astral.sphere",
-    "akashic.envelope",
-    "sphere.of.sensation",
-    "image.on.the.sphere",
-    "picture.on.the.sphere",
-    "spirit.vision"
+    "astral.sphere", "akashic.envelope", "sphere.of.sensation", "image.on.the.sphere",
+    "picture.on.the.sphere", "spirit.vision"
   ),
   astral_light = c(
-    "astral.light",
-    "electric.vital.fluid",
-    "fohat",
-    "great.magnetic.agent",
-    "primordial.light",
-    "sidereal.force",
-    "terrestrial.fluid",
-    "universal.agent",
+    "astral.light", "electric.vital.fluid", "fohat", "great.magnetic.agent", "primordial.light",
+    "sidereal.force", "terrestrial.fluid", "universal.agent",
     # additional
-    "sun..force",
-    "occult.force",
-    "astral.fluid"
+    "sun..force", "occult.force", "astral.fluid"
   ),
-  kabbalistic_tarot = c(
-    "kabbalistic.tarot"
-  ),
+  kabbalistic_tarot = c("kabbalistic.tarot"),
   magnetic_sleep = c(
-    "magnetic.sleep",
-    "magnetic.crisis",
-    "magnetic.somnambulism",
+    "magnetic.sleep", "magnetic.crisis", "magnetic.somnambulism",
     # additional
-    "magnetic.somnambule",
-    "magnetic.somnambulist"
+    "magnetic.somnambule", "magnetic.somnambulist"
   ),
   seance = c(
-    "seance",
-    "sitting",
-    "sitter",
-    "rapping",
-    "table.tipping",
-    "movement.of.furniture",
-    "possessed.medium",
-    "seized.medium"
+    "seance", "sitting", "sitter", "rapping", "table.tipping", "movement.of.furniture",
+    "possessed.medium", "seized.medium"
     # no additional
   ),
   progression = c(
-    "law.of.progress",
-    "spiritual.growth",
+    "law.of.progress", "spiritual.growth",
     # additional
-    "national.karma",
-    "cycle.of.incarnation",
-    "chain.of.progression",
-    "human.progress",
-    "progress.of.humanity",
-    "eternal.progression"
+    "national.karma", "cycle.of.incarnation", "chain.of.progression", "human.progress",
+    "progress.of.humanity", "eternal.progression"
   )
 )
 
@@ -134,9 +102,7 @@ keyatm_print_model_statistics_table(
 # Validate
 
 # ... top documents
-search_top_docs <- keyatm_top_docs_texts(
-  search_model, search_corpus, search_dfm, n = 47
-)
+search_top_docs <- keyatm_top_docs_texts(search_model, search_corpus, search_dfm, n = 47)
 keyatm_save_top_docs_texts(search_top_docs, "models/search/docs.md")
 
 keyatm_plot_top_docs_length(search_top_docs)

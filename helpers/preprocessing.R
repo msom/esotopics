@@ -10,9 +10,7 @@ preprocess_phrases <- function(x) {
   #' @return a DFM
 
   cleaned <- gsub("[kq]u?abb?all?ah?", "kabbalah", x, ignore.case = TRUE)
-  cleaned <- gsub(
-    "[kq]u?abb?all?i([a-z]*)", "kabbali\\1", cleaned, ignore.case = TRUE
-  )
+  cleaned <- gsub("[kq]u?abb?all?i([a-z]*)", "kabbali\\1", cleaned, ignore.case = TRUE)
   cleaned <- gsub("thoth?", "thoth", cleaned, ignore.case = TRUE)
   cleaned <- gsub("séance?", "seance", cleaned, ignore.case = TRUE)
 
@@ -20,21 +18,12 @@ preprocess_phrases <- function(x) {
     udpipe_phrases(
       pattern = "A+N|NPN|NN|N(P+D*(A|N)*N)",
       nouns = c(
-        # the astral
-        "astral",
-        # astral light
-        "ether", "fohat",
-        # seance
-        "seance", "sitting", "sitter", "manifestation", "rapping",
-        "materialization",
-        # progress(ion)
-        "progression", "progress", "incarnation", "reincarnation", "karma",
-        "monad"
+        "astral", # the astral
+        "ether", "fohat", # astral light
+        "seance", "sitting", "sitter", "manifestation", "rapping", "materialization", # seance
+        "progression", "progress", "incarnation", "reincarnation", "karma", "monad" # progress(ion)
       ),
-      noun_tuples = list(
-        # kabbalistic tarot
-        c("tarot", "kabbalah")
-      )
+      noun_tuples = list(c("tarot", "kabbalah")) # kabbalistic tarot
     ) %>%
     dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
 
@@ -51,17 +40,12 @@ preprocess_closed_words <- function(x) {
   #' @return a DFM
 
   cleaned <- gsub("[kq]u?abb?all?ah?", "kabbalah", x, ignore.case = TRUE)
-  cleaned <- gsub(
-    "[kq]u?abb?all?i([a-z]*)", "kabbali\\1", cleaned, ignore.case = TRUE
-  )
+  cleaned <- gsub("[kq]u?abb?all?i([a-z]*)", "kabbali\\1", cleaned, ignore.case = TRUE)
   cleaned <- gsub("thoth?", "thoth", cleaned, ignore.case = TRUE)
   cleaned <- gsub("séance?", "seance", cleaned, ignore.case = TRUE)
 
   result <- cleaned %>%
-    udpipe_phrases(
-      pattern = "N|A|M|V",
-      adverbs_only = TRUE
-    ) %>%
+    udpipe_phrases(pattern = "N|A|M|V", adverbs_only = TRUE) %>%
     dfm_subset(ntoken(.) > 0, drop_docid = FALSE)
 
   return(result)

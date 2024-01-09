@@ -8,11 +8,10 @@ source("helpers/keyATM.R")
 source("helpers/preprocessing.R")
 source("helpers/vocabulary.R")
 
-# Create corpus. Use text from esoteric animal magnetism, spiritualism,
-# spiritsm, occultism, Theosophic Society and Order of the Golden Dawn.
-# Only include paragraphs with at least 30 words. Reshape to paragraphs, since
-# we assume to topic may change by paragraphs. Drop all features occurring
-# only once.
+# Create corpus. Use text from esoteric animal magnetism, spiritualism, spiritsm, occultism,
+# Theosophic Society and Order of the Golden Dawn. Only include paragraphs with at least 30 words.
+# Reshape to paragraphs, since we assume to topic may change by paragraphs. Drop all features
+# ccurring only once.
 pos_corpus <- esocorpus %>%
   corpus() %>%
   corpus_subset(
@@ -52,35 +51,31 @@ pos_docs <- keyATM_read(texts = pos_dfm)
 pos_keywords <- list(
   the_astral = c("astral", "realm", "plane", "projection"),
   astral_light = c(
-    "magnetic", "fluid", "ether", "astral", "light", "universal", "agent",
-    "primordial", "terrestrial", "sidereal", "force", "electric", "vital",
-    "fohat"
+    "magnetic", "fluid", "ether", "astral", "light", "universal", "agent", "primordial",
+    "terrestrial", "sidereal", "force", "electric", "vital", "fohat"
   ),
   kabbalistic_tarot = c("kabbalistic", "book", "thoth", "tarot", "kabbalah"),
   magnetic_sleep = c(
-    "magnetic", "sleep", "crisis", "peaceful", "state", "somnambulism",
-    "sixth", "sense", "clairvoyant", "healing"
+    "magnetic", "sleep", "crisis", "peaceful", "state", "somnambulism", "sixth", "sense",
+    "clairvoyant", "healing"
   ),
   seance = c(
-    "seance", "sitting", "manifestation", "rapping", "table",  "movement",
-    "furniture", "possessed", "medium", "materialization", "good", "spirit",
-    "evil", "spectre"
+    "seance", "sitting", "manifestation", "rapping", "table",  "movement", "furniture",
+    "possessed", "medium", "materialization", "good", "spirit", "evil", "spectre"
   ),
   progression = c(
-    "progression", "progress", "incarnation", "reincarnation", "law", "karma",
-    "monad", "cause", "effect", "retribution", "spiritual", "growth"
+    "progression", "progress", "incarnation", "reincarnation", "law", "karma", "monad", "cause",
+    "effect", "retribution", "spiritual", "growth"
   )
 )
 
-visualize_keywords(
-  docs = pos_docs,
-  keywords = pos_keywords
-)$figure + scale_color_discrete(
-  labels = names(pos_keywords) %>%
-    str_replace("\\d_", "") %>%
-    str_replace_all("_", " ") %>%
-    str_to_title()
-)
+visualize_keywords(docs = pos_docs, keywords = pos_keywords)$figure +
+  scale_color_discrete(
+    labels = names(pos_keywords) %>%
+      str_replace("\\d_", "") %>%
+      str_replace_all("_", " ") %>%
+      str_to_title()
+  )
 ggsave("models/pos/keywords.pdf", width = 9, height = 6)
 
 # Calculate models
@@ -103,30 +98,19 @@ pos_metrics <- keyatm_measure_models(
 save(pos_metrics, file = "models/pos/metrics.RData")
 
 # Find number of topics
-keyatm_plot_topic_measure_scatter(
-  pos_metrics,
-  c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
-)
+keyatm_plot_topic_measure_scatter(pos_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300))
 ggsave("models/pos/metrics_scatter_overview.pdf", width = 9, height = 4)
 
-keyatm_plot_topic_measure_trend(
-  pos_metrics,
-  c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300)
-)
+keyatm_plot_topic_measure_trend(pos_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300))
 ggsave("models/pos/metrics_trend.pdf", width = 9, height = 5)
 
-keyatm_plot_topic_measure_scatter(
-  pos_metrics,
-  c(seq(75, 125), 300),
-  highlight = c(109)
-)
+keyatm_plot_topic_measure_scatter(pos_metrics, c(seq(75, 125), 300), highlight = c(109))
 ggsave("models/pos/metrics_scatter.pdf", width = 9, height = 8)
 
 # Load model
 pos_model <- keyatm_load_model(109, 123, "models/pos/models/")
 
 # Statistics
-
 # ... document histogram
 keyatm_plot_document_histogram(pos_model)
 ggsave("models/pos/document_histogram.pdf", width = 9, height = 6)
@@ -141,23 +125,16 @@ pos_statistics <- keyatm_calculate_model_statistics(
   intruder_features = c(NA, NA, NA, NA, NA, NA),
   intruder_documents = c(2 / 20, 9 / 20, 4 / 20, 0 / 20, 0 / 20, 1 / 20)
 )
-keyatm_print_model_statistics_table(
-  pos_statistics,
-  ncol(pos_dfm),
-  nrow(pos_dfm)
-)
+keyatm_print_model_statistics_table(pos_statistics, ncol(pos_dfm), nrow(pos_dfm))
 
 # Validate
-
 # ... convergence
 plot_modelfit(pos_model)
 ggsave("models/pos/model_fit.pdf", width = 9, height = 6)
-
 plot_alpha(pos_model)
 
 # ... topic proportion
 plot_pi(pos_model)
-
 plot_topicprop(pos_model, show_topic = seq(1, 6))
 
 # ... top features
@@ -174,10 +151,7 @@ ggsave("models/pos/doc_length.pdf", width = 9, height = 6)
 
 # ... occurrences
 keyatm_print_occurrences_table(pos_model, pos_dfm)
-
-keyatm_plot_topic_occurrences(
-  pos_model, pos_dfm, path = "models/pos/"
-)
+keyatm_plot_topic_occurrences(pos_model, pos_dfm, path = "models/pos/")
 
 # ... external
 pos_classify <- function(titles) {
@@ -192,9 +166,7 @@ pos_classify <- function(titles) {
   theta <- keyatm_predict(docs, pos_model)
   result <- keyatm_predict_top_doc(theta)
   known <- vocabulary_compare(dfm, pos_dfm)$known
-  return(
-    list(dfm = dfm, corp = corp, known = known, theta = theta, result = result)
-  )
+  return(list(dfm = dfm, corp = corp, known = known, theta = theta, result = result))
 }
 
 pos_classification <- list(
