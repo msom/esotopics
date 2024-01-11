@@ -88,7 +88,9 @@ udpipe_extract_phrases <- function(
       detailed = FALSE
     )
     if (!is.null(nouns)) {
-      # FIXME: rbind might create duplicate entries when pattern is "N"
+      if ("N" %in% unlist(strsplit(pattern, split = "\\|"))) {
+        warning("pattern 'N' might not work together with nouns")
+      }
       result <- result %>% rbind(
         noun_phrases %>%
           select(-ngram) %>%
@@ -96,11 +98,16 @@ udpipe_extract_phrases <- function(
       )
     }
     if (!is.null(noun_tuples)) {
+      if (
+        ("NN" %in% unlist(strsplit(pattern, split = "\\|"))) ||
+        ("NN+" %in% unlist(strsplit(pattern, split = "\\|")))
+      ) {
+        warning("pattern 'NN' or 'NN+' might not work together with noun tuples")
+      }
       for (noun_tuple in noun_tuples) {
         intersection <- intersect(noun_tuple, noun_phrases$keyword)
         if (length(intersection) == length(noun_tuple)) {
           name <- paste(noun_tuple, collapse = "-")
-          # FIXME: this might create duplicate entries when pattern is "NN+"
           result[nrow(result) + 1, ] <- list(name, 1)
         }
       }
@@ -108,7 +115,9 @@ udpipe_extract_phrases <- function(
   }
 
   if (!is.null(verbs)) {
-    # FIXME: rbind might create duplicate entries when patterns is "V"
+    if ("V" %in% unlist(strsplit(pattern, split = "\\|"))) {
+      warning("pattern 'V' might not work together with verbs")
+    }
     result <- result %>%
       rbind(
         phrases(
