@@ -24,7 +24,7 @@ relation_corpus <- esocorpus %>%
       "Astral Projection Ritual Magic and Alchemy"
     )
   ) %>%
-  corpus_trim("paragraphs", min_ntoken = 3) %>%
+  corpus_trim("paragraphs", min_ntoken = 30) %>%
   corpus_reshape(to = "paragraph")
 docvars(relation_corpus)$file <- names(relation_corpus)
 docvars(relation_corpus)$ntoken <- ntoken(relation_corpus)
@@ -38,7 +38,7 @@ for (index in seq_along(relation_corpus)) {
   writeLines(relation_corpus[index], relation_files[[index]])
 }
 
-# extract relations
+# extract relations using reverb from http://reverb.cs.washington.edu/
 system2(
   "java",
   args = c("-Xmx512m", "-jar", "models/relation/reverb-latest.jar", "--files"),
@@ -51,37 +51,40 @@ relation_data <- read_delim("models/relation/relations.csv", delim = "\t", col_n
   mutate(file = basename(file)) %>%
   left_join(docvars(relation_corpus))
 
-# fit distribution of relations
+# evaluate distribution of relations
 relation_distribution <- relation_data %>%
   group_by(file) %>%
-  summarize(x = n() / min(ntoken)) %>%
+  summarize(f = n() / min(ntoken)) %>%
   pull()
+fitdistrplus::descdist(relation_distribution)
+plot(fitdistrplus::fitdist(relation_distribution, "norm"), breaks = 30)
+pdf("models/relation/relation_distribution.pdf", width = 9, height = 6)
+plot(fitdistrplus::fitdist(relation_distribution, "norm"), breaks = 30)
+dev.off()
 
-fitdistrplus::descdist(relation_distribution, discrete = FALSE)
-plot(fitdistrplus::fitdist(relation_distribution, "lnorm"))
-
-# count correspondence relations
+# extract correspondence relations
+relation_pattern <- "correspond|analogous|resemble|echo(?! of)|reflect(?!ion| over)|equivalent|equal to"
 relation_correspondences <- relation_data %>%
-  filter(
-    grepl(
-      "correspond|analogous|resemble|echo(?! of)|reflect(?!ion)|equivalent|equal to",
-      relation, perl = TRUE
-    )
-  )
+  filter(grepl(relation_pattern, relation, perl = TRUE))
+nrow(relation_correspondences)
 
-relation_correspondences %>%
+# evaluate distribution of correspondence relations
+relation_correspondences_distribution <- relation_correspondences %>%
+  group_by(file) %>%
+  summarize(f = n() / max(ntoken)) %>%
+  pull()
+length(relation_correspondences_distribution)
+fitdistrplus::descdist(relation_correspondences_distribution)
+plot(fitdistrplus::fitdist(relation_correspondences_distribution, "gamma"), breaks = 30)
+pdf("models/relation/correspondence_distribution.pdf", width = 9, height = 6)
+plot(fitdistrplus::fitdist(relation_correspondences_distribution, "gamma"), breaks = 30)
+dev.off()
+
+# correspondence relations per document
+relation_correspondences_per_document <- relation_correspondences %>%
   group_by(file) %>%
   summarize(relations = n()) %>%
   group_by(relations) %>%
   summarize(count = n()) %>%
+  mutate(freq = round(count / sum(count), 3)) %>%
   md_table()
-
-relation_correspondences %>%
-  group_by(file) %>%
-  summarize(x = n() / max(ntoken)) %>%
-  pull() %>%
-  # hist()
-  # fitdistrplus::descdist()
-  fitdistrplus::fitdist("exp") %>%
-  plot()
-ggsave("models/relation/correspondence_histogram.pdf", width = 9, height = 6)
