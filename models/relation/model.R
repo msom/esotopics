@@ -58,7 +58,7 @@ relation_distribution <- relation_data %>%
   pull()
 fitdistrplus::descdist(relation_distribution)
 plot(fitdistrplus::fitdist(relation_distribution, "norm"), breaks = 30)
-pdf("models/relation/relation_distribution.pdf", width = 9, height = 6)
+pdf("models/relation/relation_distribution.pdf", width = 6, height = 6)
 plot(fitdistrplus::fitdist(relation_distribution, "norm"), breaks = 30)
 dev.off()
 
@@ -76,7 +76,7 @@ relation_correspondences_distribution <- relation_correspondences %>%
 length(relation_correspondences_distribution)
 fitdistrplus::descdist(relation_correspondences_distribution)
 plot(fitdistrplus::fitdist(relation_correspondences_distribution, "gamma"), breaks = 30)
-pdf("models/relation/correspondence_distribution.pdf", width = 9, height = 6)
+pdf("models/relation/correspondence_distribution.pdf", width = 6, height = 6)
 plot(fitdistrplus::fitdist(relation_correspondences_distribution, "gamma"), breaks = 30)
 dev.off()
 
