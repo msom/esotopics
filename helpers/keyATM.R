@@ -404,12 +404,13 @@ keyatm_keyword_search <- function(
   return(result)
 }
 
-keyatm_plot_topic_occurrences <- function(model, dfm, include_others = FALSE, path = NA) {
+keyatm_plot_topic_occurrences <- function(model, dfm, title, include_others = FALSE, path = NA) {
   #'
   #' Plot the occurrence of the topics within the documents.
   #'
   #' @param model the keyATM model
   #' @param dfm the DFM used with the model
+  #' @param title the title of the plot
   #' @param include_others if FALSE, only pre-defined topics are used, default is FALSE
   #' @param path the path to safe the model
   #' @return a list of plots
@@ -438,6 +439,7 @@ keyatm_plot_topic_occurrences <- function(model, dfm, include_others = FALSE, pa
       facet_wrap(~ book, ncol = 1) +
       xlab("Paragraph") +
       ylab("Theta") +
+      ggtitle(paste0(keyatm_topic_names(topic), ", ", title)) +
       theme(
         axis.text.x = element_blank(),
         axis.text.y = element_blank(),
@@ -475,13 +477,14 @@ keyatm_plot_keyword_occurrences <- function(dfm, keywords, topic) {
 }
 
 keyatm_plot_topic_measure_scatter <- function(
-  metrics, topic_range, highlight = NULL
+  metrics, topic_range, title, highlight = NULL
 ) {
   #'
   #' Plot the measures of a model as a scatter plot.
   #'
   #' @param metrics the keyATM model metrics
   #' @param topic_range the number of topics to show
+  #' @param title the title of the plot
   #' @param hightlight option metrics to highlight using a different shape
   #'
   data <- metrics %>%
@@ -506,15 +509,18 @@ keyatm_plot_topic_measure_scatter <- function(
     scale_shape_discrete(guide = "none") +
     xlab("Coherence")  +
     ylab("Exclusivity") +
-    labs(color = "Ranks (ISR)", size = "Features")
+    labs(color = "Ranks (ISR)", size = "Features") +
+    ggtitle(title) +
+    theme(plot.title = element_text(hjust = 0.5))
 }
 
-keyatm_plot_topic_measure_trend <- function(metrics, topic_range) {
+keyatm_plot_topic_measure_trend <- function(metrics, topic_range, title) {
   #'
   #' Plot the measures of a model as trend lines.
   #'
   #' @param metrics the keyATM model metrics
   #' @param topic_range the number of topics to show
+  #' @param title the title of the plot
   #'
   metrics %>%
     filter(topics %in% topic_range) %>%
@@ -542,17 +548,17 @@ keyatm_plot_topic_measure_trend <- function(metrics, topic_range) {
       labels = c("Coherence", "Documents", "Exclusivity", "Features", "Ranks (ISR)")
     ) +
     xlab("Topics") +
-    ylab("Normalized Value")
+    ylab("Normalized Value") +
+    ggtitle(title) +
+    theme(plot.title = element_text(hjust = 0.5))
 }
 
-
-}
-
-keyatm_plot_top_docs_length <- function(texts, ymax = NA) {
+keyatm_plot_top_docs_length <- function(texts, title, ymax = NA) {
   #'
   #' Plot the length of the top documents of a model include SE
   #'
   #' @param texts the result of keyatm_top_docs_texts
+  #' @param title the title of the plot
   #' @param ymax optional ymax
   #'
   plot <- texts %>%
@@ -564,7 +570,9 @@ keyatm_plot_top_docs_length <- function(texts, ymax = NA) {
     geom_bar(stat = "identity", fill = "#256a9e") +
     geom_errorbar(aes(ymin = mean - se, ymax = mean + se), width = 0.3) +
     xlab("Topic") +
-    ylab("Length")
+    ylab("Length") +
+    ggtitle(title) +
+    theme(plot.title = element_text(hjust = 0.5))
   if (!is.na(ymax)) {
     plot <- plot + ylim(c(0, ymax))
   }

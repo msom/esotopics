@@ -75,7 +75,9 @@ visualize_keywords(docs = pos_docs, keywords = pos_keywords)$figure +
       str_replace("\\d_", "") %>%
       str_replace_all("_", " ") %>%
       str_to_title()
-  )
+  ) +
+  ggtitle("Model A") +
+  theme(plot.title = element_text(hjust = 0.5))
 ggsave("models/pos/keywords.pdf", width = 9, height = 6)
 
 # Calculate models
@@ -98,13 +100,15 @@ pos_metrics <- keyatm_measure_models(
 save(pos_metrics, file = "models/pos/metrics.RData")
 
 # Find number of topics
-keyatm_plot_topic_measure_scatter(pos_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300))
+keyatm_plot_topic_measure_scatter(pos_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300),
+                                  "Model A")
 ggsave("models/pos/metrics_scatter_overview.pdf", width = 9, height = 4)
 
-keyatm_plot_topic_measure_trend(pos_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300))
+keyatm_plot_topic_measure_trend(pos_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300),
+                                "Model A")
 ggsave("models/pos/metrics_trend.pdf", width = 9, height = 5)
 
-keyatm_plot_topic_measure_scatter(pos_metrics, c(seq(75, 125), 300), highlight = c(109))
+keyatm_plot_topic_measure_scatter(pos_metrics, c(seq(75, 125), 300), highlight = c(109), "Model A")
 ggsave("models/pos/metrics_scatter.pdf", width = 9, height = 8)
 
 # Load model
@@ -120,7 +124,9 @@ keyatm_print_model_statistics_table(pos_statistics, ncol(pos_dfm), nrow(pos_dfm)
 
 # Validate
 # ... convergence
-plot_modelfit(pos_model)
+plot_modelfit(pos_model)$figure +
+  ggtitle("Model A") +
+  theme(plot.title = element_text(hjust = 0.5))
 ggsave("models/pos/model_fit.pdf", width = 9, height = 6)
 plot_alpha(pos_model)
 
@@ -137,12 +143,12 @@ top_words(pos_model, n = 200, show_keyword = FALSE) %>%
 pos_top_docs <- keyatm_top_docs_texts(pos_model, pos_corpus, pos_dfm, n = 20)
 keyatm_save_top_docs_texts(pos_top_docs, "models/pos/docs.md")
 
-keyatm_plot_top_docs_length(pos_top_docs, 3000)
+keyatm_plot_top_docs_length(pos_top_docs, "Model A", 4200)
 ggsave("models/pos/doc_length.pdf", width = 9, height = 6)
 
 # ... occurrences
 keyatm_print_occurrences_table(pos_model, pos_dfm)
-keyatm_plot_topic_occurrences(pos_model, pos_dfm, path = "models/pos/")
+keyatm_plot_topic_occurrences(pos_model, pos_dfm, "Model A", path = "models/pos/")
 
 # ... external
 pos_classify <- function(titles) {

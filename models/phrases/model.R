@@ -75,7 +75,9 @@ visualize_keywords(docs = phrases_docs, keywords = phrases_keywords)$figure +
       str_replace("\\d_", "") %>%
       str_replace_all("_", " ") %>%
       str_to_title()
-  )
+  ) +
+  ggtitle("Model B") +
+  theme(plot.title = element_text(hjust = 0.5))
 ggsave("models/phrases/keywords.pdf", width = 9, height = 6)
 
 # Calculate models
@@ -98,13 +100,16 @@ phrases_metrics <- keyatm_measure_models(
 save(phrases_metrics, file = "models/phrases/metrics.RData")
 
 # Find number of topics
-keyatm_plot_topic_measure_scatter(phrases_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300))
+keyatm_plot_topic_measure_scatter(phrases_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300),
+                                  "Model B")
 ggsave("models/phrases/metrics_scatter_overview.pdf", width = 9, height = 4)
 
-keyatm_plot_topic_measure_trend(phrases_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300))
+keyatm_plot_topic_measure_trend(phrases_metrics, c(10, 25, 50, 75, 100, 125, 150, 200, 250, 300),
+                                "Model B")
 ggsave("models/phrases/metrics_trend.pdf", width = 9, height = 5)
 
-keyatm_plot_topic_measure_scatter(phrases_metrics, c(seq(75, 125), 300), highlight = c(106))
+keyatm_plot_topic_measure_scatter(phrases_metrics, c(seq(75, 125), 300), highlight = c(106),
+                                  "Model B")
 ggsave("models/phrases/metrics_scatter.pdf", width = 9, height = 8)
 
 # Load model
@@ -120,7 +125,9 @@ keyatm_print_model_statistics_table(phrases_statistics, ncol(phrases_dfm), nrow(
 
 # Validate
 # ... convergence
-plot_modelfit(phrases_model)
+plot_modelfit(phrases_model)$figure +
+  ggtitle("Model B") +
+  theme(plot.title = element_text(hjust = 0.5))
 ggsave("models/phrases/model_fit.pdf", width = 9, height = 6)
 plot_alpha(phrases_model)
 
@@ -139,12 +146,12 @@ phrases_top_docs <- keyatm_top_docs_texts(
 )
 keyatm_save_top_docs_texts(phrases_top_docs, "models/phrases/docs.md")
 
-keyatm_plot_top_docs_length(phrases_top_docs, 3000)
+keyatm_plot_top_docs_length(phrases_top_docs, "Model B", 4200)
 ggsave("models/phrases/doc_length.pdf", width = 9, height = 6)
 
 # ... occurrences
 keyatm_print_occurrences_table(phrases_model, phrases_dfm)
-keyatm_plot_topic_occurrences(phrases_model, phrases_dfm, path = "models/phrases/")
+keyatm_plot_topic_occurrences(phrases_model, phrases_dfm, "Model B", path = "models/phrases/")
 
 # ... external
 phrases_classify <- function(titles) {
