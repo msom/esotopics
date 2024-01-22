@@ -46,7 +46,9 @@ keyatm_print_top_words_table <- function(model, n = 10, include_others = FALSE) 
     select(matches(match)) %>%
     mutate_all(str_replace_all, "\\.", " ") %>%
     mutate_all(str_replace_all, "(.*) \\[✓\\]", "*\\1*") %>%
-    mutate_all(str_replace_all, " \\[\\d\\]", "")
+    mutate_all(str_replace_all, " \\[\\d\\]", "") %>%
+    mutate(Rank = row_number()) %>%
+    relocate(Rank)
   names(docs) <- keyatm_topic_names(names(docs))
   docs %>%
     md_table()
