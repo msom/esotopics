@@ -545,59 +545,7 @@ keyatm_plot_topic_measure_trend <- function(metrics, topic_range) {
     ylab("Normalized Value")
 }
 
-keyatm_plot_document_histogram <- function(model, threshold = 1) {
-  #'
-  #' Plot the histogram of the documents of a model
-  #'
-  #' @param model the keyATM model
-  #' @param threshold the theta value used for inclusion/exclusion as a multiple
-  #'  of the uniform distribution value, default is 1
-  #'
-  totals <- keyatm_topic_document_count(model, threshold)
-  threshold_theta <- threshold / (model$no_keyword_topics + model$keyword_k)
-  model$theta %>%
-    as.data.frame() %>%
-    pivot_longer(matches("\\d_.*")) %>%
-    select(name, value) %>%
-    mutate(
-      name = name %>%
-        keyatm_topic_names() %>%
-        paste0(" (", totals[name], ")")
-    ) %>%
-    filter(value > threshold_theta) %>%
-    ggplot(mapping = aes(x = value)) +
-    geom_histogram() +
-    facet_wrap(~name) +
-    xlab("Normalized Theta") +
-    ylab("Count")
-}
 
-keyatm_plot_feature_histogram <- function(model, threshold = 1) {
-  #'
-  #' Plot the histogram of the words of a model
-  #'
-  #' @param model the keyATM model
-  #' @param threshold the phi value used for inclusion/exclusion as a multiple
-  #'  of the uniform distribution value, default is 1
-  #'
-  totals <- keyatm_topic_feature_count(model, threshold)
-  threshold_phi <- threshold / ncol(model$phi)
-  model$phi %>%
-    t() %>%
-    as.data.frame() %>%
-    pivot_longer(matches("\\d_.*")) %>%
-    select(name, value) %>%
-    mutate(
-      name = name %>%
-        keyatm_topic_names() %>%
-        paste0(" (", totals[name], ")")
-    ) %>%
-    filter(value > threshold_phi) %>%
-    ggplot(mapping = aes(x = value)) +
-    geom_histogram() +
-    facet_wrap(~name) +
-    xlab("Phi") +
-    ylab("Count")
 }
 
 keyatm_plot_top_docs_length <- function(texts, ymax = NA) {

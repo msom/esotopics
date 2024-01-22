@@ -111,15 +111,6 @@ ggsave("models/phrases/metrics_scatter.pdf", width = 9, height = 8)
 phrases_model <- keyatm_load_model(106, 123, "models/phrases/models/")
 
 # Statistics
-# ... document histogram
-keyatm_plot_document_histogram(phrases_model, threshold = 1)
-ggsave("models/phrases/document_histogram.pdf", width = 9, height = 6)
-
-# ... feature histogram
-keyatm_plot_feature_histogram(phrases_model)
-ggsave("models/phrases/feature_histogram.pdf", width = 9, height = 6)
-
-# ... model statistics
 phrases_statistics <- keyatm_calculate_model_statistics(
   phrases_model, phrases_dfm, phrases_keywords,
   intruder_features = c(NA, NA, NA, NA, NA, NA),

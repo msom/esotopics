@@ -76,12 +76,6 @@ search_keywords <- list(
 search_model <- keyatm_search_to_model(search_dfm, search_keywords)
 
 # Statistics
-
-# ... document histogram
-keyatm_plot_document_histogram(search_model, threshold = 1)
-ggsave("models/search/document_histogram.pdf", width = 9, height = 6)
-
-# ... model statistics
 search_statistics <- data.frame(
   feature_count = lengths(search_keywords),
   document_count = keyatm_topic_document_count(search_model),
@@ -100,7 +94,6 @@ keyatm_print_model_statistics_table(
 )
 
 # Validate
-
 # ... top documents
 search_top_docs <- keyatm_top_docs_texts(search_model, search_corpus, search_dfm, n = 47)
 keyatm_save_top_docs_texts(search_top_docs, "models/search/docs.md")
