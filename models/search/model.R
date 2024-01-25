@@ -83,7 +83,7 @@ search_statistics <- data.frame(
   exclusivity = c(NA, NA, NA, NA, NA, NA),
   ranksum = c(NA, NA, NA, NA, NA, NA),
   intruder_features = c(NA, NA, NA, NA, NA, NA),
-  intruder_documents = c(18.5 / 20, 19 / 20, 1 / 1, 20 / 20, 14 / 20, 16 / 20)
+  intruder_documents = c(17 / 20, 19 / 20, 1 / 1, 20 / 20, 14 / 20, 16 / 20)
 )
 keyatm_print_model_statistics_table(
   search_statistics,
